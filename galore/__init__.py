@@ -82,6 +82,11 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
 
 
 def main():
+    """For now main() contains a proof-of-concept example with random data.
+
+    This example should be replaced with a useful user interface, and
+    fresh examples prepared to demonstrate the UI and API.
+    """
     # Set up a mesh for discrete analysis
     d = 1
     # Need some negative frequency points so Lorentzian can be correctly
@@ -109,6 +114,8 @@ def triple_plot(raman_sim,
                 raman_spikes,
                 broadened_spikes,
                 filename=False):
+    """Plot the proof-of-concept with random data which is set up in main().
+    """
     max_freq = max(frequencies)
     # Plot them
     plt.subplot(3, 1, 1)
