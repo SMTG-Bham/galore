@@ -12,9 +12,28 @@ calculations. The two main intended applications are
 
 ## Usage
 
+For full documentation of the command-line flags, please use the
+in-built help.
+
+    ./bin/galore -h
+
+Python API documentation will be added once the project structure and
+scope become clearer.
+
 #### Instrumental broadening
 Data may be provided as a set of X,Y coordinates in a text file of
 comma-separated values (CSV).
+
+To plot a CSV file to the screen with default Lorentzian broadening (2
+cm-1), use the command
+
+    ./bin/galore MY_DATA.csv -l -p
+
+and to plot to a file with more generous 10 cm-1 broadening
+
+    ./bin/galore MY_DATA.csv -l 10 -p MY_PLOT.png
+
+will provide the additional data needed.
 
 #### XPS simulation
 
