@@ -1,9 +1,29 @@
 #! /usr/bin/env python
 
+###############################################################################
+#                                                                             #
+# GALORE: Gaussian and Lorentzian broadening for simulated spectra            #
+#                                                                             #
+# Developed by Adam J. Jackson (2016) at University College London            #
+#                                                                             #
+###############################################################################
+#                                                                             #
+# This file is part of Galore. Galore is free software: you can redistribute  #
+# it and/or modify it under the terms of the GNU General Public License as    #
+# published by the Free Software Foundation, either version 3 of the License, #
+# or (at your option) any later version.  This program is distributed in the  #
+# hope that it will be useful, but WITHOUT ANY WARRANTY; without even the     #
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    #
+# See the GNU General Public License for more details.  You should have       #
+# received a copy of the GNU General Public License along with this program.  #
+# If not, see <http://www.gnu.org/licenses/>.                                 #
+#                                                                             #
+###############################################################################
+
 import numpy as np
 from itertools import repeat
 try:
-    from matplotlib import pyplot as plt
+    import matplotlib.pyplot as plt
     has_matplotlib = True
 except ImportError:
     has_matplotlib = False
@@ -18,19 +38,17 @@ def random_raman_xy(max_freq=1000):
     return raman_sim
 
 
-def xy_to_1d(xy, d, xmin=0, xmax=False):
+def xy_to_1d(xy, x_values):
     """Convert a set of x,y coordinates to 1D array
 
     Args:
         xy: (ndarray) 2D numpy array of x, y values
-        d: sample width in units of x
-        xmin: x-value corresponding to start of 1D array
-        xmax: x-value corresponding to end of 1D array"""
-    if not xmax:
-        xmax = max(xy[:, 0]) * 1.05
+        x_values: (iterable) Object containing x-value mesh
 
-    x_values = np.arange(xmin, xmax, d)
+    """
+
     spikes = np.zeros(len(x_values))
+    d = x_values[1] - x_values[0]
 
     for x, y in xy:
         spike = y * np.array(map(lambda f: delta(f, x, w=d), x_values))
@@ -97,7 +115,8 @@ def main():
 
     gamma = 2
     frequencies = np.arange(0, max_freq, d)
-    raman_spikes = xy_to_1d(raman_sim, d, xmax=max_freq)
+
+    raman_spikes = xy_to_1d(raman_sim, frequencies)
     broadened_spikes = broaden(raman_spikes, pad=pad, d=d, width=gamma)
 
     broadening = lorentzian(np.arange(-pad, pad, d), f0=0, gamma=gamma)
