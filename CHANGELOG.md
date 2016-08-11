@@ -10,5 +10,7 @@ Versioning](http://semver.org/).  The changelog format is inspired by
 
 - Initial prototype from random data
 - Convolution algorithm used to apply Lorentzian broadening
-- bin folder with command-line interface
+- command-line interface
 - Plotting to screen and file
+- Limited internal tests
+- setuptools-based distribution

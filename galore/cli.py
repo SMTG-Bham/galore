@@ -32,8 +32,7 @@ try:
 except ImportError:
     has_matplotlib = False
 
-
-def main(**args):
+def run(**args):
     if not os.path.exists(args['input']):
         raise Exception("Input file {0} does not exist!".format(args['input']))
     if galore.formats.isdoscar(args['input']):
@@ -80,7 +79,7 @@ def main(**args):
             else:
                 plt.show()
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('input', type=str, default='DOSCAR',
                         help='Input data file')
@@ -124,4 +123,7 @@ if __name__ == '__main__':
                         help='Maximum y axis value')
     args = parser.parse_args()
     args = vars(args)
-    main(**args)
+    run(**args)
+
+if __name__ == '__main__':
+    main()
