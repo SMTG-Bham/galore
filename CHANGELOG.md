@@ -6,6 +6,8 @@ Versioning](http://semver.org/).  The changelog format is inspired by
 
 ## [Unreleased]
 
+## [0.1.0] - 2016-08-11
+
 ### Added
 
 - Initial prototype from random data
@@ -14,3 +16,5 @@ Versioning](http://semver.org/).  The changelog format is inspired by
 - Plotting to screen and file
 - Limited internal tests
 - setuptools-based distribution
+
+[Unreleased]: https://github.com/smtg-ucl/galore/compare/v0.1.0...HEAD

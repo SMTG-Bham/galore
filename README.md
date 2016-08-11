@@ -45,6 +45,25 @@ file and the DOS is read from the DOSCAR.
 Galore uses Numpy to apply convolution operations. Matplotlib is
 required for plotting.
 
+Galore uses Pip and setuptools for installation. You *probably*
+already have this; if not, your GNU/Linux package manager will be able
+to oblige with a package named something like `python-setuptools`. On
+Max OSX, the Python distributed with [Homebrew](http://brew.sh)
+includes setuptools and Pip.
+
+## Installation
+
+At this stage, the recommended installation procedure is, from the
+directory containing this README:
+
+    pip install --user -e galore
+    
+which installs an *editable* (`-e`) version of galore in your
+userspace. The executable program `galore` goes to a directory like
+`~/.local/bin` and the galore library should be available on your
+Pythonpath. These are links to this project folder, which you can
+continue to edit and update using Git.
+
 ## Development
 
 This code is developed by the Scanlon Materials Theory Group based at
