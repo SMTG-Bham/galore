@@ -40,7 +40,7 @@ calculations. The two main intended applications are
         ],
     keywords='spectroscopy spectra chemistry physics raman xps',
     packages=find_packages(exclude=['docs', 'test']),
-    install_requires=['numpy', 'scipy'],
+    install_requires=['numpy'],
     entry_points={
         'console_scripts': [
             'galore=galore.cli:main',
