@@ -53,11 +53,18 @@ includes setuptools and Pip.
 
 ## Installation
 
-At this stage, the recommended installation procedure is, from the
-directory containing this README:
+### Windows user installation
+[Anaconda](https://www.continuum.io/downloads) is recommended for
+managing the Python environment and dependencies on Windows.  From the
+Anaconda shell:
 
-    pip install --user -e galore
-    
+    pip install .
+
+### Linux/Mac developer installation
+From the directory containing this README:
+
+    pip install --user -e .
+
 which installs an *editable* (`-e`) version of galore in your
 userspace. The executable program `galore` goes to a directory like
 `~/.local/bin` and the galore library should be available on your
