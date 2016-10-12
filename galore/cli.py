@@ -19,6 +19,7 @@
 # If not, see <http://www.gnu.org/licenses/>.                                 #
 #                                                                             #
 ###############################################################################
+from __future__ import print_function
 
 import os
 import numpy as np
@@ -66,9 +67,28 @@ def run(**args):
         broadened_data = galore.broaden(
             broadened_data, d=d, dist='gaussian', width=args['gaussian'])
 
+    if not any(
+        ((args['csv'] is None), (args['txt'] is None),
+         (args['plot'] is None), args['csv'], args['txt'], args['plot'])):
+        print("No output selected. Please use at least one of the output "
+              "options (CSV, txt, plotting). For usage information, run "
+              "galore with -h argument.")
+
+    if args['csv'] is None:
+        galore.formats.write_csv(x_values, broadened_data, filename=None)
+    elif args['csv']:
+        galore.formats.write_csv(
+            x_values, broadened_data, filename=args['csv'])
+
+    if args['txt'] is None:
+        galore.formats.write_txt(x_values, broadened_data, filename=None)
+    elif args['txt']:
+        galore.formats.write_txt(
+            x_values, broadened_data, filename=args['txt'])
+
     if args['plot'] or args['plot'] is None:
         if not has_matplotlib:
-            print "Can't plot, no Matplotlib"
+            print("Can't plot, no Matplotlib")
         else:
             plt.plot(x_values, broadened_data, 'r-')
             plt.xlim([args['xmin'], args['xmax']])
@@ -112,6 +132,20 @@ def main():
         default='cm-1',
         choices=('cm', 'cm-1', 'thz', 'THz', 'ev', 'eV'),
         help='Units for x axis (usually frequency or energy)')
+    parser.add_argument(
+        '--txt',
+        nargs='?',
+        default=False,
+        const=None,
+        help="Write broadened output as space-delimited text; file if path "
+        "provided, otherwise write to standard output.")
+    parser.add_argument(
+        '--csv',
+        nargs='?',
+        default=False,
+        const=None,
+        help="Write broadened output as comma-separated values; file if path "
+        "provided, otherwise write to standard output.")
     parser.add_argument(
         '-p',
         '--plot',

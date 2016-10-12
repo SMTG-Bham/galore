@@ -6,7 +6,7 @@ Versioning](http://semver.org/).  The changelog format is inspired by
 
 ## [Unreleased]
 - Gaussian broadening added. In the CLI, this stacks with Lorentzian broadening.
-- Text file output: Python interface and testing
+- Text file output
 
 ## [0.1.0] - 2016-08-11
 
