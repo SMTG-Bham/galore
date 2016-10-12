@@ -5,7 +5,8 @@ Versioning](http://semver.org/).  The changelog format is inspired by
 [keep-a-changelog](https://github.com/olivierlacan/keep-a-changelog).
 
 ## [Unreleased]
-- Gaussian broadening
+- Gaussian broadening added. In the CLI, this stacks with Lorentzian broadening.
+- Text file output: Python interface and testing
 
 ## [0.1.0] - 2016-08-11
 
