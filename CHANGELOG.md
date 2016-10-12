@@ -5,6 +5,7 @@ Versioning](http://semver.org/).  The changelog format is inspired by
 [keep-a-changelog](https://github.com/olivierlacan/keep-a-changelog).
 
 ## [Unreleased]
+- Gaussian broadening
 
 ## [0.1.0] - 2016-08-11
 

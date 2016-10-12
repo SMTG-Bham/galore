@@ -32,6 +32,7 @@ try:
 except ImportError:
     has_matplotlib = False
 
+
 def run(**args):
     if not os.path.exists(args['input']):
         raise Exception("Input file {0} does not exist!".format(args['input']))
@@ -58,8 +59,12 @@ def run(**args):
 
     broadened_data = data_1d.copy()
     if args['lorentzian']:
-        broadened_data = galore.broaden(broadened_data, d=d,
-                                        width=args['lorentzian'])
+        broadened_data = galore.broaden(
+            broadened_data, d=d, dist='lorentzian', width=args['lorentzian'])
+
+    if args['gaussian']:
+        broadened_data = galore.broaden(
+            broadened_data, d=d, dist='gaussian', width=args['gaussian'])
 
     if args['plot'] or args['plot'] is None:
         if not has_matplotlib:
@@ -79,10 +84,11 @@ def run(**args):
             else:
                 plt.show()
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('input', type=str, default='DOSCAR',
-                        help='Input data file')
+    parser.add_argument(
+        'input', type=str, default='DOSCAR', help='Input data file')
     parser.add_argument(
         '-l',
         '--lorentzian',
@@ -91,6 +97,14 @@ def main():
         const=2,
         type=float,
         help='Apply Lorentzian broadening with specified width.')
+    parser.add_argument(
+        '-g',
+        '--gaussian',
+        nargs='?',
+        default=False,
+        const=2,
+        type=float,
+        help='Apply Gaussian broadening with specified width.')
     parser.add_argument(
         '--units',
         '--x_units',
@@ -111,19 +125,19 @@ def main():
         '--sampling',
         type=float,
         default=False,
-        help='Width, in units of x, of x-axis resolution'
-        )
-    parser.add_argument('--xmin', type=float, default=0,
-                        help='Minimum x axis value')
-    parser.add_argument('--xmax', type=float, default=False,
-                        help='Maximum x axis value')
-    parser.add_argument('--ymin', type=float, default=0,
-                        help='Minimum y axis value')
-    parser.add_argument('--ymax', type=float, default=False,
-                        help='Maximum y axis value')
+        help='Width, in units of x, of x-axis resolution')
+    parser.add_argument(
+        '--xmin', type=float, default=0, help='Minimum x axis value')
+    parser.add_argument(
+        '--xmax', type=float, default=False, help='Maximum x axis value')
+    parser.add_argument(
+        '--ymin', type=float, default=0, help='Minimum y axis value')
+    parser.add_argument(
+        '--ymax', type=float, default=False, help='Maximum y axis value')
     args = parser.parse_args()
     args = vars(args)
     run(**args)
+
 
 if __name__ == '__main__':
     main()

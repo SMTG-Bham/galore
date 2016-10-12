@@ -65,8 +65,13 @@ def delta(f1, f2, w=1):
 
 
 def lorentzian(f, f0=0, gamma=1):
-    """Lorentzian function with height 1 centred on f0"""
+    """Lorentzian function with height 1 centered on f0"""
     return 0.5 * gamma / (np.pi * (f - f0)**2 + (0.5 * gamma)**2)
+
+
+def gaussian(f, f0=0, c=1):
+    """Gaussian function with height 1 centered on f0"""
+    return np.exp(-np.power(f - f0, 2) / (2 * c**2))
 
 
 def broaden(data, dist='lorentz', width=2, pad=False, d=1):
@@ -89,6 +94,9 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     if dist.lower() in ('lorentz', 'lorentzian'):
         gamma = width
         broadening = lorentzian(np.arange(-pad, pad, d), f0=0, gamma=gamma)
+    elif dist.lower() in ('gauss', 'gaussian'):
+        c = width
+        broadening = gaussian(np.arange(-pad, pad, d), f0=0, c=c)
     else:
         raise Exception('Broadening distribution '
                         ' "{0}" not known.'.format(dist))
