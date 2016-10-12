@@ -12,7 +12,6 @@ import galore.formats
 from contextlib import contextmanager
 import io
 
-
 @contextmanager
 def stdout_to_bytes():
     output = io.BytesIO()
@@ -85,6 +84,11 @@ class test_array_functions(numpy.testing.TestCase):
                 header=["Frequency", "Value"])
             self.assertEqual(stdout.getvalue(), csv_test_string)
 
+    def test_read_spinpol_doscar(self):
+        doscar_path = os.path.join(os.path.dirname(__file__), 'DOSCAR.1')
+        data = galore.formats.read_doscar(doscar_path)
+        self.assertEqual(data[0][20], -31.795)
+        self.assertEqual(data[1][14], 0.329)
 
 txt_test_string = """# Frequency  Value
 0.000000e+00 0.000000e+00

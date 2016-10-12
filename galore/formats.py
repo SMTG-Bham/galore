@@ -83,3 +83,40 @@ def write_csv(x_values, y_values, filename="galore_output.csv", header=None):
     else:
         with open(filename, 'w') as f:
             _write_csv(x_values, y_values, f, header=header)
+
+
+def read_doscar(filename="DOSCAR"):
+    """Read an x, y series of frequencies and DOS from a VASP DOSCAR file
+
+    Args:
+        filename: (str) Path to DOSCAR file
+
+    Returns:
+        data: (2-tuple) Tuple containing x values and y values as lists
+"""
+    with open(filename, 'r') as f:
+        # Scroll to line 6 which contains NEDOS
+        for i in range(5):
+            f.readline()
+        nedos = int(f.readline().split()[2])
+
+        # Get number of fields and infer number of spin channels
+        first_dos_line = f.readline().split()
+        spin_channels = (len(first_dos_line) - 1) / 2
+        if spin_channels == 1:
+
+            def _tdos_from_line(line):
+                return (float(line[0]), float(line[1]))
+        elif spin_channels == 2:
+
+            def _tdos_from_line(line):
+                line = map(float, line)
+                return (line[0], line[1] + line[2])
+        else:
+            raise Exception("Too many columns in DOSCAR")
+
+        dos_pairs = (
+            [_tdos_from_line(first_dos_line)] +
+            [_tdos_from_line(f.readline().split()) for i in range(nedos - 1)])
+
+        return (zip(*dos_pairs))
