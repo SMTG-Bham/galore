@@ -19,9 +19,10 @@
 ###############################################################################
 
 from __future__ import print_function
+import os
 import csv
 import sys
-
+import numpy as np
 
 def isdoscar(filename):
     """Determine whether file is a DOSCAR by checking fourth line"""
@@ -73,13 +74,14 @@ def write_csv(x_values, y_values, filename="galore_output.csv", header=None):
         """
 
     def _write_csv(x_values, y_values, f, header=None):
-        writer = csv.writer(f)
+        writer = csv.writer(f, lineterminator=os.linesep)
         if header is not None:
             writer.writerow(header)
         writer.writerows(zip(x_values, y_values))
 
     if filename is None:
         _write_csv(x_values, y_values, sys.stdout, header=header)
+
     else:
         with open(filename, 'w') as f:
             _write_csv(x_values, y_values, f, header=header)
@@ -110,7 +112,7 @@ def read_doscar(filename="DOSCAR"):
         elif spin_channels == 2:
 
             def _tdos_from_line(line):
-                line = map(float, line)
+                line = [float(x) for x in line]
                 return (line[0], line[1] + line[2])
         else:
             raise Exception("Too many columns in DOSCAR")
@@ -119,4 +121,4 @@ def read_doscar(filename="DOSCAR"):
             [_tdos_from_line(first_dos_line)] +
             [_tdos_from_line(f.readline().split()) for i in range(nedos - 1)])
 
-        return (zip(*dos_pairs))
+        return tuple(zip(*dos_pairs))

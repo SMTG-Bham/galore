@@ -53,7 +53,8 @@ def xy_to_1d(xy, x_values):
     d = x_values[1] - x_values[0]
 
     for x, y in xy:
-        spike = y * np.array(map(lambda f: delta(f, x, w=d), x_values))
+        spike = y * np.fromiter(map(lambda f: delta(f, x, w=d), x_values),
+                                float)
         spikes += spike
     return spikes
 

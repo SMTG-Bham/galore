@@ -1,9 +1,13 @@
-import os, sys
+from __future__ import division, absolute_import
+
+import os
+import sys
 import unittest
 import shutil
 import tempfile
 
 import numpy.testing
+from numpy.testing import assert_array_equal
 import numpy as np
 
 import galore
@@ -12,9 +16,14 @@ import galore.formats
 from contextlib import contextmanager
 import io
 
+
 @contextmanager
-def stdout_to_bytes():
-    output = io.BytesIO()
+def stdout_redirect():
+    """Enable tests to inspect stdout in suitable format for Python version"""
+    if sys.version_info > (3,):
+        output = io.StringIO()
+    else:
+        output = io.BytesIO()
     sys.stdout = output
     try:
         yield output
@@ -22,7 +31,7 @@ def stdout_to_bytes():
         output.close()
 
 
-class test_array_functions(numpy.testing.TestCase):
+class test_array_functions(unittest.TestCase):
     # The Numpy unit testing framework is used as this provides
     # comparison tools for ndarrays
     def setUp(self):
@@ -35,7 +44,7 @@ class test_array_functions(numpy.testing.TestCase):
         self.assertEqual(galore.delta(1, 1.5, w=1), 1)
 
     def test_xy_to_1d(self):
-        np.testing.assert_array_equal(
+        assert_array_equal(
             galore.xy_to_1d(
                 np.array([[2.1, 0.6], [4.3, 0.2], [5.1, 0.3]]), range(6)),
             np.array([0., 0., 0.6, 0., 0.2, 0.3]))
@@ -53,7 +62,7 @@ class test_array_functions(numpy.testing.TestCase):
             self.assertEqual(f.read(), txt_test_string)
 
     def test_write_txt_stdout(self):
-        with stdout_to_bytes() as stdout:
+        with stdout_redirect() as stdout:
             x_values = range(5)
             y_values = [x**2 / 200 for x in range(5)]
             filename = os.path.join(self.tempdir, 'write_txt_test.txt')
@@ -74,7 +83,7 @@ class test_array_functions(numpy.testing.TestCase):
             self.assertEqual(f.read(), csv_test_string)
 
     def test_write_csv_stdout(self):
-        with stdout_to_bytes() as stdout:
+        with stdout_redirect() as stdout:
             x_values = range(5)
             y_values = [x**2 / 200 for x in range(5)]
             galore.formats.write_csv(
@@ -92,19 +101,14 @@ class test_array_functions(numpy.testing.TestCase):
 
 txt_test_string = """# Frequency  Value
 0.000000e+00 0.000000e+00
-1.000000e+00 0.000000e+00
-2.000000e+00 0.000000e+00
-3.000000e+00 0.000000e+00
-4.000000e+00 0.000000e+00
+1.000000e+00 5.000000e-03
+2.000000e+00 2.000000e-02
+3.000000e+00 4.500000e-02
+4.000000e+00 8.000000e-02
 """
 
-csv_test_string = """Frequency,Value\r
-0,0\r
-1,0\r
-2,0\r
-3,0\r
-4,0\r
-"""
+csv_test_string = os.linesep.join(
+    ("Frequency,Value", "0,0.0", "1,0.005", "2,0.02", "3,0.045", "4,0.08", ""))
 
 if __name__ == '__main__':
     unittest.main()
