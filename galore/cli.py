@@ -19,16 +19,20 @@
 # If not, see <http://www.gnu.org/licenses/>.                                 #
 #                                                                             #
 ###############################################################################
-from __future__ import print_function
+from __future__ import print_function, absolute_import, division
 
 import os
-import numpy as np
-import galore
-import galore.formats
 import argparse
 
+import numpy as np
+
+import galore
+import galore.formats
+import galore.plot
+from galore import auto_limits
+
 try:
-    import matplotlib.pyplot as plt
+    import matplotlib
     has_matplotlib = True
 except ImportError:
     has_matplotlib = False
@@ -52,11 +56,12 @@ def run(**args):
         d = 1e-2
 
     # Add 5% to data range if not specified
-    xmin, xmax = min(xy_data[:, 0]), max(xy_data[:, 0])
+    auto_xmin, auto_xmax = auto_limits(xy_data[:, 0], padding=0.05)
     if not args['xmax']:
-        args['xmax'] = xmax + 0.05 * (xmax - xmin)
+        args['xmax'] = auto_xmax
     if not args['xmin']:
-        args['xmin'] = xmin - 0.05 * (xmax - xmin)
+        args['xmin'] = auto_xmin
+
 
     x_values = np.arange(args['xmin'], args['xmax'], d)
     data_1d = galore.xy_to_1d(xy_data, x_values)
@@ -93,20 +98,12 @@ def run(**args):
         if not has_matplotlib:
             print("Can't plot, no Matplotlib")
         else:
-            plt.plot(x_values, broadened_data, 'r-')
-            plt.xlim([args['xmin'], args['xmax']])
-            plt.xlabel(args['units'])
-
-            if not args['ymax']:
-                # Add 10% to data range if not specified
-                args['ymax'] = 1.05 * max(broadened_data) - 0.05 * args['ymin']
-            plt.ylim([args['ymin'], args['ymax']])
-
+            plt = galore.plot.plot_tdos(x_values, broadened_data, **args)
             if args['plot']:
                 plt.savefig(args['plot'])
             else:
                 plt.show()
-
+            
 
 def main():
     parser = argparse.ArgumentParser()
@@ -170,7 +167,7 @@ def main():
     parser.add_argument(
         '--ymin', type=float, default=0, help='Minimum y axis value')
     parser.add_argument(
-        '--ymax', type=float, default=False, help='Maximum y axis value')
+        '--ymax', type=float, default=None, help='Maximum y axis value')
     args = parser.parse_args()
     args = vars(args)
     run(**args)

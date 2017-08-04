@@ -16,7 +16,7 @@ Versioning](http://semver.org/).  The changelog format is inspired by
 - Convolution algorithm used to apply Lorentzian broadening
 - command-line interface
 - Plotting to screen and file
-- Limited internal tests
+- Test framework
 - setuptools-based distribution
 
 [Unreleased]: https://github.com/smtg-ucl/galore/compare/v0.1.0...HEAD

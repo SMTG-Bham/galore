@@ -30,6 +30,23 @@ try:
 except ImportError:
     has_matplotlib = False
 
+def auto_limits(data_1d, padding=0.05):
+    """Return limiting values outside data range
+
+    Args:
+        data_1d (iterable): Data to obtain range from
+        padding (float): Scale factor for padding relative to data range
+
+    Returns:
+        (2-tuple) (xmin, xmax)
+
+    """
+    xmin, xmax = min(data_1d), max(data_1d)
+    auto_xmax = xmax + padding * (xmax - xmin)
+    auto_xmin = xmin - padding * (xmax - xmin)
+    return auto_xmin, auto_xmax
+
+
 
 def random_raman_xy(max_freq=1000):
     """Generate some plausible Raman frequencies and intensities
