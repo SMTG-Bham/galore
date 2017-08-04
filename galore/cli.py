@@ -38,7 +38,7 @@ def run(**args):
     if not os.path.exists(args['input']):
         raise Exception("Input file {0} does not exist!".format(args['input']))
     if galore.formats.isdoscar(args['input']):
-        raise Exception("DOSCAR not supported yet, sorry")
+        xy_data = galore.formats.read_doscar(args['input'])
     else:
         xy_data = np.genfromtxt(args['input'], delimiter=',', comments='#')
 
@@ -51,9 +51,12 @@ def run(**args):
     elif args['units'] in ('ev', 'eV'):
         d = 1e-2
 
+    # Add 5% to data range if not specified
+    xmin, xmax = min(xy_data[:, 0]), max(xy_data[:, 0])
     if not args['xmax']:
-        # Add 5% to data range if not specified
-        args['xmax'] = 1.05 * max(xy_data[:, 0]) - 0.05 * min(xy_data[:, 0])
+        args['xmax'] = xmax + 0.05 * (xmax - xmin)
+    if not args['xmin']:
+        args['xmin'] = xmin - 0.05 * (xmax - xmin)
 
     x_values = np.arange(args['xmin'], args['xmax'], d)
     data_1d = galore.xy_to_1d(xy_data, x_values)

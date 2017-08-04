@@ -121,4 +121,4 @@ def read_doscar(filename="DOSCAR"):
             [_tdos_from_line(first_dos_line)] +
             [_tdos_from_line(f.readline().split()) for i in range(nedos - 1)])
 
-        return tuple(zip(*dos_pairs))
+        return np.array(dos_pairs)
