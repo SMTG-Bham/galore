@@ -57,11 +57,10 @@ def run(**args):
 
     # Add 5% to data range if not specified
     auto_xmin, auto_xmax = auto_limits(xy_data[:, 0], padding=0.05)
-    if not args['xmax']:
+    if args['xmax'] is None:
         args['xmax'] = auto_xmax
-    if not args['xmin']:
+    if args['xmin'] is None:
         args['xmin'] = auto_xmin
-
 
     x_values = np.arange(args['xmin'], args['xmax'], d)
     data_1d = galore.xy_to_1d(xy_data, x_values)
@@ -161,9 +160,9 @@ def main():
         default=False,
         help='Width, in units of x, of x-axis resolution')
     parser.add_argument(
-        '--xmin', type=float, default=0, help='Minimum x axis value')
+        '--xmin', type=float, default=None, help='Minimum x axis value')
     parser.add_argument(
-        '--xmax', type=float, default=False, help='Maximum x axis value')
+        '--xmax', type=float, default=None, help='Maximum x axis value')
     parser.add_argument(
         '--ymin', type=float, default=0, help='Minimum y axis value')
     parser.add_argument(
