@@ -22,8 +22,10 @@
 
 from __future__ import print_function
 
-import numpy as np
 from itertools import repeat
+from collections import OrderedDict
+
+import numpy as np
 try:
     import matplotlib.pyplot as plt
     has_matplotlib = True
@@ -45,7 +47,6 @@ def auto_limits(data_1d, padding=0.05):
     auto_xmax = xmax + padding * (xmax - xmin)
     auto_xmin = xmin - padding * (xmax - xmin)
     return auto_xmin, auto_xmax
-
 
 
 def random_raman_xy(max_freq=1000):
@@ -126,6 +127,60 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     broadened_data = broadened_data[pad_points:len(data) + pad_points]
     return broadened_data
 
+cross_sections = {'Mg': {'s': .38e-3, 'p': .46e-2, 'd': None},
+                  'O': {'s': .19e-2, 'p': .24e-3, 'd': None}}
+
+def apply_xps_weights(pdos_data, cross_sections=cross_sections):
+    """Weight orbital intensities by cross-section for XPS simulation
+
+    Args:
+        pdos_data (dict): DOS data in format
+            {'el1': {'energy': values, 's': values, 'p': values ...},
+             'el2': {'energy': values, 's': values, ...}, ...}
+             where DOS values are 1D numpy arrays. Orbital labels must match
+             cross_sections data. It is recommended to use 
+             collections.OrderedDict instead of regular dictionaries, to ensure
+             consistent output.
+
+        cross_sections (dict): Weightings in format
+            {'el1': {'1s': x1, '2s': x2, '2p': x3 ...},
+             'el2': {'3s': y1, '3p': y2 ...}, ...}
+        
+             The labels should correspond to the headers in the input data. It
+             is fine not so specify the level (e.g. use 's', 'p', etc.) as is
+             done in the sample data; however, this means that all levels are
+             being treated equally and hence probably the core levels will be
+             weighted incorrectly. It is possible to set the cross-section of
+             undesired orbitals (e.g. projection onto d-orbital for early
+             elements) to None; in this case the orbital will be dropped from 
+             the returned data set.
+
+    Returns:
+        weighted_pdos_data (dict): Weighted data in same format as input
+    """
+
+    weighted_pdos_data = OrderedDict()
+    for el, orbitals in pdos_data.items():
+        weighted_orbitals = OrderedDict()
+        for orbital, data in orbitals.items():
+            if orbital == 'energy':
+                weighted_orbitals.update({'energy': data})
+            else:
+                try:
+                    cs = cross_sections[el][orbital]
+                except KeyError as error:
+                    error.args += ("Could not find cross-section data for "
+                                   "element {0}, orbital {1}".format(el,
+                                                                     orbital),)
+                    raise                    
+                if cs is None:
+                    pass
+                else:
+                    weighted_orbitals.update({orbital: data * cs})
+
+        weighted_pdos_data.update({el: weighted_orbitals})
+
+    return weighted_pdos_data
 
 def main():
     """For now main() contains a proof-of-concept example with random data.

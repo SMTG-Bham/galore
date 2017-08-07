@@ -23,6 +23,7 @@ from __future__ import print_function, absolute_import, division
 
 import os
 import argparse
+from collections import OrderedDict
 
 import numpy as np
 
@@ -38,22 +39,107 @@ except ImportError:
     has_matplotlib = False
 
 
-def run(**args):
+def pdos(**kwargs):
+
+    energy_label = None
+    pdos_plotting_data = OrderedDict()
+    for pdos_file in kwargs['input']:
+        
+        if not os.path.exists(pdos_file):
+            raise Exception("Input file {0} does not "
+                            "exist!".format(kwargs['input']))
+
+        basename = os.path.basename(pdos_file)
+        try:
+            element = basename.split("_")[-2]
+        except IndexError:
+            raise Exception("Couldn't guess element name from filename. "
+                            "Please format filename as XXX_EL_YYY.EXT"
+                            "Where EL is the element label, and XXX, YYY "
+                            "and EXT are labels of your choice. We recommend"
+                            "SYSTEM_EL_dos.dat")            
+
+        pdos_data = galore.formats.read_pdos_txt(pdos_file)
+        
+        if energy_label is None:
+            energy_label = pdos_data.dtype.names[0]
+        else:
+            try:
+                assert pdos_data.dtype.names[0] == energy_label
+            except AssertionError as error:
+                error.args += ("Energy labels are not consistent "
+                               "between input files",)
+                raise
+            
+        orbital_labels = pdos_data.dtype.names[1:]
+
+        d = kwargs['sampling']
+        # Add 5% to data range if not specified
+        auto_xmin, auto_xmax = auto_limits(pdos_data[energy_label], padding=0.05)
+        if not kwargs['xmax']:
+            kwargs['xmax'] = auto_xmax
+        if not kwargs['xmin']:
+            kwargs['xmin'] = auto_xmin
+            
+        x_values = np.arange(kwargs['xmin'], kwargs['xmax'], d)
+        pdos_resampled = [galore.xy_to_1d(pdos_data[[energy_label, orbital]],
+                                          x_values)
+                              for orbital in orbital_labels]
+
+        broadened_data = [orbital_data.copy()
+                              for orbital_data in pdos_resampled]
+
+        if kwargs['lorentzian']:
+            broadened_data = [galore.broaden(broadened_orbital_data, d=d,
+                                             dist='lorentzian',
+                                             width=kwargs['lorentzian'])
+                                  for broadened_orbital_data in broadened_data]
+
+        if kwargs['gaussian']:
+            broadened_data = [galore.broaden(broadened_orbital_data, d=d,
+                                             dist='gaussian',
+                                             width=kwargs['gaussian'])
+                                  for broadened_orbital_data in broadened_data]
+
+        pdos_plotting_data[element] = OrderedDict([('energy', x_values)])
+        pdos_plotting_data[element].update(
+            OrderedDict((orbital, broadened_data[i])
+                 for i, orbital in enumerate(orbital_labels)))
+
+        if kwargs['xps']:
+            pdos_plotting_data = galore.apply_xps_weights(pdos_plotting_data)
+
+    plt = galore.plot.plot_pdos(pdos_plotting_data, **kwargs)
+    plt.xlabel(energy_label + " / " + kwargs['units'])
+    plt.show()
+
+
+    # if args['units']:
+    #     xlabel = energy_label + " / " + args['units']
+    # else:
+    #     xlabel= energy_label
+    # ax.set_xlabel(xlabel)
+
+    # ax.set_xlim((args['xmin'], args['xmax']))
+    # ax.legend(loc='best')
+
+    # if args['plot']:
+    #     fig.savefig(args['plot'])
+    # elif args['plot'] is None:
+    #     fig.show()
+
+def simple_dos(**args):
+    if len(args['input']) > 1:
+        raise ValueError("Simple DOS only uses one input file, "
+                         "not list: {0}".format(args['input']))
+    args['input'] = args['input'][0]
+
     if not os.path.exists(args['input']):
         raise Exception("Input file {0} does not exist!".format(args['input']))
     if galore.formats.isdoscar(args['input']):
         xy_data = galore.formats.read_doscar(args['input'])
     else:
         xy_data = np.genfromtxt(args['input'], delimiter=',', comments='#')
-
-    if args['sampling']:
-        d = args['sampling']
-    elif args['units'] in ('cm', 'cm-1'):
-        d = 0.1
-    elif args['units'] in ('THz', 'thz'):
-        d = 1e-3
-    elif args['units'] in ('ev', 'eV'):
-        d = 1e-2
 
     # Add 5% to data range if not specified
     auto_xmin, auto_xmax = auto_limits(xy_data[:, 0], padding=0.05)
@@ -62,7 +148,7 @@ def run(**args):
     if not args['xmin']:
         args['xmin'] = auto_xmin
 
-
+    d = args['sampling']
     x_values = np.arange(args['xmin'], args['xmax'], d)
     data_1d = galore.xy_to_1d(xy_data, x_values)
 
@@ -103,12 +189,30 @@ def run(**args):
                 plt.savefig(args['plot'])
             else:
                 plt.show()
-            
+
+
+def run(**args):
+
+    if args['sampling']:
+        pass
+    elif args['units'] in ('cm', 'cm-1'):
+        args['sampling'] = 0.1
+    elif args['units'] in ('THz', 'thz'):
+        args['sampling'] = 1e-3
+    elif args['units'] in ('ev', 'eV'):
+        args['sampling'] = 1e-2
+
+    if args['pdos']:
+        pdos(**args)
+    else:
+        simple_dos(**args)
+
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'input', type=str, default='DOSCAR', help='Input data file')
+        'input', type=str, default='DOSCAR', nargs='+', help='Input data file')
     parser.add_argument(
         '-l',
         '--lorentzian',
@@ -126,10 +230,15 @@ def main():
         type=float,
         help='Apply Gaussian broadening with specified width.')
     parser.add_argument(
+        '--xps',
+        action='store_true',
+        help='Apply XPS cross-section weighting to data'
+        )
+    parser.add_argument(
         '--units',
         '--x_units',
         type=str,
-        default='cm-1',
+        default='eV',
         choices=('cm', 'cm-1', 'thz', 'THz', 'ev', 'eV'),
         help='Units for x axis (usually frequency or energy)')
     parser.add_argument(
@@ -160,6 +269,8 @@ def main():
         type=float,
         default=False,
         help='Width, in units of x, of x-axis resolution')
+    parser.add_argument(
+        '--pdos', action="store_true", help='Use orbital-projected data')
     parser.add_argument(
         '--xmin', type=float, default=0, help='Minimum x axis value')
     parser.add_argument(
