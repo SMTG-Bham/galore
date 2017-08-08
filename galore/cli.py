@@ -76,9 +76,9 @@ def pdos(**kwargs):
         d = kwargs['sampling']
         # Add 5% to data range if not specified
         auto_xmin, auto_xmax = auto_limits(pdos_data[energy_label], padding=0.05)
-        if not kwargs['xmax']:
+        if kwargs['xmax'] is None:
             kwargs['xmax'] = auto_xmax
-        if not kwargs['xmin']:
+        if kwargs['xmin'] is None:
             kwargs['xmin'] = auto_xmin
             
         x_values = np.arange(kwargs['xmin'], kwargs['xmax'], d)
