@@ -119,9 +119,15 @@ def pdos(**kwargs):
         if kwargs['xps']:
             pdos_plotting_data = galore.apply_xps_weights(pdos_plotting_data)
 
-    plt = galore.plot.plot_pdos(pdos_plotting_data, **kwargs)
+    plt = galore.plot.plot_pdos(pdos_plotting_data,
+                                flipx=kwargs['xps'], # XPS uses reversed axis
+                                **kwargs)
 
-    if kwargs['units']:
+    if kwargs['xps'] and kwargs['units']:
+        xlabel = "Binding energy / " + kwargs['units']
+    elif kwargs['xps']:
+        xlabel = "Binding energy"
+    elif kwargs['units']:
         xlabel = energy_label + " / " + kwargs['units']
     else:
         xlabel= energy_label

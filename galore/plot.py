@@ -6,7 +6,7 @@ from six import next
 
 plt.style.use("seaborn-colorblind")
 
-def plot_pdos(pdos_data, ax=None, total=True, **kwargs):
+def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
     """Plot a projected density of states (PDOS)
 
     Args:
@@ -19,6 +19,9 @@ def plot_pdos(pdos_data, ax=None, total=True, **kwargs):
             a new figure and axes will be created.
         total (bool): Include total DOS. This is sum over all others. 
             Input x-values must be consistent, no further resampling is done.
+        offset (float): Bias x-axis values (e.g. to account for XPS E-Fermi)
+        flipx (bool): Negate x-axis values to express negative VB energies as
+            positive binding energies
 
     Returns:
         plt (matplotlib.pyplot):
@@ -38,7 +41,11 @@ def plot_pdos(pdos_data, ax=None, total=True, **kwargs):
     for element, el_data in pdos_data.items():
         # Field 'energy' must be present, other fields are orbitals
         assert 'energy' in el_data.keys()
-        x_data = el_data['energy']
+        if flipx:           
+            x_data = -el_data['energy']
+        else:
+            x_data = el_data['energy']            
+
         orbitals = list(el_data.keys())
         orbitals.remove('energy')
 
@@ -50,7 +57,8 @@ def plot_pdos(pdos_data, ax=None, total=True, **kwargs):
 
             ax.plot(x_data, el_data[orbital],
                     label="{0}: {1}".format(element, orbital),
-                    marker='')
+                    marker='')       
+
     if total:
         max_y = max(tdos)
         ax.plot(x_data, tdos, label="Total", color='k')
