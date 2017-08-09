@@ -1,0 +1,4 @@
+include test/test*.py
+include galore/data/cross_sections.json
+include test/DOSCAR.1 test/test_xy_data.csv
+recursive-include test/MgO MgO_Mg_dos.dat MgO_O_dos.dat

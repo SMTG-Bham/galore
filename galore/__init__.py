@@ -24,6 +24,8 @@ from __future__ import print_function
 
 from itertools import repeat
 from collections import OrderedDict
+from pkg_resources import resource_filename
+from json import load as json_load
 
 import numpy as np
 try:
@@ -127,10 +129,8 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     broadened_data = broadened_data[pad_points:len(data) + pad_points]
     return broadened_data
 
-cross_sections = {'Mg': {'s': .38e-3, 'p': .46e-2, 'd': None},
-                  'O': {'s': .19e-2, 'p': .24e-3, 'd': None}}
 
-def apply_xps_weights(pdos_data, cross_sections=cross_sections):
+def apply_xps_weights(pdos_data, cross_sections=None):
     """Weight orbital intensities by cross-section for XPS simulation
 
     Args:
@@ -138,26 +138,33 @@ def apply_xps_weights(pdos_data, cross_sections=cross_sections):
             {'el1': {'energy': values, 's': values, 'p': values ...},
              'el2': {'energy': values, 's': values, ...}, ...}
              where DOS values are 1D numpy arrays. Orbital labels must match
-             cross_sections data. It is recommended to use 
+             cross_sections data. It is recommended to use
              collections.OrderedDict instead of regular dictionaries, to ensure
              consistent output.
 
         cross_sections (dict): Weightings in format
             {'el1': {'1s': x1, '2s': x2, '2p': x3 ...},
              'el2': {'3s': y1, '3p': y2 ...}, ...}
-        
+
              The labels should correspond to the headers in the input data. It
              is fine not so specify the level (e.g. use 's', 'p', etc.) as is
              done in the sample data; however, this means that all levels are
              being treated equally and hence probably the core levels will be
              weighted incorrectly. It is possible to set the cross-section of
              undesired orbitals (e.g. projection onto d-orbital for early
-             elements) to None; in this case the orbital will be dropped from 
+             elements) to None; in this case the orbital will be dropped from
              the returned data set.
 
     Returns:
         weighted_pdos_data (dict): Weighted data in same format as input
     """
+
+    if cross_sections is None:
+
+        cross_sections_file = resource_filename(__name__,
+                                                "data/cross_sections.json")
+        with open(cross_sections_file, 'r') as f:
+            cross_sections = json_load(f)
 
     weighted_pdos_data = OrderedDict()
     for el, orbitals in pdos_data.items():
@@ -172,7 +179,7 @@ def apply_xps_weights(pdos_data, cross_sections=cross_sections):
                     error.args += ("Could not find cross-section data for "
                                    "element {0}, orbital {1}".format(el,
                                                                      orbital),)
-                    raise                    
+                    raise
                 if cs is None:
                     pass
                 else:
