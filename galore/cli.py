@@ -44,7 +44,7 @@ def pdos(**kwargs):
     energy_label = None
     pdos_plotting_data = OrderedDict()
     for pdos_file in kwargs['input']:
-        
+
         if not os.path.exists(pdos_file):
             raise Exception("Input file {0} does not "
                             "exist!".format(kwargs['input']))
@@ -57,10 +57,10 @@ def pdos(**kwargs):
                             "Please format filename as XXX_EL_YYY.EXT"
                             "Where EL is the element label, and XXX, YYY "
                             "and EXT are labels of your choice. We recommend"
-                            "SYSTEM_EL_dos.dat")            
+                            "SYSTEM_EL_dos.dat")
 
         pdos_data = galore.formats.read_pdos_txt(pdos_file)
-        
+
         if energy_label is None:
             energy_label = pdos_data.dtype.names[0]
         else:
@@ -70,41 +70,42 @@ def pdos(**kwargs):
                 error.args += ("Energy labels are not consistent "
                                "between input files",)
                 raise
-            
+
         orbital_labels = pdos_data.dtype.names[1:]
 
         d = kwargs['sampling']
         # Add 5% to data range if not specified
-        auto_xmin, auto_xmax = auto_limits(pdos_data[energy_label], padding=0.05)
+        auto_xmin, auto_xmax = auto_limits(pdos_data[energy_label],
+                                           padding=0.05)
         if kwargs['xmax'] is None:
             kwargs['xmax'] = auto_xmax
         if kwargs['xmin'] is None:
             kwargs['xmin'] = auto_xmin
-            
+
         x_values = np.arange(kwargs['xmin'], kwargs['xmax'], d)
         pdos_resampled = [galore.xy_to_1d(pdos_data[[energy_label, orbital]],
                                           x_values)
-                              for orbital in orbital_labels]
+                          for orbital in orbital_labels]
 
         broadened_data = [orbital_data.copy()
-                              for orbital_data in pdos_resampled]
+                          for orbital_data in pdos_resampled]
 
         if kwargs['lorentzian']:
             broadened_data = [galore.broaden(broadened_orbital_data, d=d,
                                              dist='lorentzian',
                                              width=kwargs['lorentzian'])
-                                  for broadened_orbital_data in broadened_data]
+                              for broadened_orbital_data in broadened_data]
 
         if kwargs['gaussian']:
             broadened_data = [galore.broaden(broadened_orbital_data, d=d,
                                              dist='gaussian',
                                              width=kwargs['gaussian'])
-                                  for broadened_orbital_data in broadened_data]
+                              for broadened_orbital_data in broadened_data]
 
         pdos_plotting_data[element] = OrderedDict([('energy', x_values)])
         pdos_plotting_data[element].update(
             OrderedDict((orbital, broadened_data[i])
-                 for i, orbital in enumerate(orbital_labels)))
+                        for i, orbital in enumerate(orbital_labels)))
 
         if kwargs['xps']:
             pdos_plotting_data = galore.apply_xps_weights(pdos_plotting_data)
@@ -192,7 +193,6 @@ def simple_dos(**args):
 
 
 def run(**args):
-
     if args['sampling']:
         pass
     elif args['units'] in ('cm', 'cm-1'):
@@ -206,7 +206,6 @@ def run(**args):
         pdos(**args)
     else:
         simple_dos(**args)
-
 
 
 def main():
