@@ -40,9 +40,9 @@ except ImportError:
 
 
 def pdos(**kwargs):
-
+    # Read files into dict, check for consistency
     energy_label = None
-    pdos_plotting_data = OrderedDict()
+    pdos_data = OrderedDict()
     for pdos_file in kwargs['input']:
 
         if not os.path.exists(pdos_file):
@@ -59,31 +59,40 @@ def pdos(**kwargs):
                             "and EXT are labels of your choice. We recommend"
                             "SYSTEM_EL_dos.dat")
 
-        pdos_data = galore.formats.read_pdos_txt(pdos_file)
+        pdos_data[element] = galore.formats.read_pdos_txt(pdos_file)
 
         if energy_label is None:
-            energy_label = pdos_data.dtype.names[0]
+            energy_label = pdos_data[element].dtype.names[0]
         else:
             try:
-                assert pdos_data.dtype.names[0] == energy_label
+                assert pdos_data[element].dtype.names[0] == energy_label
             except AssertionError as error:
                 error.args += ("Energy labels are not consistent "
                                "between input files",)
                 raise
 
-        orbital_labels = pdos_data.dtype.names[1:]
+    # Work out sampling details; 5% pad added to data if no limits specified
+    d = kwargs['sampling']
+    limits = (auto_limits(pdos_data[energy_label], padding=0.05)
+                  for (element, pdos_data)
+                  in pdos_data.items())
+    xmins, xmaxes = zip(*limits)
 
-        d = kwargs['sampling']
-        # Add 5% to data range if not specified
-        auto_xmin, auto_xmax = auto_limits(pdos_data[energy_label],
-                                           padding=0.05)
-        if kwargs['xmax'] is None:
-            kwargs['xmax'] = auto_xmax
-        if kwargs['xmin'] is None:
-            kwargs['xmin'] = auto_xmin
+    if kwargs['xmax'] is None:
+        kwargs['xmax'] = max(xmaxes)
+    if kwargs['xmin'] is None:
+        kwargs['xmin'] = min(xmins)
+    x_values = np.arange(kwargs['xmin'], kwargs['xmax'], d)
 
-        x_values = np.arange(kwargs['xmin'], kwargs['xmax'], d)
-        pdos_resampled = [galore.xy_to_1d(pdos_data[[energy_label, orbital]],
+    # Resample data into new dictionary
+    pdos_plotting_data = OrderedDict()
+    for element, data in pdos_data.items():
+
+        orbital_labels = data.dtype.names[1:]
+
+
+
+        pdos_resampled = [galore.xy_to_1d(data[[energy_label, orbital]],
                                           x_values)
                           for orbital in orbital_labels]
 
@@ -111,23 +120,17 @@ def pdos(**kwargs):
             pdos_plotting_data = galore.apply_xps_weights(pdos_plotting_data)
 
     plt = galore.plot.plot_pdos(pdos_plotting_data, **kwargs)
-    plt.xlabel(energy_label + " / " + kwargs['units'])
-    plt.show()
 
+    if kwargs['units']:
+        xlabel = energy_label + " / " + kwargs['units']
+    else:
+        xlabel= energy_label
+    plt.xlabel(xlabel)
 
-    # if args['units']:
-    #     xlabel = energy_label + " / " + args['units']
-    # else:
-    #     xlabel= energy_label
-    # ax.set_xlabel(xlabel)
-
-    # ax.set_xlim((args['xmin'], args['xmax']))
-    # ax.legend(loc='best')
-
-    # if args['plot']:
-    #     fig.savefig(args['plot'])
-    # elif args['plot'] is None:
-    #     fig.show()
+    if kwargs['plot']:
+        plt.savefig(kwargs['plot'])
+    elif kwargs['plot'] is None:
+        plt.show()
 
 def simple_dos(**args):
     if len(args['input']) > 1:

@@ -1,10 +1,12 @@
 """Plotting routines with Matplotlib"""
+import numpy as np
 from matplotlib import pyplot as plt
 from galore import auto_limits
+from six import next
 
 plt.style.use("seaborn-colorblind")
 
-def plot_pdos(pdos_data, ax=None, **kwargs):
+def plot_pdos(pdos_data, ax=None, total=True, **kwargs):
     """Plot a projected density of states (PDOS)
 
     Args:
@@ -15,6 +17,8 @@ def plot_pdos(pdos_data, ax=None, **kwargs):
              use ordered dictionaries!
         ax (matplotlib.Axes): Use existing Axes object for plot. If None,
             a new figure and axes will be created.
+        total (bool): Include total DOS. This is sum over all others. 
+            Input x-values must be consistent, no further resampling is done.
 
     Returns:
         plt (matplotlib.pyplot):
@@ -29,6 +33,8 @@ def plot_pdos(pdos_data, ax=None, **kwargs):
         fig = plt.figure()
         ax = fig.add_subplot(1,1,1)
 
+    tdos = np.zeros(len(pdos_data.values()[0]['energy']))
+
     for element, el_data in pdos_data.items():
         # Field 'energy' must be present, other fields are orbitals
         assert 'energy' in el_data.keys()
@@ -37,10 +43,17 @@ def plot_pdos(pdos_data, ax=None, **kwargs):
         orbitals.remove('energy')
 
         for orbital in orbitals:
+            if total:
+                tdos += el_data[orbital]
+            else:
+                max_y = max(max_y, max(el_data[orbital]))
+
             ax.plot(x_data, el_data[orbital],
                     label="{0}: {1}".format(element, orbital),
                     marker='')
-            max_y = max(max_y, max(el_data[orbital]))
+    if total:
+        max_y = max(tdos)
+        ax.plot(x_data, tdos, label="Total", color='k')
 
     # Range based on last dataset. If that's not satisfactory, it should have
     # been pruned already by kwargs['xmin'] and kwargs['xmax']
