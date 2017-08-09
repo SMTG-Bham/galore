@@ -76,8 +76,7 @@ def pdos(**kwargs):
     # reversed while treating DOS data.
     d = kwargs['sampling']
     limits = (auto_limits(pdos_data[energy_label], padding=0.05)
-                  for (element, pdos_data)
-                  in pdos_data.items())
+              for (element, pdos_data) in pdos_data.items())
     xmins, xmaxes = zip(*limits)
 
     if kwargs['xmax'] is None:
@@ -96,8 +95,6 @@ def pdos(**kwargs):
     for element, data in pdos_data.items():
 
         orbital_labels = data.dtype.names[1:]
-
-
 
         pdos_resampled = [galore.xy_to_1d(data[[energy_label, orbital]],
                                           x_values)
@@ -127,7 +124,7 @@ def pdos(**kwargs):
             pdos_plotting_data = galore.apply_xps_weights(pdos_plotting_data)
 
     plt = galore.plot.plot_pdos(pdos_plotting_data,
-                                flipx=kwargs['xps'], # XPS uses reversed axis
+                                flipx=kwargs['xps'],  # XPS uses reversed axis
                                 **kwargs)
 
     if kwargs['xps'] and kwargs['units']:
@@ -137,13 +134,14 @@ def pdos(**kwargs):
     elif kwargs['units']:
         xlabel = energy_label + " / " + kwargs['units']
     else:
-        xlabel= energy_label
+        xlabel = energy_label
     plt.xlabel(xlabel)
 
     if kwargs['plot']:
         plt.savefig(kwargs['plot'])
     elif kwargs['plot'] is None:
         plt.show()
+
 
 def simple_dos(**args):
     if len(args['input']) > 1:
