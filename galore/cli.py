@@ -72,6 +72,8 @@ def pdos(**kwargs):
                 raise
 
     # Work out sampling details; 5% pad added to data if no limits specified
+    # In XPS mode, the user specifies these as binding energies so values are
+    # reversed while treating DOS data.
     d = kwargs['sampling']
     limits = (auto_limits(pdos_data[energy_label], padding=0.05)
                   for (element, pdos_data)
@@ -80,8 +82,13 @@ def pdos(**kwargs):
 
     if kwargs['xmax'] is None:
         kwargs['xmax'] = max(xmaxes)
+
     if kwargs['xmin'] is None:
         kwargs['xmin'] = min(xmins)
+
+    if kwargs['xps']:
+        kwargs['xmin'], kwargs['xmax'] = -kwargs['xmax'], -kwargs['xmin']
+
     x_values = np.arange(kwargs['xmin'], kwargs['xmax'], d)
 
     # Resample data into new dictionary

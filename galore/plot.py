@@ -2,7 +2,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from galore import auto_limits
-from six import next
+from six import itervalues
 
 plt.style.use("seaborn-colorblind")
 
@@ -36,7 +36,7 @@ def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
         fig = plt.figure()
         ax = fig.add_subplot(1,1,1)
 
-    tdos = np.zeros(len(pdos_data.values()[0]['energy']))
+    tdos = np.zeros(len(next(itervalues(pdos_data))['energy']))
 
     for element, el_data in pdos_data.items():
         # Field 'energy' must be present, other fields are orbitals
