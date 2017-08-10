@@ -24,6 +24,7 @@ from __future__ import print_function, absolute_import, division
 import os
 import argparse
 from collections import OrderedDict
+from json import load as json_load
 
 import numpy as np
 
@@ -121,7 +122,17 @@ def pdos(**kwargs):
                         for i, orbital in enumerate(orbital_labels)))
 
         if kwargs['xps']:
-            pdos_plotting_data = galore.apply_xps_weights(pdos_plotting_data)
+            if type(kwargs['xps']) is bool:
+                cross_sections = None
+            elif type(kwargs['xps']) is str:
+                if not os.path.exists(kwargs['xps']):
+                    raise Exception("Cross-sections file {0} does not "
+                                    "exist!".format(kwargs['xps']))
+                with open(kwargs['xps'], 'r') as f:
+                    cross_sections = json_load(f)
+
+            pdos_plotting_data = galore.apply_xps_weights(pdos_plotting_data,
+                                     cross_sections=cross_sections)
 
     plt = galore.plot.plot_pdos(pdos_plotting_data,
                                 flipx=kwargs['xps'],  # XPS uses reversed axis
@@ -244,9 +255,12 @@ def main():
         help='Apply Gaussian broadening with specified width.')
     parser.add_argument(
         '--xps',
-        action='store_true',
-        help='Apply XPS cross-section weighting to data'
-        )
+        nargs='?',
+        default=None,
+        const=True,
+        help="""Apply XPS cross-section weighting to data. Optionally provide
+                JSON file with cross-section data; otherwise defaults are used.
+             """)
     parser.add_argument(
         '--units',
         '--x_units',

@@ -7,6 +7,9 @@ Versioning](http://semver.org/).  The changelog format is inspired by
 ## [Unreleased]
 - Gaussian broadening added. In the CLI, this stacks with Lorentzian broadening.
 - Text file output
+- Support for PDOS plotting
+- XPS simulation mode; x-axis flipped and PDOS contributions weighted
+  by cross-section.
 
 ## [0.1.0] - 2016-08-11
 
