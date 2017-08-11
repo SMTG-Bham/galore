@@ -22,13 +22,18 @@
 
 from __future__ import print_function
 
-import numpy as np
 from itertools import repeat
+from collections import OrderedDict
+from pkg_resources import resource_filename
+from json import load as json_load
+
+import numpy as np
 try:
     import matplotlib.pyplot as plt
     has_matplotlib = True
 except ImportError:
     has_matplotlib = False
+
 
 def auto_limits(data_1d, padding=0.05):
     """Return limiting values outside data range
@@ -47,7 +52,6 @@ def auto_limits(data_1d, padding=0.05):
     return auto_xmin, auto_xmax
 
 
-
 def random_raman_xy(max_freq=1000):
     """Generate some plausible Raman frequencies and intensities
 
@@ -60,19 +64,35 @@ def random_raman_xy(max_freq=1000):
 def xy_to_1d(xy, x_values):
     """Convert a set of x,y coordinates to 1D array
 
+    A set of "spikes" results, with y-values placed on the nearest
+    x-value by subtracting d/2 and rounding up. d is determined by examining
+    the first two elements of x_values.
+
     Args:
         xy: (ndarray) 2D numpy array of x, y values
-        x_values: (iterable) Object containing x-value mesh
+        x_values: (iterable) An evenly-spaced x-value mesh
+"""
 
-    """
-
-    spikes = np.zeros(len(x_values))
+    x_values = np.array(x_values)
+    n_x_values = x_values.size
+    spikes = np.zeros(n_x_values)
     d = x_values[1] - x_values[0]
 
-    for x, y in xy:
-        spike = y * np.fromiter(map(lambda f: delta(f, x, w=d), x_values),
-                                float)
-        spikes += spike
+    # Structured arrays are allowed, in which case first field is x,
+    # second is y. A bit of hackery is needed to slice these interchangeably.
+    if xy.dtype.names is None:
+        x_field, y_field = (Ellipsis, 0), (Ellipsis, 1)
+    else:
+        x_field, y_field = xy.dtype.names
+
+    spike_locations = x_values.searchsorted(xy[x_field] - (0.5 * d))
+
+    for location, value in zip(spike_locations, xy[y_field]):
+        if location == 0 or location == n_x_values:
+            pass
+        else:
+            spikes[location] += value
+
     return spikes
 
 
@@ -125,6 +145,71 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     broadened_data = np.convolve(broadening, data)
     broadened_data = broadened_data[pad_points:len(data) + pad_points]
     return broadened_data
+
+
+def get_default_cross_sections():
+    """Read default Al K-alpha cross-sections from packaged data file"""
+    cross_sections_file = resource_filename(__name__,
+                                            "data/cross_sections.json")
+    with open(cross_sections_file, 'r') as f:
+        cross_sections = json_load(f)
+    return cross_sections
+
+
+def apply_xps_weights(pdos_data, cross_sections=None):
+    """Weight orbital intensities by cross-section for XPS simulation
+
+    Args:
+        pdos_data (dict): DOS data in format
+            {'el1': {'energy': values, 's': values, 'p': values ...},
+             'el2': {'energy': values, 's': values, ...}, ...}
+             where DOS values are 1D numpy arrays. Orbital labels must match
+             cross_sections data. It is recommended to use
+             collections.OrderedDict instead of regular dictionaries, to ensure
+             consistent output.
+
+        cross_sections (dict): Weightings in format
+            {'el1': {'1s': x1, '2s': x2, '2p': x3 ...},
+             'el2': {'3s': y1, '3p': y2 ...}, ...}
+
+             The labels should correspond to the headers in the input data. It
+             is fine not so specify the level (e.g. use 's', 'p', etc.) as is
+             done in the sample data; however, this means that all levels are
+             being treated equally and hence probably the core levels will be
+             weighted incorrectly. It is possible to set the cross-section of
+             undesired orbitals (e.g. projection onto d-orbital for early
+             elements) to None; in this case the orbital will be dropped from
+             the returned data set.
+
+    Returns:
+        weighted_pdos_data (dict): Weighted data in same format as input
+    """
+
+    if cross_sections is None:
+        cross_sections = get_default_cross_sections()
+
+    weighted_pdos_data = OrderedDict()
+    for el, orbitals in pdos_data.items():
+        weighted_orbitals = OrderedDict()
+        for orbital, data in orbitals.items():
+            if orbital == 'energy':
+                weighted_orbitals.update({'energy': data})
+            else:
+                try:
+                    cs = cross_sections[el][orbital]
+                except KeyError as error:
+                    error.args += ("Could not find cross-section data for "
+                                   "element {0}, orbital {1}".format(el,
+                                                                     orbital),)
+                    raise
+                if cs is None:
+                    pass
+                else:
+                    weighted_orbitals.update({orbital: data * cs})
+
+        weighted_pdos_data.update({el: weighted_orbitals})
+
+    return weighted_pdos_data
 
 
 def main():

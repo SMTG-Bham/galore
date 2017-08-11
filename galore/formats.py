@@ -87,6 +87,24 @@ def write_csv(x_values, y_values, filename="galore_output.csv", header=None):
             _write_csv(x_values, y_values, f, header=header)
 
 
+def read_pdos_txt(filename):
+    """Read a text file containing projected density-of-states (PDOS) data
+
+    The first row should be a header identifying the orbitals, e.g.
+    "# Energy s p d f". The following rows contain the corresponding energy and
+    DOS values.
+
+    Args:
+        filename (str): Path to file for import
+
+    Returns:
+        data (np.ndarray): Numpy structured array with named columns
+            corresponding to input data format.
+    """
+    data = np.genfromtxt(filename, names=True)
+    return data
+    
+
 def read_doscar(filename="DOSCAR"):
     """Read an x, y series of frequencies and DOS from a VASP DOSCAR file
 

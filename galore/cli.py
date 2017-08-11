@@ -23,6 +23,8 @@ from __future__ import print_function, absolute_import, division
 
 import os
 import argparse
+from collections import OrderedDict
+from json import load as json_load
 
 import numpy as np
 
@@ -38,22 +40,136 @@ except ImportError:
     has_matplotlib = False
 
 
-def run(**args):
+def pdos(**kwargs):
+    # Read files into dict, check for consistency
+    energy_label = None
+    pdos_data = OrderedDict()
+    for pdos_file in kwargs['input']:
+
+        if not os.path.exists(pdos_file):
+            raise Exception("Input file {0} does not "
+                            "exist!".format(kwargs['input']))
+
+        basename = os.path.basename(pdos_file)
+        try:
+            element = basename.split("_")[-2]
+        except IndexError:
+            raise Exception("Couldn't guess element name from filename. "
+                            "Please format filename as XXX_EL_YYY.EXT"
+                            "Where EL is the element label, and XXX, YYY "
+                            "and EXT are labels of your choice. We recommend"
+                            "SYSTEM_EL_dos.dat")
+
+        pdos_data[element] = galore.formats.read_pdos_txt(pdos_file)
+
+        if energy_label is None:
+            energy_label = pdos_data[element].dtype.names[0]
+        else:
+            try:
+                assert pdos_data[element].dtype.names[0] == energy_label
+            except AssertionError as error:
+                error.args += ("Energy labels are not consistent "
+                               "between input files",)
+                raise
+
+    # Work out sampling details; 5% pad added to data if no limits specified
+    # In XPS mode, the user specifies these as binding energies so values are
+    # reversed while treating DOS data.
+    d = kwargs['sampling']
+    limits = (auto_limits(pdos_data[energy_label], padding=0.05)
+              for (element, pdos_data) in pdos_data.items())
+    xmins, xmaxes = zip(*limits)
+
+    if kwargs['xmax'] is None:
+        kwargs['xmax'] = max(xmaxes)
+
+    if kwargs['xmin'] is None:
+        kwargs['xmin'] = min(xmins)
+
+    if kwargs['xps']:
+        kwargs['xmin'], kwargs['xmax'] = -kwargs['xmax'], -kwargs['xmin']
+
+    x_values = np.arange(kwargs['xmin'], kwargs['xmax'], d)
+
+    # Resample data into new dictionary
+    pdos_plotting_data = OrderedDict()
+    for element, data in pdos_data.items():
+
+        orbital_labels = data.dtype.names[1:]
+
+        pdos_resampled = [galore.xy_to_1d(data[[energy_label, orbital]],
+                                          x_values)
+                          for orbital in orbital_labels]
+
+        broadened_data = [orbital_data.copy()
+                          for orbital_data in pdos_resampled]
+
+        if kwargs['lorentzian']:
+            broadened_data = [galore.broaden(broadened_orbital_data, d=d,
+                                             dist='lorentzian',
+                                             width=kwargs['lorentzian'])
+                              for broadened_orbital_data in broadened_data]
+
+        if kwargs['gaussian']:
+            broadened_data = [galore.broaden(broadened_orbital_data, d=d,
+                                             dist='gaussian',
+                                             width=kwargs['gaussian'])
+                              for broadened_orbital_data in broadened_data]
+
+        pdos_plotting_data[element] = OrderedDict([('energy', x_values)])
+        pdos_plotting_data[element].update(
+            OrderedDict((orbital, broadened_data[i])
+                        for i, orbital in enumerate(orbital_labels)))
+
+        if kwargs['xps']:
+            if type(kwargs['xps']) is bool:
+                cross_sections = None
+            elif type(kwargs['xps']) is str:
+                if not os.path.exists(kwargs['xps']):
+                    raise Exception("Cross-sections file {0} does not "
+                                    "exist!".format(kwargs['xps']))
+                with open(kwargs['xps'], 'r') as f:
+                    cross_sections = json_load(f)
+
+            pdos_plotting_data = galore.apply_xps_weights(
+                pdos_plotting_data, cross_sections=cross_sections)
+
+    plt = galore.plot.plot_pdos(pdos_plotting_data,
+                                flipx=kwargs['xps'],  # XPS uses reversed axis
+                                **kwargs)
+
+    if kwargs['xps'] and kwargs['units']:
+        xlabel = "Binding energy / " + kwargs['units']
+    elif kwargs['xps']:
+        xlabel = "Binding energy"
+    elif kwargs['units']:
+        xlabel = energy_label + " / " + kwargs['units']
+    else:
+        xlabel = energy_label
+    plt.xlabel(xlabel)
+
+    plt.gca().set_yticklabels([''])
+    if kwargs['ylabel'] is not None:
+        plt.ylabel(kwargs['ylabel'])
+
+    if kwargs['plot']:
+        plt.savefig(kwargs['plot'])
+    elif kwargs['plot'] is None:
+        plt.show()
+
+
+def simple_dos(**args):
+    if len(args['input']) > 1:
+        raise ValueError("Simple DOS only uses one input file, "
+                         "not list: {0}".format(args['input']))
+    args['input'] = args['input'][0]
+
     if not os.path.exists(args['input']):
         raise Exception("Input file {0} does not exist!".format(args['input']))
     if galore.formats.isdoscar(args['input']):
         xy_data = galore.formats.read_doscar(args['input'])
     else:
         xy_data = np.genfromtxt(args['input'], delimiter=',', comments='#')
-
-    if args['sampling']:
-        d = args['sampling']
-    elif args['units'] in ('cm', 'cm-1'):
-        d = 0.1
-    elif args['units'] in ('THz', 'thz'):
-        d = 1e-3
-    elif args['units'] in ('ev', 'eV'):
-        d = 1e-2
 
     # Add 5% to data range if not specified
     auto_xmin, auto_xmax = auto_limits(xy_data[:, 0], padding=0.05)
@@ -62,6 +178,7 @@ def run(**args):
     if args['xmin'] is None:
         args['xmin'] = auto_xmin
 
+    d = args['sampling']
     x_values = np.arange(args['xmin'], args['xmax'], d)
     data_1d = galore.xy_to_1d(xy_data, x_values)
 
@@ -98,16 +215,36 @@ def run(**args):
             print("Can't plot, no Matplotlib")
         else:
             plt = galore.plot.plot_tdos(x_values, broadened_data, **args)
+            plt.gca().set_yticklabels([''])
+            if kwargs['ylabel'] is not None:
+                plt.ylabel(kwargs['ylabel'])
+
             if args['plot']:
                 plt.savefig(args['plot'])
             else:
                 plt.show()
-            
+
+
+def run(**args):
+    if args['sampling']:
+        pass
+    elif args['units'] in ('cm', 'cm-1'):
+        args['sampling'] = 0.1
+    elif args['units'] in ('THz', 'thz'):
+        args['sampling'] = 1e-3
+    elif args['units'] in ('ev', 'eV'):
+        args['sampling'] = 1e-2
+
+    if args['pdos']:
+        pdos(**args)
+    else:
+        simple_dos(**args)
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'input', type=str, default='DOSCAR', help='Input data file')
+        'input', type=str, default='DOSCAR', nargs='+', help='Input data file')
     parser.add_argument(
         '-l',
         '--lorentzian',
@@ -125,12 +262,25 @@ def main():
         type=float,
         help='Apply Gaussian broadening with specified width.')
     parser.add_argument(
+        '--xps',
+        nargs='?',
+        default=None,
+        const=True,
+        help="""Apply XPS cross-section weighting to data. Optionally provide
+                JSON file with cross-section data; otherwise defaults are used.
+             """)
+    parser.add_argument(
         '--units',
         '--x_units',
         type=str,
-        default='cm-1',
+        default='eV',
         choices=('cm', 'cm-1', 'thz', 'THz', 'ev', 'eV'),
         help='Units for x axis (usually frequency or energy)')
+    parser.add_argument(
+        '--ylabel',
+        type=str,
+        default=None,
+        help='Label for plot y-axis')
     parser.add_argument(
         '--txt',
         nargs='?',
@@ -159,6 +309,8 @@ def main():
         type=float,
         default=False,
         help='Width, in units of x, of x-axis resolution')
+    parser.add_argument(
+        '--pdos', action="store_true", help='Use orbital-projected data')
     parser.add_argument(
         '--xmin', type=float, default=None, help='Minimum x axis value')
     parser.add_argument(

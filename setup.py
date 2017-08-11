@@ -47,8 +47,9 @@ if __name__ == "__main__":
             'Topic :: Scientific/Engineering :: Physics'
             ],
         keywords='spectroscopy spectra chemistry physics raman xps',
+        include_package_data=True,
         packages=find_packages(exclude=['docs', 'test']),
-        install_requires=['numpy'],
+        install_requires=['numpy', 'matplotlib', 'six'],
         entry_points={
             'console_scripts': [
                 'galore=galore.cli:main',
