@@ -131,8 +131,8 @@ def pdos(**kwargs):
                 with open(kwargs['xps'], 'r') as f:
                     cross_sections = json_load(f)
 
-            pdos_plotting_data = galore.apply_xps_weights(pdos_plotting_data,
-                                     cross_sections=cross_sections)
+            pdos_plotting_data = galore.apply_xps_weights(
+                pdos_plotting_data, cross_sections=cross_sections)
 
     plt = galore.plot.plot_pdos(pdos_plotting_data,
                                 flipx=kwargs['xps'],  # XPS uses reversed axis
@@ -147,6 +147,10 @@ def pdos(**kwargs):
     else:
         xlabel = energy_label
     plt.xlabel(xlabel)
+
+    plt.gca().set_yticklabels([''])
+    if kwargs['ylabel'] is not None:
+        plt.ylabel(kwargs['ylabel'])
 
     if kwargs['plot']:
         plt.savefig(kwargs['plot'])
@@ -211,6 +215,10 @@ def simple_dos(**args):
             print("Can't plot, no Matplotlib")
         else:
             plt = galore.plot.plot_tdos(x_values, broadened_data, **args)
+            plt.gca().set_yticklabels([''])
+            if kwargs['ylabel'] is not None:
+                plt.ylabel(kwargs['ylabel'])
+
             if args['plot']:
                 plt.savefig(args['plot'])
             else:
@@ -268,6 +276,11 @@ def main():
         default='eV',
         choices=('cm', 'cm-1', 'thz', 'THz', 'ev', 'eV'),
         help='Units for x axis (usually frequency or energy)')
+    parser.add_argument(
+        '--ylabel',
+        type=str,
+        default=None,
+        help='Label for plot y-axis')
     parser.add_argument(
         '--txt',
         nargs='?',
