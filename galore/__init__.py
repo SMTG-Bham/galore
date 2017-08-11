@@ -147,6 +147,15 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     return broadened_data
 
 
+def get_default_cross_sections():
+    """Read default Al K-alpha cross-sections from packaged data file"""
+    cross_sections_file = resource_filename(__name__,
+                                            "data/cross_sections.json")
+    with open(cross_sections_file, 'r') as f:
+        cross_sections = json_load(f)
+    return cross_sections
+
+
 def apply_xps_weights(pdos_data, cross_sections=None):
     """Weight orbital intensities by cross-section for XPS simulation
 
@@ -177,11 +186,7 @@ def apply_xps_weights(pdos_data, cross_sections=None):
     """
 
     if cross_sections is None:
-
-        cross_sections_file = resource_filename(__name__,
-                                                "data/cross_sections.json")
-        with open(cross_sections_file, 'r') as f:
-            cross_sections = json_load(f)
+        cross_sections = get_default_cross_sections()
 
     weighted_pdos_data = OrderedDict()
     for el, orbitals in pdos_data.items():

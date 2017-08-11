@@ -30,10 +30,14 @@ def stdout_redirect():
     finally:
         output.close()
 
+class test_xps_data(unittest.TestCase):
+    def test_xps_defaults(self):
+        cross_sections = galore.get_default_cross_sections()
+        self.assertEqual(cross_sections["Lr"]["p"], 0.10e-1)
+        self.assertIsNone(cross_sections["H"]["f"])
+
 
 class test_array_functions(unittest.TestCase):
-    # The Numpy unit testing framework is used as this provides
-    # comparison tools for ndarrays
     def setUp(self):
         self.tempdir = tempfile.mkdtemp()
 
