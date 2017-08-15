@@ -166,10 +166,12 @@ def simple_dos(**args):
 
     if not os.path.exists(args['input']):
         raise Exception("Input file {0} does not exist!".format(args['input']))
-    if galore.formats.isdoscar(args['input']):
+    if galore.formats.is_doscar(args['input']):
         xy_data = galore.formats.read_doscar(args['input'])
+    elif galore.formats.is_csv(args['input']):
+        xy_data = galore.formats.read_csv(args['input'])
     else:
-        xy_data = np.genfromtxt(args['input'], delimiter=',', comments='#')
+        xy_data = galore.formats.read_txt(args['input'])
 
     # Add 5% to data range if not specified
     auto_xmin, auto_xmax = auto_limits(xy_data[:, 0], padding=0.05)
@@ -216,9 +218,8 @@ def simple_dos(**args):
         else:
             plt = galore.plot.plot_tdos(x_values, broadened_data, **args)
             plt.gca().set_yticklabels([''])
-            if kwargs['ylabel'] is not None:
-                plt.ylabel(kwargs['ylabel'])
-
+            if args['ylabel'] is not None:
+                plt.ylabel(args['ylabel'])
             if args['plot']:
                 plt.savefig(args['plot'])
             else:

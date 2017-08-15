@@ -24,7 +24,8 @@ import csv
 import sys
 import numpy as np
 
-def isdoscar(filename):
+
+def is_doscar(filename):
     """Determine whether file is a DOSCAR by checking fourth line"""
     with open(filename, 'r') as f:
         for i in range(3):
@@ -33,6 +34,11 @@ def isdoscar(filename):
             return True
         else:
             return False
+
+
+def is_csv(filename):
+    """Determine whether file is CSV by checking extension"""
+    return filename.split('.')[-1] == 'csv'
 
 
 def write_txt(x_values, y_values, filename="galore_output.txt", header=None):
@@ -87,6 +93,51 @@ def write_csv(x_values, y_values, filename="galore_output.csv", header=None):
             _write_csv(x_values, y_values, f, header=header)
 
 
+def read_csv(filename):
+    """Read a txt file containing frequencies and intensities
+
+    If input file contains three columns, the first column is ignored. (It is
+    presumed to be a vibrational mode index.)
+
+    Args:
+        filename (str): Path to data file
+
+    Returns:
+        n x 2 Numpy array of frequencies and intensities
+
+    """
+    return read_txt(filename, delimiter=',')
+
+
+def read_txt(filename, delimiter=None):
+    """Read a txt file containing frequencies and intensities
+
+    If input file contains three columns, the first column is ignored. (It is
+    presumed to be a vibrational mode index.)
+
+    Args:
+        filename (str): Path to data file
+
+    Returns:
+        n x 2 Numpy array of frequencies and intensities
+
+    """
+    xy_data = np.genfromtxt(filename, comments='#', delimiter=delimiter)
+
+    columns = np.shape(xy_data)[1]
+
+    if columns == 2:
+        return xy_data
+    elif columns == 3:
+        return xy_data[:, 1:]
+    elif columns < 2:
+        raise Exception("Not sure how to interpret {0}: "
+                        "not enough columns.".format(filename))
+    else:
+        raise Exception("Not sure how to interpret {0}: "
+                        "too many columns.".format(filename))
+
+
 def read_pdos_txt(filename):
     """Read a text file containing projected density-of-states (PDOS) data
 
@@ -103,7 +154,7 @@ def read_pdos_txt(filename):
     """
     data = np.genfromtxt(filename, names=True)
     return data
-    
+
 
 def read_doscar(filename="DOSCAR"):
     """Read an x, y series of frequencies and DOS from a VASP DOSCAR file
