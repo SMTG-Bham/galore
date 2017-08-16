@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-
+#! /usr/bin/env python3
 ###############################################################################
 #                                                                             #
 # GALORE: Gaussian and Lorentzian broadening for simulated spectra            #

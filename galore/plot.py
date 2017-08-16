@@ -5,16 +5,15 @@ from itertools import cycle
 from six import itervalues
 from galore import auto_limits
 
-plt.style.use("seaborn-colorblind")
-
-
 def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
     """Plot a projected density of states (PDOS)
 
     Args:
-        pdos_data (dict): Data for pdos plot in format
-            {'el1': {'energy': values, 's': values, 'p': values ...},
-             'el2': {'energy': values, 's': values, ...}, ...}
+        pdos_data (dict): Data for pdos plot in format::
+            
+                {'el1': {'energy': values, 's': values, 'p': values ...},
+                 'el2': {'energy': values, 's': values, ...}, ...}
+
              where DOS values are 1D numpy arrays. For deterministic plots,
              use ordered dictionaries!
         ax (matplotlib.Axes): Use existing Axes object for plot. If None,
@@ -31,6 +30,8 @@ def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
             and axes.
 
         """
+
+    plt.style.use("seaborn-colorblind")
 
     linecycler = cycle(['--'] * 6 + [':'] * 6 + ['-.'] * 6)
 
@@ -102,6 +103,8 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
         Pyplot instance if a new Figure was created.
 
     """
+
+    plt.style.use("seaborn-colorblind")
 
     if ax:
         pass

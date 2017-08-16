@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 ###############################################################################
 #                                                                             #
 # GALORE: Gaussian and Lorentzian broadening for simulated spectra            #
@@ -28,12 +26,6 @@ from pkg_resources import resource_filename
 from json import load as json_load
 
 import numpy as np
-try:
-    import matplotlib.pyplot as plt
-    has_matplotlib = True
-except ImportError:
-    has_matplotlib = False
-
 
 def auto_limits(data_1d, padding=0.05):
     """Return limiting values outside data range
@@ -160,17 +152,20 @@ def apply_xps_weights(pdos_data, cross_sections=None):
     """Weight orbital intensities by cross-section for XPS simulation
 
     Args:
-        pdos_data (dict): DOS data in format
-            {'el1': {'energy': values, 's': values, 'p': values ...},
-             'el2': {'energy': values, 's': values, ...}, ...}
+        pdos_data (dict): DOS data in format::
+
+                {'el1': {'energy': values, 's': values, 'p': values ...},
+                 'el2': {'energy': values, 's': values, ...}, ...}
+
              where DOS values are 1D numpy arrays. Orbital labels must match
              cross_sections data. It is recommended to use
              collections.OrderedDict instead of regular dictionaries, to ensure
              consistent output.
 
-        cross_sections (dict): Weightings in format
-            {'el1': {'1s': x1, '2s': x2, '2p': x3 ...},
-             'el2': {'3s': y1, '3p': y2 ...}, ...}
+        cross_sections (dict): Weightings in format::
+
+                {'el1': {'1s': x1, '2s': x2, '2p': x3 ...},
+                 'el2': {'3s': y1, '3p': y2 ...}, ...}
 
              The labels should correspond to the headers in the input data. It
              is fine not so specify the level (e.g. use 's', 'p', etc.) as is
