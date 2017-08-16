@@ -1,4 +1,4 @@
-Galore
+README
 ======
 
 Introduction
@@ -9,8 +9,19 @@ calculations. The two main intended applications are
 
 1. Application of Lorentzian instrumental broadening to simulated Raman
    spectra from DFPT calculations.
-2. Gaussian broadening of electronic density-of-states to simulate XPS
-   data, followed by Lorentzian instrumental broadening.
+2. Gaussian and Lorentzian broadening of electronic density-of-states,
+   with orbital weighting to simulate XPS measurements.
+
+
+Documentation
+-------------
+
+A brief overview is given in this README file.
+Full documentation can be built using Sphinx; try ``make html`` from
+the *docs* directory of this project.
+Pre-compiled documentation will be made available through `readthedocs
+<https://readthedocs.org>`__ when this project is made publicly
+viewable.
 
 Usage
 -----
@@ -20,37 +31,63 @@ in-built help.
 
 ::
 
-    ./bin/galore -h
-
-Python API documentation will be added once the project structure and
-scope become clearer.
+    galore -h
 
 Instrumental broadening
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 Data may be provided as a set of X,Y coordinates in a text file of
 comma-separated values (CSV).
+Whitespace-separated data is also readable, in which case a *.txt*
+file extension should be used.
 
 To plot a CSV file to the screen with default Lorentzian broadening (2
-cm-1), use the command
+cm\ :sup:`-1`), use the command
 
 ::
 
-    ./bin/galore MY_DATA.csv -l -p
+    galore MY_DATA.csv -l -p
 
-and to plot to a file with more generous 10 cm-1 broadening
+and to plot to a file with more generous 10 cm\ :sup:`-1` broadening
 
 ::
 
-    ./bin/galore MY_DATA.csv -l 10 -p MY_PLOT.png
+    galore MY_DATA.csv -l 10 -p MY_PLOT.png
 
-will provide the additional data needed.
+will provide the additional data needed. 
 
 XPS simulation
 ^^^^^^^^^^^^^^
 
-For data calculated with VASP, the atom types are read from a POSCAR
-file and the DOS is read from the DOSCAR.
+XPS simulation requires several inputs:
+
+- Orbital-projected density of states data. The input format for
+  Galore is one file per element, with columns for energy and each
+  orbital. A header should be provided with the orbital names. For an
+  examples see the *test/MgO* folder. The element will be identified
+  from the filename, so the filename format should be of the form
+  ``X_el_Y.Z``, where `el` is the corresponding element symbol.
+- Instrumental broadening parameters. The Lorentzian and Gaussian
+  broadening widths are input by the user as before.
+- Photoionization cross section data, which is used to weight the
+  contributions of different orbitals. Galore includes data for
+  valance band orbitals at Al k-α energies, drawn from a more
+  extensive table computed by
+  `Yeh and Lindau (1985) <https://doi.org/10.1016/0092-640X(85)90016-6>`__.
+  An alternative dataset may be provided as a JSON file; it is only
+  necessary to include the elements and orbitals used in the DOS input
+  files.
+
+To demonstrate this function, sample data is provided calculated with
+the revTPSS function for MgO.
+
+::
+
+    galore test/MgO/MgO_Mg_dos.dat test/MgO/MgO_O_dos.dat -l 0.3 -g 0.2 --xps --pdos -p --xmin -1 --xmax 8
+
+will plot the calculated valence band XPS spectrum to the screen over
+a sensible range, with 0.3 eV of Lorentzian broadening and 0.2 eV of
+Gaussian broadening.
 
 Requirements
 ------------
@@ -92,6 +129,17 @@ userspace. The executable program ``galore`` goes to a directory like
 ``~/.local/bin`` and the galore library should be available on your
 Pythonpath. These are links to this project folder, which you can
 continue to edit and update using Git.
+
+Installation for documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you need to build the documentation you can add ``[docs]`` to the
+pip command to ensure you have all the Sphinx requirements and
+extensions.
+
+::
+
+   pip install --upgrade .[docs]
 
 Development
 -----------

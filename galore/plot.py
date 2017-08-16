@@ -25,8 +25,8 @@ def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
             positive binding energies
 
     Returns:
-        plt (matplotlib.pyplot):
-            the pyplot state machine. Can be queried to access current figure
+        (matplotlib.pyplot):
+            The pyplot state machine. Can be queried to access current figure
             and axes.
 
         """
@@ -100,7 +100,9 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
             returned.
 
     Returns:
-        Pyplot instance if a new Figure was created.
+        (matplotlib.pyplot):
+            The pyplot state machine. Can be queried to access current figure
+            and axes.
 
     """
 

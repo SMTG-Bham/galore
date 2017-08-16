@@ -1,5 +1,5 @@
-galore
-======
+Python API
+==========
 
 .. toctree::
    :maxdepth: 4

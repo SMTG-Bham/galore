@@ -11,6 +11,7 @@ Welcome to Galore's documentation!
    :caption: Contents:
 
    README <readme>
+   cli
    changelog
    Python API <modules>             
 

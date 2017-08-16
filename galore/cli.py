@@ -241,7 +241,7 @@ def run(**args):
         simple_dos(**args)
 
 
-def main():
+def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'input', type=str, default='DOSCAR', nargs='+', help='Input data file')
@@ -266,9 +266,9 @@ def main():
         nargs='?',
         default=None,
         const=True,
-        help="""Apply XPS cross-section weighting to data. Optionally provide
-                JSON file with cross-section data; otherwise defaults are used.
-             """)
+        help="Apply XPS cross-section weighting to data. Optionally, "
+              "provide JSON file with cross-section data; otherwise defaults "
+              "are used.")
     parser.add_argument(
         '--units',
         '--x_units',
@@ -319,6 +319,12 @@ def main():
         '--ymin', type=float, default=0, help='Minimum y axis value')
     parser.add_argument(
         '--ymax', type=float, default=None, help='Maximum y axis value')
+
+    return parser
+
+
+def main():
+    parser = get_parser()
     args = parser.parse_args()
     args = vars(args)
     run(**args)
