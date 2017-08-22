@@ -50,6 +50,9 @@ if __name__ == "__main__":
         include_package_data=True,
         packages=find_packages(exclude=['docs', 'test']),
         install_requires=['numpy', 'matplotlib', 'six'],
+        extras_require={'docs': ["sphinx",
+                                 #"sphinx_rtd_theme",
+                                 "sphinx-argparse"]},
         entry_points={
             'console_scripts': [
                 'galore=galore.cli:main',

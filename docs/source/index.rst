@@ -12,8 +12,10 @@ Welcome to Galore's documentation!
 
    README <readme>
    tutorials
-   changelog
+   cli
    Python API <modules>             
+   changelog
+
 
 
 Indices and tables
