@@ -53,17 +53,65 @@ def write_txt(x_values, y_values, filename="galore_output.txt", header=None):
             is used.
 
         """
-    lines = ["{x:10.6e} {y:10.6e}\n".format(
-        x=x, y=y) for x, y in zip(x_values, y_values)]
-    if header:
-        lines = [header + "\n"] + lines
+
+    rows = zip(x_values, y_values)
+    _write_txt_rows(rows, filename=filename, header=header)
+
+
+def _write_txt_rows(rows, filename=None, header=None):
+    """Write rows of data to space-separated text output
+
+    Args:
+        rows (iterable): Rows to write. Rows should be a list of values.
+        filename (str or None): Filename for text output. If None, write to
+            standard output instead.
+        header (iterable or None): Optionally add another row to the top of the
+            file. Useful if rows is a generator you don't want to mess with.
+
+    """
+
+    def _format_line(row):
+        return ' '.join(('{0:10.6e}'.format(x) for x in row)) + '\n'
+
+    lines = map(_format_line, rows)
 
     if filename is not None:
         with open(filename, 'w') as f:
+            if header is not None:
+                f.write(header + '\n')
             f.writelines(lines)
+
     else:
+        if header is not None:
+            print(header)
         for line in lines:
             print(line, end='')
+
+
+def _write_csv_rows(rows, filename=None, header=None):
+    """Write rows of data to output in CSV format
+
+    Args:
+        rows (iterable): Rows to write. Rows should be a list of values.
+        filename (str or None): Filename for CSV output. If None, write to
+            standard output instead.
+        header (iterable or None): Optionally add another row to the top of the
+            file. Useful if rows is a generator you don't want to mess with.
+
+    """
+
+    def _write_csv(rows, f, header):
+        writer = csv.writer(f, lineterminator=os.linesep)
+        if header is not None:
+            writer.writerow(header)
+        writer.writerows(rows)
+
+    if filename is None:
+        _write_csv(rows, sys.stdout, header=header)
+
+    else:
+        with open(filename, 'w') as f:
+            _write_csv(rows, f, header=header)
 
 
 def write_csv(x_values, y_values, filename="galore_output.csv", header=None):
@@ -79,18 +127,42 @@ def write_csv(x_values, y_values, filename="galore_output.csv", header=None):
 
         """
 
-    def _write_csv(x_values, y_values, f, header=None):
-        writer = csv.writer(f, lineterminator=os.linesep)
-        if header is not None:
-            writer.writerow(header)
-        writer.writerows(zip(x_values, y_values))
+    rows = zip(x_values, y_values)
+    _write_csv_rows(rows, filename=filename, header=header)
 
-    if filename is None:
-        _write_csv(x_values, y_values, sys.stdout, header=header)
 
+def write_pdos(pdos_data, filename=None, filetype="txt"):
+    """Write PDOS or XPS data to CSV file
+
+    Args:
+        pdos_data (dict): Data for pdos plot in format::
+
+                {'el1': {'energy': values, 's': values, 'p': values ...},
+                 'el2': {'energy': values, 's': values, ...}, ...}
+
+             where DOS values are 1D numpy arrays. For deterministic output,
+             use ordered dictionaries!
+        filename (str or None): Filename for output. If None, write to stdout
+        filetype (str): Format for output; "csv" or "txt.
+    """
+
+    header = ['energy']
+    cols = [list(pdos_data.values())[0]['energy']]
+    for el, orbitals in pdos_data.items():
+        for orbital, values in orbitals.items():
+            if orbital.lower() != 'energy':
+                header += ['_'.join((el, orbital))]
+                cols.append(values)
+
+    data = np.array(cols).T
+    if filetype == 'csv':
+        _write_csv_rows(data, filename=filename, header=header)
+    elif filetype == 'txt':
+        header = ' ' + ' '.join(('{0:12s}'.format(x) for x in header))
+        _write_txt_rows(data, filename=filename, header=header)
     else:
-        with open(filename, 'w') as f:
-            _write_csv(x_values, y_values, f, header=header)
+        raise ValueError('filetype "{0}" not recognised. Use "txt" or "csv".')
+
 
 def read_csv(filename):
     """Read a txt file containing frequencies and intensities

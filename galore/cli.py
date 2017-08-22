@@ -134,33 +134,46 @@ def pdos(**kwargs):
             pdos_plotting_data = galore.apply_xps_weights(
                 pdos_plotting_data, cross_sections=cross_sections)
 
-    plt = galore.plot.plot_pdos(pdos_plotting_data,
-                                flipx=kwargs['xps'],  # XPS uses reversed axis
-                                **kwargs)
+    # For plotting and writing, "None" means "write to screen"
+    # while False means "do nothing"
+    if kwargs['plot'] or kwargs['plot'] is None:
+        plt = galore.plot.plot_pdos(pdos_plotting_data,
+                                    flipx=kwargs['xps'],  # Assume xflip wanted
+                                    **kwargs)
 
-    if kwargs['units'] and kwargs['units'].lower() in unit_labels:
-        unit_label = unit_labels[kwargs['units'].lower()]
-    else:
-        unit_label = kwargs['units']
+        if kwargs['units'] and kwargs['units'].lower() in unit_labels:
+            unit_label = unit_labels[kwargs['units'].lower()]
+        else:
+            unit_label = kwargs['units']
 
-    if kwargs['xps'] and kwargs['units']:
-        xlabel = "Binding energy / " + unit_label
-    elif kwargs['xps']:
-        xlabel = "Binding energy"
-    elif kwargs['units']:
-        xlabel = energy_label + " / " + unit_label
-    else:
-        xlabel = energy_label
-    plt.xlabel(xlabel)
+        if kwargs['xps'] and kwargs['units']:
+            xlabel = "Binding energy / " + unit_label
+        elif kwargs['xps']:
+            xlabel = "Binding energy"
+        elif kwargs['units']:
+            xlabel = energy_label + " / " + unit_label
+        else:
+            xlabel = energy_label
+        plt.xlabel(xlabel)
 
-    plt.gca().set_yticklabels([''])
-    if kwargs['ylabel'] is not None:
-        plt.ylabel(kwargs['ylabel'])
+        plt.gca().set_yticklabels([''])
+        if kwargs['ylabel'] is not None:
+            plt.ylabel(kwargs['ylabel'])
 
-    if kwargs['plot']:
-        plt.savefig(kwargs['plot'])
-    elif kwargs['plot'] is None:
-        plt.show()
+        if kwargs['plot']:
+            plt.savefig(kwargs['plot'])
+        elif kwargs['plot'] is None:
+            plt.show()
+
+    if kwargs['csv'] or kwargs['csv'] is None:
+        galore.formats.write_pdos(pdos_plotting_data,
+                                  filename=kwargs['csv'],
+                                  filetype='csv')
+
+    if kwargs['txt'] or kwargs['txt'] is None:
+        galore.formats.write_pdos(pdos_plotting_data,
+                                  filename=kwargs['txt'],
+                                  filetype='txt')
 
 
 def simple_dos(**args):

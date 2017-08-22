@@ -15,6 +15,8 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 -  XPS simulation mode; x-axis flipped and PDOS contributions weighted
    by cross-section.
 -  Initial documentation
+-  Tutorials
+-  Fancy formatting of units   
 
 [0.1.0] - 2016-08-11
 --------------------
