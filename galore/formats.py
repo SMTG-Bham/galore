@@ -131,7 +131,7 @@ def write_csv(x_values, y_values, filename="galore_output.csv", header=None):
     _write_csv_rows(rows, filename=filename, header=header)
 
 
-def write_pdos(pdos_data, filename=None, filetype="txt"):
+def write_pdos(pdos_data, filename=None, filetype="txt", flipx=False):
     """Write PDOS or XPS data to CSV file
 
     Args:
@@ -144,10 +144,15 @@ def write_pdos(pdos_data, filename=None, filetype="txt"):
              use ordered dictionaries!
         filename (str or None): Filename for output. If None, write to stdout
         filetype (str): Format for output; "csv" or "txt.
+        flipx (bool): Negate the x-axis (i.e. energy) values to make binding
+            energies
     """
 
     header = ['energy']
     cols = [list(pdos_data.values())[0]['energy']]
+    if flipx:
+        cols[0] = -cols[0]
+
     for el, orbitals in pdos_data.items():
         for orbital, values in orbitals.items():
             if orbital.lower() != 'energy':
@@ -155,6 +160,11 @@ def write_pdos(pdos_data, filename=None, filetype="txt"):
                 cols.append(values)
 
     data = np.array(cols).T
+
+    total = data[:, 1:].sum(axis=1)
+    data = np.insert(data, 1, total, axis=1)
+    header.insert(1, 'total')
+
     if filetype == 'csv':
         _write_csv_rows(data, filename=filename, header=header)
     elif filetype == 'txt':

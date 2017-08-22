@@ -136,15 +136,21 @@ Let's turn this into a useful XPS plot. The flag ``--xps`` can be used
 to pass a data file with cross-section data, or defaults to use data
 for Al k-α radiation. It also flips the x-axis to match the usual
 presenation of XPS data as positive ionisation or binding energies
-rather than the negative energy of the stable electron states.
+rather than the negative energy of the stable electron states. We'll
+also write the data to a CSV file with the ``--csv`` option.
 
 .. code-block:: bash
 
     galore test/MgO/MgO_Mg_dos.dat test/MgO/MgO_O_dos.dat \
       --plot mgo_xps.png --pdos -g 0.2 -l 0.2 --xps \
-      --units ev --xmin -1 --xmax 8 --ylabel Intensity
+      --units ev --xmin -1 --xmax 8 --ylabel Intensity \
+      --csv mgo_xps.csv
       
 .. image:: figures/mgo_xps.png
            :alt: Simulated XPS for MgO
            :align: center
            :scale: 50%
+
+Plotting the CSV file with a standard plotting package should give a
+similar result to the figure above; if not, please report this as a
+bug!

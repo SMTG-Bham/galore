@@ -168,12 +168,14 @@ def pdos(**kwargs):
     if kwargs['csv'] or kwargs['csv'] is None:
         galore.formats.write_pdos(pdos_plotting_data,
                                   filename=kwargs['csv'],
-                                  filetype='csv')
+                                  filetype='csv',
+                                  flipx=kwargs['xps'])
 
     if kwargs['txt'] or kwargs['txt'] is None:
         galore.formats.write_pdos(pdos_plotting_data,
                                   filename=kwargs['txt'],
-                                  filetype='txt')
+                                  filetype='txt',
+                                  flipx=kwargs['xps'])
 
 
 def simple_dos(**args):
