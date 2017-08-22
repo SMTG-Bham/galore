@@ -1,4 +1,6 @@
-Command line interface
+.. _cli:
+
+Command-line interface
 ======================
 
 The main interface for Galore is the ``galore`` command.

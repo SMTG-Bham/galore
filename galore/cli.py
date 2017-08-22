@@ -30,6 +30,7 @@ import numpy as np
 import galore
 import galore.formats
 import galore.plot
+from galore.plot import unit_labels
 from galore import auto_limits
 
 try:
@@ -137,12 +138,17 @@ def pdos(**kwargs):
                                 flipx=kwargs['xps'],  # XPS uses reversed axis
                                 **kwargs)
 
+    if kwargs['units'] and kwargs['units'].lower() in unit_labels:
+        unit_label = unit_labels[kwargs['units'].lower()]
+    else:
+        unit_label = kwargs['units']
+
     if kwargs['xps'] and kwargs['units']:
-        xlabel = "Binding energy / " + kwargs['units']
+        xlabel = "Binding energy / " + unit_label
     elif kwargs['xps']:
         xlabel = "Binding energy"
     elif kwargs['units']:
-        xlabel = energy_label + " / " + kwargs['units']
+        xlabel = energy_label + " / " + unit_label
     else:
         xlabel = energy_label
     plt.xlabel(xlabel)
@@ -234,6 +240,8 @@ def run(**args):
         args['sampling'] = 1e-3
     elif args['units'] in ('ev', 'eV'):
         args['sampling'] = 1e-2
+    else:
+        args['sampling'] = 1e-2
 
     if args['pdos']:
         pdos(**args)
@@ -273,7 +281,7 @@ def get_parser():
         '--units',
         '--x_units',
         type=str,
-        default='eV',
+        default='',
         choices=('cm', 'cm-1', 'thz', 'THz', 'ev', 'eV'),
         help='Units for x axis (usually frequency or energy)')
     parser.add_argument(
@@ -308,7 +316,9 @@ def get_parser():
         '--sampling',
         type=float,
         default=False,
-        help='Width, in units of x, of x-axis resolution')
+        help='Width, in units of x, of x-axis resolution. If not specified, '
+             'default value is based on units. If units are not specified, '
+             'default value is 1e-2.')
     parser.add_argument(
         '--pdos', action="store_true", help='Use orbital-projected data')
     parser.add_argument(

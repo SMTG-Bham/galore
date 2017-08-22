@@ -5,6 +5,11 @@ from itertools import cycle
 from six import itervalues
 from galore import auto_limits
 
+unit_labels = {'cm': r'cm$^{-1}$',
+               'cm-1': r'cm$^{-1}$',
+               'thz': 'THz',
+               'ev': 'eV'}
+
 def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
     """Plot a projected density of states (PDOS)
 
@@ -71,7 +76,12 @@ def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
     # Range based on last dataset. If that's not satisfactory, it should have
     # been pruned already by kwargs['xmin'] and kwargs['xmax']
     ax.set_xlim([min(x_data), max(x_data)])
-    ax.set_xlabel(kwargs['units'])
+
+    if kwargs['units'] and kwargs['units'].lower() in unit_labels:
+        xlabel = unit_labels[kwargs['units'].lower()]
+    else:
+        xlabel = kwargs['units']
+    ax.set_xlabel(xlabel)
 
     if kwargs['ymax'] is None or kwargs['ymin'] is None:
         # Add 10% to data range if not specified
@@ -116,7 +126,12 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
 
     ax.plot(xdata, ydata, 'r-')
     ax.set_xlim([min(xdata), max(xdata)])
-    ax.set_xlabel(kwargs['units'])
+
+    if kwargs['units'] and kwargs['units'].lower() in unit_labels:
+        xlabel = unit_labels[kwargs['units'].lower()]
+    else:
+        xlabel = kwargs['units']
+    ax.set_xlabel(xlabel)
 
     if kwargs['ymax'] is None or kwargs['ymin'] is None:
         # Add 10% to data range if not specified
