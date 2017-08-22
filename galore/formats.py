@@ -45,11 +45,11 @@ def write_txt(x_values, y_values, filename="galore_output.txt", header=None):
     """Write output to a simple space-delimited file
 
     Args:
-        x_values: (iterable) Values to print in first column
-        y_value: (iterable) Values to print in second column
-        filename: (str) Path to output file, including extension. If False,
+        x_values (iterable): Values to print in first column
+        y_value (iterable): Values to print in second column
+        filename (str): Path to output file, including extension. If None,
             write to standard output instead.
-        header: (str) Additional line to prepend to file. If None, no header
+        header (str): Additional line to prepend to file. If None, no header
             is used.
 
         """
@@ -70,11 +70,11 @@ def write_csv(x_values, y_values, filename="galore_output.csv", header=None):
     """Write output to a simple space-delimited file
 
     Args:
-        x_values: (iterable) Values to print in first column
-        y_value: (iterable) Values to print in second column
-        filename: (str) Path to output file, including extension. If None,
+        x_values (iterable): Values to print in first column
+        y_value (iterable): Values to print in second column
+        filename (str): Path to output file, including extension. If None,
             write to standard output instead.
-        header: (iterable) Additional line to prepend to file. If None,
+        header (iterable): Additional line to prepend to file. If None,
             no header is used.
 
         """
@@ -91,7 +91,6 @@ def write_csv(x_values, y_values, filename="galore_output.csv", header=None):
     else:
         with open(filename, 'w') as f:
             _write_csv(x_values, y_values, f, header=header)
-
 
 def read_csv(filename):
     """Read a txt file containing frequencies and intensities
@@ -160,10 +159,10 @@ def read_doscar(filename="DOSCAR"):
     """Read an x, y series of frequencies and DOS from a VASP DOSCAR file
 
     Args:
-        filename: (str) Path to DOSCAR file
+        filename (str): Path to DOSCAR file
 
     Returns:
-        data: (2-tuple) Tuple containing x values and y values as lists
+        data (2-tuple): Tuple containing x values and y values as lists
 """
     with open(filename, 'r') as f:
         # Scroll to line 6 which contains NEDOS
