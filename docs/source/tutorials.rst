@@ -15,9 +15,9 @@ compute these properties is with a single DFPT calculation
 (e.g. ``IBRION = 7``, ``LEPSILON = .TRUE.``, ``NWRITE = 3``)
 and follow-up with
 `David Karhanek's analysis script <http://homepage.univie.ac.at/david.karhanek/downloads.html#Entry02>`__.
-A sample output file is provided for
-CaF\ `2`:sub: (computed within the local-density approximation using a 700 eV
-plane-wave cutoff) is included as *test/CaF2/ir_lda_700.txt*.
+A sample output file is provided for CaF\ `2`:sub: (computed within
+the local-density approximation (LDA) using a 700 eV plane-wave
+cutoff) is included as *test/CaF2/ir_lda_700.txt*.
 
 This file (found as *intensities/results/results.txt* after running the script) uses
 a three-column space-separated format understood by Galore. To plot
@@ -54,7 +54,7 @@ axis range, add axis labels and write to a file.
 .. code-block:: bash
 
   galore test/CaF2/ir_lda_700.txt -g 1.2 -l \
-    --plot docs/source/figures/ir_lda_700_better.png \
+    --plot ir_lda_700_better.png \
     --xmin=200 --xmax=350 --units cm-1 --ylabel Intensity
 
 .. image:: figures/ir_lda_700_better.png
@@ -79,6 +79,32 @@ given. We can also write space-separated text data, so for example
 
 generates a file with two columns (i.e. energy and broadened intensity).
 
+Simulated Raman
+---------------
+
+Broadening a simulated Raman spectrum is very similar to broadening a
+simulated IR spectrum. Galore recognises the output format of the
+`vasp_raman.py <https://github.com/raman-sc/VASP>`__ code, which
+automates the process of following vibrational modes and calculating
+the polarisability change on each displacement. The output file has a
+simple format and Galore recognises them by inspecting the header.
+Sample data is included (computed with LDA using VASP with a 500 eV
+cutoff) as *test/CaF2/raman_lda_500.dat*. We generate a plot in the
+same way as before:
+
+.. code-block:: bash
+
+    galore test/CaF2/raman_lda_500.dat -g -l --plot --units cm-1 --ylabel Intensity
+
+.. image:: figures/raman_lda_500.png
+           :alt: Simulated Raman plot for CaF2
+           :align: center
+           :scale: 50%
+
+Note that for the same material we are seeing a single peak again, but
+at a different frequency to the IR plot. This is not a shift; the peak
+at 280 cm\ `-1`:sup: is still present but has zero activity, while the
+peak calculated at 345 cm\ `-1`:sup: has zero IR activity.
 
 Simulated Photoionization Spectroscopy
 --------------------------------------
@@ -145,7 +171,7 @@ also write the data to a CSV file with the ``--csv`` option.
       --plot mgo_xps.png --pdos -g 0.2 -l 0.2 --xps \
       --units ev --xmin -1 --xmax 8 --ylabel Intensity \
       --csv mgo_xps.csv
-      
+
 .. image:: figures/mgo_xps.png
            :alt: Simulated XPS for MgO
            :align: center

@@ -16,7 +16,9 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
    by cross-section.
 -  Initial documentation
 -  Tutorials
--  Fancy formatting of units   
+-  Fancy formatting of units
+-  Support for files from `David Karhanek's IR analysis script <http://homepage.univie.ac.at/david.karhanek/downloads.html#Entry02>`__
+   and the `raman-sc program <https://github.com/raman-sc/VASP>`__ for simulated optical spectra.
 
 [0.1.0] - 2016-08-11
 --------------------
