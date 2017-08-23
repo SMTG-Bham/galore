@@ -121,18 +121,18 @@ def pdos(**kwargs):
             OrderedDict((orbital, broadened_data[i])
                         for i, orbital in enumerate(orbital_labels)))
 
-        if kwargs['xps']:
-            if type(kwargs['xps']) is bool:
-                cross_sections = None
-            elif type(kwargs['xps']) is str:
-                if not os.path.exists(kwargs['xps']):
-                    raise Exception("Cross-sections file {0} does not "
-                                    "exist!".format(kwargs['xps']))
-                with open(kwargs['xps'], 'r') as f:
-                    cross_sections = json_load(f)
+    if kwargs['xps']:
+        if type(kwargs['xps']) is bool:
+            cross_sections = None
+        elif type(kwargs['xps']) is str:
+            if not os.path.exists(kwargs['xps']):
+                raise Exception("Cross-sections file {0} does not "
+                                "exist!".format(kwargs['xps']))
+            with open(kwargs['xps'], 'r') as f:
+                cross_sections = json_load(f)
 
-            pdos_plotting_data = galore.apply_xps_weights(
-                pdos_plotting_data, cross_sections=cross_sections)
+        pdos_plotting_data = galore.apply_xps_weights(
+            pdos_plotting_data, cross_sections=cross_sections)
 
     # For plotting and writing, "None" means "write to screen"
     # while False means "do nothing"
