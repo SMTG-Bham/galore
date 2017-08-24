@@ -4,13 +4,14 @@ README
 Introduction
 ------------
 
-Apply Gaussian and Lorentzian broadening to data from *ab initio*
-calculations. The two main intended applications are
+Galore is a package which applies Gaussian and Lorentzian broadening
+to data from *ab initio* calculations. The two main intended
+applications are
 
 1. Application of Lorentzian instrumental broadening to simulated Raman
    spectra from DFPT calculations.
 2. Gaussian and Lorentzian broadening of electronic density-of-states,
-   with orbital weighting to simulate XPS measurements.
+   with orbital weighting to simulate UPS/XPS/HAXPES measurements.
 
 
 Documentation
@@ -27,9 +28,7 @@ Usage
 -----
 
 For full documentation of the command-line flags, please use the
-in-built help.
-
-::
+in-built help::
 
     galore -h
 
@@ -42,55 +41,46 @@ Whitespace-separated data is also readable, in which case a *.txt*
 file extension should be used.
 
 To plot a CSV file to the screen with default Lorentzian broadening (2
-cm\ :sup:`-1`), use the command
-
-::
+cm\ :sup:`-1`), use the command::
 
     galore MY_DATA.csv -l -p
 
-and to plot to a file with more generous 10 cm\ :sup:`-1` broadening
-
-::
+and to plot to a file with more generous 10 cm\ :sup:`-1` broadening::
 
     galore MY_DATA.csv -l 10 -p MY_PLOT.png
 
 will provide the additional data needed. 
 
-XPS simulation
-^^^^^^^^^^^^^^
+Other file formats are supported, including IR and Raman intensity
+simulation output. See the Tutorials for usage examples.
 
-XPS simulation requires several inputs:
+Photoionization spectra
+^^^^^^^^^^^^^^^^^^^^^^^
 
-- Orbital-projected density of states data. The input format for
-  Galore is one file per element, with columns for energy and each
-  orbital. A header should be provided with the orbital names. For an
-  examples see the *test/MgO* folder. The element will be identified
-  from the filename, so the filename format should be of the form
-  ``X_el_Y.Z``, where `el` is the corresponding element symbol.
+UPS, XPS or HAXPES spectra can be simulated using Galore. This requires
+several inputs:
+
+- Orbital-projected density of states data. 
 - Instrumental broadening parameters. The Lorentzian and Gaussian
   broadening widths are input by the user as before.
 - Photoionization cross section data, which is used to weight the
   contributions of different orbitals. Galore includes data for
-  valance band orbitals at Al k-α energies, drawn from a more
-  extensive table computed by
+  valance band orbitals at Al k-α (XPS) and He II (UPS) energies,
+  drawn from a more extensive table computed by
   `Yeh and Lindau (1985) <https://doi.org/10.1016/0092-640X(85)90016-6>`__.
   An alternative dataset may be provided as a JSON file; it is only
   necessary to include the elements and orbitals used in the DOS input
   files.
 
-To demonstrate this function, sample data is provided calculated with
-the revTPSS function for MgO.
-
-::
-
-    galore test/MgO/MgO_Mg_dos.dat test/MgO/MgO_O_dos.dat -l 0.3 -g 0.2 --xps --pdos -p --xmin -1 --xmax 8
-
-will plot the calculated valence band XPS spectrum to the screen over
-a sensible range, with 0.3 eV of Lorentzian broadening and 0.2 eV of
-Gaussian broadening.
+See the Tutorials for a walkthrough using sample data.
 
 Requirements
 ------------
+
+Galore is currently compatible with Python 2.7 and Python 3.4. It is
+*strongly* recommended that you install Galore with Python 3, as many
+scientific Python libraries are committed to dropping Python 2 support
+`by the end of 2020 <http://www.python3statement.org>`__.
 
 Galore uses Numpy to apply convolution operations. Matplotlib is
 required for plotting.
@@ -109,44 +99,38 @@ Windows user installation
 
 `Anaconda <https://www.continuum.io/downloads>`__ is recommended for
 managing the Python environment and dependencies on Windows. From the
-Anaconda shell:
+Anaconda shell::
 
-::
-
-    pip install .
+    pip3 install .
 
 Linux/Mac developer installation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-From the directory containing this README:
+From the directory containing this README::
 
-::
-
-    pip install --user -e .
+    pip3 install --user -e .
 
 which installs an *editable* (``-e``) version of galore in your
-userspace. The executable program ``galore`` goes to a directory like
-``~/.local/bin`` and the galore library should be available on your
-Pythonpath. These are links to this project folder, which you can
-continue to edit and update using Git.
+userspace. The executable program ``galore`` goes to a user directory
+like ``~/.local/bin`` (which may need to be added to your PATH) and
+the galore library should be available on your PYTHONPATH. These are
+links to the project source folder, which you can continue to edit and
+update using Git.
 
 Installation for documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you need to build the documentation you can add ``[docs]`` to the
 pip command to ensure you have all the Sphinx requirements and
-extensions.
+extensions::
 
-::
-
-   pip install --upgrade .[docs]
+   pip3 install --upgrade .[docs]
 
 Development
 -----------
 
 This code is developed by the Scanlon Materials Theory Group based at
-University College London. As a result, development prioritises the
-needs of this group. Other suggestions and contributions are welcome;
+University College London. Suggestions and contributions are welcome;
 please use the Github issue tracker.
 
 License
