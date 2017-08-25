@@ -45,6 +45,9 @@ def pdos(**kwargs):
     energy_label = None
     pdos_data = OrderedDict()
     for pdos_file in kwargs['input']:
+        if galore.formats.is_xml(pdos_file):
+            pdos_data = galore.formats.read_vasprun_pdos(pdos_file)
+            break
 
         if not os.path.exists(pdos_file):
             raise Exception("Input file {0} does not "
