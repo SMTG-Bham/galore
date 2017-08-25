@@ -187,7 +187,7 @@ def simple_dos(**args):
         raise Exception("Input file {0} does not exist!".format(args['input']))
     if galore.formats.is_doscar(args['input']):
         xy_data = galore.formats.read_doscar(args['input'])
-    elif galore.formats.is_vasprun(args['input']):
+    elif galore.formats.is_xml(args['input']):
         xy_data = galore.formats.read_vasprun_totaldos(args['input'])
     elif galore.formats.is_vasp_raman(args['input']):
         xy_data = galore.formats.read_vasp_raman(args['input'])
