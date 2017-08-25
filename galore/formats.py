@@ -261,7 +261,7 @@ def read_doscar(filename="DOSCAR"):
 
     Returns:
         data (2-tuple): Tuple containing x values and y values as lists
-"""
+    """
     with open(filename, 'r') as f:
         # Scroll to line 6 which contains NEDOS
         for i in range(5):
@@ -288,6 +288,49 @@ def read_doscar(filename="DOSCAR"):
             [_tdos_from_line(f.readline().split()) for i in range(nedos - 1)])
 
         return np.array(dos_pairs)
+
+
+def read_vasprun(filename='vasprun.xml'):
+    """Read a vasprun.xml file to obtain the density of states
+
+    Pymatgen must be present on the system to use this method
+
+    Args:
+        filename (str): Path to vasprun.xml file
+
+    Returns:
+        data (pymatgen.electronic_structure.dos.Dos): A pymatgen Dos object
+    """
+    try:
+        from pymatgen.io.vasp.outputs import Vasprun
+        from pymatgen.electronic_structure.core import Spin
+    except ImportError:
+        raise Exception("pymatgen package neccessary to load vasprun files")
+
+    vr = Vasprun(filename)
+    band = vr.get_band_structure()
+    dos = vr.complete_dos
+
+    if band.is_metal():
+        zero_point = vr.efermi
+    else:
+        zero_point = band.get_vbm()['energy']
+
+    # Shift the energies so that the vbm is at 0 eV, also taking into account
+    # any gaussian broadening
+    dos.energies -= zero_point
+    if vr.parameters['ISMEAR'] == 0 or vr.parameters['ISMEAR'] == -1:
+        dos.energies -= vr.parameters['SIGMA']
+
+    # pymatgen includes the spin down channel for SOC calculations, even
+    # though there is no density here. We remove this channel so the
+    # plotting is easier later on.
+    if vr.parameters['LSORBIT']:
+        del dos.densities[Spin.down]
+        for site in dos.pdos:
+            for orbital in dos.pdos[site]:
+                del dos.pdos[site][orbital][Spin.down]
+    return dos
 
 
 def read_vasp_raman(filename="vasp_raman.dat"):
