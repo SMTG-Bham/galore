@@ -19,6 +19,12 @@ import io
 
 test_dir = os.path.abspath(os.path.dirname(__file__))
 
+try:
+    import pymatgen
+    has_pymatgen = True
+except ImportError:
+    has_pymatgen = False
+
 
 @contextmanager
 def stdout_redirect():
@@ -134,6 +140,21 @@ class test_io_functions(unittest.TestCase):
                                [6.11920000e-01, 3.80000000e-06]])
         assert_array_equal(galore.formats.read_vasp_raman(raman_path),
                            raman_data)
+
+    @unittest.skipUnless(has_pymatgen, "requires pymatgen")
+    def test_read_vasprun_totaldos(self):
+        vr_path = path_join(test_dir, 'MgO', 'vasprun.xml')
+        data = galore.formats.read_vasprun_totaldos(vr_path)
+        self.assertEqual(data[150, 0], -17.2715)
+        self.assertEqual(data[195, 1], 16.8066)
+
+    @unittest.skipUnless(has_pymatgen, "requires pymatgen")
+    def test_read_vasprun_totaldos(self):
+        vr_path = path_join(test_dir, 'MgO', 'vasprun.xml')
+        pdos = galore.formats.read_vasprun_pdos(vr_path)
+        self.assertEqual(pdos['Mg']['s'][150], 0.053)
+        self.assertEqual(pdos['O']['p'][189], 0.004)
+
 
 txt_test_string = """# Frequency  Value
 0.000000e+00 0.000000e+00
