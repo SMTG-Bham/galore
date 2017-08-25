@@ -291,7 +291,7 @@ def read_doscar(filename="DOSCAR"):
 
 
 def read_vasprun(filename='vasprun.xml'):
-    """Read a vasprun.xml file to obtain the density of states
+    """Read a VASP vasprun.xml file to obtain the density of states
 
     Pymatgen must be present on the system to use this method
 
@@ -322,15 +322,30 @@ def read_vasprun(filename='vasprun.xml'):
     if vr.parameters['ISMEAR'] == 0 or vr.parameters['ISMEAR'] == -1:
         dos.energies -= vr.parameters['SIGMA']
 
-    # pymatgen includes the spin down channel for SOC calculations, even
-    # though there is no density here. We remove this channel so the
-    # plotting is easier later on.
-    if vr.parameters['LSORBIT']:
-        del dos.densities[Spin.down]
-        for site in dos.pdos:
-            for orbital in dos.pdos[site]:
-                del dos.pdos[site][orbital][Spin.down]
     return dos
+
+
+def read_vasprun_totaldos(filename='vasprun.xml'):
+    """Read an x, y series of energies and DOS from a VASP vasprun.xml file
+
+    Args:
+        filename (str): Path to vasprun.xml file
+
+    Returns:
+        data (2-tuple): Tuple containing x values and y values as lists
+    """
+    try:
+        from pymatgen.electronic_structure.core import Spin
+    except ImportError:
+        raise Exception("pymatgen package neccessary to load vasprun files")
+
+    dos = read_vasprun(filename)
+    # sum spin up and spin down channels
+    densitites = dos.densities[Spin.up]
+    if len(dos.densities) > 1:
+        densities += dos.densities[Spin.down]
+
+    return np.array((dos.energies, densities))
 
 
 def read_vasp_raman(filename="vasp_raman.dat"):
