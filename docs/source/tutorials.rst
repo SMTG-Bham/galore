@@ -5,7 +5,7 @@ Simulated IR
 ------------
 
 The first-order infra-red absorption spectrum can be simulated by
-performing lattice dynamics calcululations to obtain the Γ-point
+performing lattice dynamics calculations to obtain the Γ-point
 vibrational mode frequencies. The dielectric response of the system
 determines the relative intensities of the modes, and some will be
 inactive for symmetry reasons.
@@ -46,7 +46,7 @@ To see the full list of command-line arguments you can use ``galore
            :align: center
            :scale: 50%
 
-Admittedly it isn't the most exciting spectrum, with a single peak
+Admittedly, it isn't the most exciting spectrum, with a single peak
 around 280 cm\ `-1`:sup:. Let's make some adjustments: we'll add a
 touch more Gaussian broadening, zoom in on the peak by limiting the
 axis range, add axis labels and write to a file.
@@ -70,7 +70,7 @@ file by simply replacing ``--plot`` with ``--csv``:
 
   galore test/CaF2/ir_lda_700.txt -g 1.2 -l --csv --xmin=200 --xmax=350
 
-will write a csv file to the standard output as no filename was
+This will write a csv file to the standard output as no filename was
 given. We can also write space-separated text data, so for example
 
 .. code-block:: bash
@@ -129,7 +129,7 @@ values; Galore includes some such data from
 In *ab initio* codes it is often possible to assign states to
 particular orbital characters; often this is limited to s-p-d-f
 (i.e. the second quantum number) but in principle an all-electron
-codes can also assign the first quantum number. Directional character
+code can also assign the first quantum number. Directional character
 is also sometimes assigned, usually relative to the crystallographic
 axes. These various schemes are used to construct a "projected density
 of states" (PDOS).
@@ -161,7 +161,7 @@ determined from the column headers in this file.
 Let's turn this into a useful XPS plot. The flag ``--xps`` can be used
 to pass a data file with cross-section data, or defaults to use data
 for Al k-α radiation. It also flips the x-axis to match the usual
-presenation of XPS data as positive ionisation or binding energies
+presentation of XPS data as positive ionisation or binding energies
 rather than the negative energy of the stable electron states. We'll
 also write the data to a CSV file with the ``--csv`` option.
 

@@ -22,6 +22,7 @@ from __future__ import print_function
 import os
 import csv
 import sys
+from collections import OrderedDict
 import numpy as np
 
 
@@ -50,6 +51,11 @@ def is_vasp_raman(filename):
 def is_csv(filename):
     """Determine whether file is CSV by checking extension"""
     return filename.split('.')[-1] == 'csv'
+
+
+def is_xml(filename):
+    """Determine whether file is XML by checking extension"""
+    return filename.split('.')[-1] == 'xml'
 
 
 def write_txt(x_values, y_values, filename="galore_output.txt", header=None):
@@ -256,7 +262,7 @@ def read_doscar(filename="DOSCAR"):
 
     Returns:
         data (2-tuple): Tuple containing x values and y values as lists
-"""
+    """
     with open(filename, 'r') as f:
         # Scroll to line 6 which contains NEDOS
         for i in range(5):
@@ -283,6 +289,97 @@ def read_doscar(filename="DOSCAR"):
             [_tdos_from_line(f.readline().split()) for i in range(nedos - 1)])
 
         return np.array(dos_pairs)
+
+
+def read_vasprun(filename='vasprun.xml'):
+    """Read a VASP vasprun.xml file to obtain the density of states
+
+    Pymatgen must be present on the system to use this method
+
+    Args:
+        filename (str): Path to vasprun.xml file
+
+    Returns:
+        data (pymatgen.electronic_structure.dos.Dos): A pymatgen Dos object
+    """
+    try:
+        from pymatgen.io.vasp.outputs import Vasprun
+        from pymatgen.electronic_structure.core import Spin
+    except ImportError as e:
+        e.msg = "pymatgen package neccessary to load vasprun files"
+        raise
+
+    vr = Vasprun(filename)
+    band = vr.get_band_structure()
+    dos = vr.complete_dos
+
+    if band.is_metal():
+        zero_point = vr.efermi
+    else:
+        zero_point = band.get_vbm()['energy']
+
+    # Shift the energies so that the vbm is at 0 eV, also taking into account
+    # any gaussian broadening
+    dos.energies -= zero_point
+    if vr.parameters['ISMEAR'] == 0 or vr.parameters['ISMEAR'] == -1:
+        dos.energies -= vr.parameters['SIGMA']
+
+    return dos
+
+
+def read_vasprun_totaldos(filename='vasprun.xml'):
+    """Read an x, y series of energies and DOS from a VASP vasprun.xml file
+
+    Pymatgen must be present on the system to use this method
+
+    Args:
+        filename (str): Path to vasprun.xml file
+
+    Returns:
+        data (2-tuple): Tuple containing x values and y values as lists
+    """
+    dos = read_vasprun(filename)
+
+    from pymatgen.electronic_structure.core import Spin
+
+    # sum spin up and spin down channels
+    densities = dos.densities[Spin.up]
+    if len(dos.densities) > 1:
+        densities += dos.densities[Spin.down]
+
+    return np.array(zip(dos.energies, densities))
+
+
+def read_vasprun_pdos(filename='vasprun.xml'):
+    """Read a vasprun.xml containing projected density-of-states (PDOS) data
+
+    Pymatgen must be present on the system to use this method
+
+    Args:
+        filename (str): Path to vasprun.xml file
+
+    Returns:
+        pdos_data (np.ndarray): PDOS data formatted as nestled OrderedDict of:
+            {element: {'energy': energies, 's': densities, 'p' ... }
+    """
+    dos = read_vasprun(filename)
+
+    from pymatgen.electronic_structure.core import Spin, OrbitalType
+
+    pdos_data = OrderedDict()
+    for element in dos.structure.symbol_set:
+        pdos_data[element] = OrderedDict([('energy', dos.energies)])
+        pdos = dos.get_element_spd_dos(element)
+        for orb in sorted([orb.value for orb in pdos.keys()]):
+            # this way we can ensure the orbitals remain in the correct order
+            orbital = OrbitalType(orb)
+            # sum spin up and spin down channels
+            densities = pdos[orbital].densities[Spin.up]
+            if len(dos.densities) > 1:
+                densities += pdos[orbital].densities[Spin.down]
+            pdos_data[element][orbital.name] = densities
+
+    return pdos_data
 
 
 def read_vasp_raman(filename="vasp_raman.dat"):
