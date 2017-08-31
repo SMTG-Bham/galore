@@ -13,6 +13,7 @@ import numpy as np
 
 import galore
 import galore.formats
+import galore.cli
 
 from contextlib import contextmanager
 import io
@@ -40,11 +41,39 @@ def stdout_redirect():
         output.close()
 
 
+class test_dos_functions(unittest.TestCase):
+    def test_simple_dos(self):
+        """Test total DOS / spectrum plotter from CSV data"""
+        ylabel = 'some label'
+        xmin = -3
+        xmax = 220
+        sampling = 1e-1
+        plt = galore.cli.simple_dos(input=['test/test_xy_data.csv'],
+                                    return_plt=True, xmax=xmax, xmin=xmin,
+                                    sampling=sampling,
+                                    lorentzian=2.3, gaussian=3.2,
+                                    csv=False, txt=False, plot=None,
+                                    units='cm-1', ymax=None, ymin=None,
+                                    ylabel=ylabel)
+        fig = plt.gcf()
+        ax = fig.axes[0]
+        self.assertEqual(ax.get_ylabel(), ylabel)
+        self.assertEqual(ax.get_xlabel(), r'cm$^{-1}$')
+        self.assertAlmostEqual(ax.get_xlim()[0], xmin, places=2)
+        self.assertLess(ax.get_xlim()[1], xmax)
+        self.assertGreater(ax.get_xlim()[1], (xmax * 0.99))
+        self.assertEqual(len(ax.lines), 1)
+        xvals, yvals = ax.lines[0].get_xydata().T
+        self.assertAlmostEqual(xvals[5], (xmin + 5 * sampling))
+        self.assertAlmostEqual(yvals[5], 0.0, places=3)
+        self.assertAlmostEqual(yvals[2000], 3.84, places=2)
+
+
 class test_xps_data(unittest.TestCase):
     def test_xps_defaults(self):
         cross_sections = galore.get_default_cross_sections()
-        self.assertEqual(cross_sections["Lr"]["p"], 0.10e-1)
-        self.assertIsNone(cross_sections["H"]["f"])
+        self.assertEqual(cross_sections['Lr']['p'], 0.10e-1)
+        self.assertIsNone(cross_sections['H']['f'])
 
 
 class test_array_functions(unittest.TestCase):

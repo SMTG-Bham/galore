@@ -181,7 +181,16 @@ def pdos(**kwargs):
                                   flipx=kwargs['xps'])
 
 
-def simple_dos(**args):
+def simple_dos(return_plt=False, **args):
+    """Generate a spectrum or DOS over one data series
+
+    In addition to main args documented for CLI
+
+    Args:
+        return_plt (bool): If True, return the pyplot object instead of writing
+            or displaying plot output.
+
+    """
     if len(args['input']) > 1:
         raise ValueError("Simple DOS only uses one input file, "
                          "not list: {0}".format(args['input']))
@@ -247,7 +256,9 @@ def simple_dos(**args):
             plt.gca().set_yticklabels([''])
             if args['ylabel'] is not None:
                 plt.ylabel(args['ylabel'])
-            if args['plot']:
+            if return_plt:
+                return plt
+            elif args['plot']:
                 plt.savefig(args['plot'])
             else:
                 plt.show()
