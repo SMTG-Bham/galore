@@ -107,7 +107,8 @@ def pdos(**kwargs):
             if orbital == 'energy':
                 continue
 
-            xy_data = np.array(zip(el_data['energy'], orb_data))
+            xy_data = np.column_stack([el_data['energy'], orb_data])
+
             pdos_resampled = galore.xy_to_1d(xy_data, x_values)
             broadened_data = pdos_resampled.copy()
 
