@@ -305,8 +305,9 @@ def read_vasprun(filename='vasprun.xml'):
     try:
         from pymatgen.io.vasp.outputs import Vasprun
         from pymatgen.electronic_structure.core import Spin
-    except ImportError:
-        raise Exception("pymatgen package neccessary to load vasprun files")
+    except ImportError as e:
+        e.msg = "pymatgen package neccessary to load vasprun files"
+        raise
 
     vr = Vasprun(filename)
     band = vr.get_band_structure()
