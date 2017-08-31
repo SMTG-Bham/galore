@@ -161,7 +161,7 @@ determined from the column headers in this file.
 Let's turn this into a useful XPS plot. The flag ``--xps`` can be used
 to pass a data file with cross-section data, or defaults to use data
 for Al k-α radiation. It also flips the x-axis to match the usual
-presenation of XPS data as positive ionisation or binding energies
+presentation of XPS data as positive ionisation or binding energies
 rather than the negative energy of the stable electron states. We'll
 also write the data to a CSV file with the ``--csv`` option.
 
