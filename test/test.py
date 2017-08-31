@@ -13,11 +13,18 @@ import numpy as np
 
 import galore
 import galore.formats
+import galore.cli
 
 from contextlib import contextmanager
 import io
 
 test_dir = os.path.abspath(os.path.dirname(__file__))
+
+try:
+    import pymatgen
+    has_pymatgen = True
+except ImportError:
+    has_pymatgen = False
 
 
 @contextmanager
@@ -34,11 +41,39 @@ def stdout_redirect():
         output.close()
 
 
+class test_dos_functions(unittest.TestCase):
+    def test_simple_dos(self):
+        """Test total DOS / spectrum plotter from CSV data"""
+        ylabel = 'some label'
+        xmin = -3
+        xmax = 220
+        sampling = 1e-1
+        plt = galore.cli.simple_dos(input=['test/test_xy_data.csv'],
+                                    return_plt=True, xmax=xmax, xmin=xmin,
+                                    sampling=sampling,
+                                    lorentzian=2.3, gaussian=3.2,
+                                    csv=False, txt=False, plot=None,
+                                    units='cm-1', ymax=None, ymin=None,
+                                    ylabel=ylabel)
+        fig = plt.gcf()
+        ax = fig.axes[0]
+        self.assertEqual(ax.get_ylabel(), ylabel)
+        self.assertEqual(ax.get_xlabel(), r'cm$^{-1}$')
+        self.assertAlmostEqual(ax.get_xlim()[0], xmin, places=2)
+        self.assertLess(ax.get_xlim()[1], xmax)
+        self.assertGreater(ax.get_xlim()[1], (xmax * 0.99))
+        self.assertEqual(len(ax.lines), 1)
+        xvals, yvals = ax.lines[0].get_xydata().T
+        self.assertAlmostEqual(xvals[5], (xmin + 5 * sampling))
+        self.assertAlmostEqual(yvals[5], 0.0, places=3)
+        self.assertAlmostEqual(yvals[2000], 3.84, places=2)
+
+
 class test_xps_data(unittest.TestCase):
     def test_xps_defaults(self):
         cross_sections = galore.get_default_cross_sections()
-        self.assertEqual(cross_sections["Lr"]["p"], 0.10e-1)
-        self.assertIsNone(cross_sections["H"]["f"])
+        self.assertEqual(cross_sections['Lr']['p'], 0.10e-1)
+        self.assertIsNone(cross_sections['H']['f'])
 
 
 class test_array_functions(unittest.TestCase):
@@ -134,6 +169,21 @@ class test_io_functions(unittest.TestCase):
                                [6.11920000e-01, 3.80000000e-06]])
         assert_array_equal(galore.formats.read_vasp_raman(raman_path),
                            raman_data)
+
+    @unittest.skipUnless(has_pymatgen, "requires pymatgen")
+    def test_read_vasprun_totaldos(self):
+        vr_path = path_join(test_dir, 'MgO', 'vasprun.xml')
+        data = galore.formats.read_vasprun_totaldos(vr_path)
+        self.assertEqual(data[150, 0], -17.2715)
+        self.assertEqual(data[195, 1], 16.8066)
+
+    @unittest.skipUnless(has_pymatgen, "requires pymatgen")
+    def test_read_vasprun_totaldos(self):
+        vr_path = path_join(test_dir, 'MgO', 'vasprun.xml')
+        pdos = galore.formats.read_vasprun_pdos(vr_path)
+        self.assertEqual(pdos['Mg']['s'][150], 0.053)
+        self.assertEqual(pdos['O']['p'][189], 0.004)
+
 
 txt_test_string = """# Frequency  Value
 0.000000e+00 0.000000e+00
