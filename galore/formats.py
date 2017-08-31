@@ -55,7 +55,10 @@ def is_csv(filename):
 
 def is_xml(filename):
     """Determine whether file is XML by checking extension"""
-    return filename.split('.')[-1] == 'xml'
+    if filename.split('.')[-1] == 'gz':
+        return filename.split('.')[-2] == 'xml'
+    else:
+        return filename.split('.')[-1] == 'xml'
 
 
 def write_txt(x_values, y_values, filename="galore_output.txt", header=None):
