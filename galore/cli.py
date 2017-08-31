@@ -274,7 +274,8 @@ def run(**args):
 def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'input', type=str, default='DOSCAR', nargs='+', help='Input data file')
+        'input', type=str, default='vasprun.xml', nargs='+',
+        help='Input data file')
     parser.add_argument(
         '-l',
         '--lorentzian',
