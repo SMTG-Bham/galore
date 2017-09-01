@@ -203,9 +203,10 @@ We have digitised the experimental data plotted in Fig.3 of
 `Farahani et al. (2014) <https://doi.org/10.1103/PhysRevB.90.155413>`__
 in order to aid a direct comparison::
 
-  galore test/SnO2/vasprun.xml.gz --plot -g 0.1 -l 0.3 \
-    --pdos --xps --xmin -2 --xmax 14 \
-    --overlay test/SnO2/xps_data.csv  --overlay_offset -4
+  galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.3 \
+    --pdos --xps --xmin -2 --xmax 10 \
+    --overlay test/SnO2/xps_data.csv  --overlay_offset -4 \
+    --overlay_scale 120 --units ev --ylabel Intensity
 
 As in the paper, the experimental results have been automatically
 scaled to the top of the peak. The general character and peak
