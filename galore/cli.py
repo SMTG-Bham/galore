@@ -144,6 +144,14 @@ def pdos(**kwargs):
                                     flipx=kwargs['xps'],  # Assume xflip wanted
                                     **kwargs)
 
+        if kwargs['overlay'] is not None:
+            plt = galore.plot.add_overlay(plt, kwargs['overlay'],
+                overlay_offset=kwargs['overlay_offset'],
+                overlay_scale=kwargs['overlay_scale'],
+                overlay_style=kwargs['overlay_style'],
+                overlay_label=kwargs['overlay_label'])
+            plt.legend(loc='best')
+
         if kwargs['units'] and kwargs['units'].lower() in unit_labels:
             unit_label = unit_labels[kwargs['units'].lower()]
         else:
@@ -363,6 +371,22 @@ def get_parser():
         '--ymin', type=float, default=0, help='Minimum y axis value')
     parser.add_argument(
         '--ymax', type=float, default=None, help='Maximum y axis value')
+    parser.add_argument(
+        '--overlay', type=str, default=None, help='Data file for overlay')
+    parser.add_argument(
+        '--overlay_scale', type=float, default=None,
+        help='Y-axis scale factor for data overlay')
+    parser.add_argument(
+        '--overlay_offset', type=float, default=0,
+        help='X-axis offset for data overlay')
+    parser.add_argument(
+        '--overlay_style', type=str, default='o',
+        help='Matplotlib line style for overlay data. Default "o" for '
+             'circles, "x:" for crosses joined by dotted lines, etc.')
+    parser.add_argument(
+        '--overlay_label', type=str, default=None,
+        help='Legend label for data overlay'
+        )
 
     return parser
 

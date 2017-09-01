@@ -1,14 +1,60 @@
 """Plotting routines with Matplotlib"""
-import numpy as np
-from matplotlib import pyplot as plt
+from __future__ import division
+
+from os.path import basename as path_basename
 from itertools import cycle
 from six import itervalues
+
+import numpy as np
+from matplotlib import pyplot as plt
+
 from galore import auto_limits
+import galore.formats
 
 unit_labels = {'cm': r'cm$^{-1}$',
                'cm-1': r'cm$^{-1}$',
                'thz': 'THz',
                'ev': 'eV'}
+
+def add_overlay(plt, overlay, overlay_scale=None, overlay_offset=0.,
+                overlay_style='o', overlay_label=None):
+    """Overlay data points from file over existing plot
+
+    Args:
+        plt (matplotlib.pyplot): Pyplot object with target figure/axes active
+        overlay (str): Path to overlay data file
+        overlay_scale (float): y-axis scale factor for overlay data. If None,
+            scale to match maximum and print this value.
+        overlay_offset (float): x-xaxis offset for overlay data
+        overlay_style (str): Matplotlib short code for marker/line style
+        overlay_label (str): Legend label for data overlay (default: filename)
+
+    """
+
+    if galore.formats.is_csv(overlay):
+        xy_data = galore.formats.read_csv(overlay)
+    else:
+        xy_data = galore.formats.read_txt(overlay)
+
+    ax = plt.gca()
+    if overlay_scale is None:
+        ymax = np.max(xy_data[:,1])        
+        lines = ax.lines
+        ymax_plot = max(max(line.get_xydata()[:,1]) for line in lines)
+
+        overlay_scale = ymax_plot / ymax
+        print("Scaling overlay intensity by {0}".format(overlay_scale))
+
+    if overlay_label is None:
+        overlay_label = path_basename(overlay)
+
+    plt.plot(xy_data[:, 0] + overlay_offset,
+             xy_data[:, 1] * overlay_scale,
+             overlay_style,
+             label=overlay_label)
+
+    return plt
+
 
 def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
     """Plot a projected density of states (PDOS)

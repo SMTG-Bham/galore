@@ -180,3 +180,40 @@ also write the data to a CSV file with the ``--csv`` option.
 Plotting the CSV file with a standard plotting package should give a
 similar result to the figure above; if not, please report this as a
 bug!
+
+Compare with literature: tin dioxide
+------------------------------------
+
+Sample VASP output data is included for rutile tin dioxide. This was
+computed with the PBE0 functional, using a 4x4x5 **k**-point mesh and
+700 eV basis-set cutoff.  The structure was optimised to reduce forces
+to below 1E-3 eV Å\ `-1`:sup: using 0.05 eV of Gaussian broadening and
+the DOS was computed on an automatic tetrahedron mesh with Blöchl
+corrections.
+
+XPS
+^^^
+
+.. image:: figures/sno2_xps_data.png
+           :alt: Simulated XPS for SnO2 overlaid with experimental data
+           :align: center
+           :scale: 50%
+
+We have digitised the experimental data plotted in Fig.3 of
+`Farahani et al. (2014) <https://doi.org/10.1103/PhysRevB.90.155413>`__
+in order to aid a direct comparison::
+
+  galore test/SnO2/vasprun.xml.gz --plot -g 0.1 -l 0.3 \
+    --pdos --xps --xmin -2 --xmax 14 \
+    --overlay test/SnO2/xps_data.csv  --overlay_offset -4
+
+As in the paper, the experimental results have been automatically
+scaled to the top of the peak. The general character and peak
+positions match well, but the second peak which aligns with Sn p
+states is a bit weak and gets lost in the Sn d states.
+
+A slightly more generous assignment of 'p' vs 'd' charcter by the
+orbital projection scheme would have made for a better fit! The
+published results seem to fit better despite using similar calculation
+parameters; we can't see if the orbital breakdown is indeed the
+determining factor.
