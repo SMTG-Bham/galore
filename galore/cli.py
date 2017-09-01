@@ -192,6 +192,7 @@ def pdos(**kwargs):
 def simple_dos(return_plt=False, **args):
     """Generate a spectrum or DOS over one data series
 
+    args['input'] can be a string or a list containing one string.
     In addition to main args documented for CLI
 
     Args:
@@ -199,10 +200,13 @@ def simple_dos(return_plt=False, **args):
             or displaying plot output.
 
     """
-    if len(args['input']) > 1:
+    if type(args['input']) == str:
+        pass
+    elif len(args['input']) > 1:
         raise ValueError("Simple DOS only uses one input file, "
                          "not list: {0}".format(args['input']))
-    args['input'] = args['input'][0]
+    else:
+        args['input'] = args['input'][0]
 
     if not os.path.exists(args['input']):
         raise Exception("Input file {0} does not exist!".format(args['input']))

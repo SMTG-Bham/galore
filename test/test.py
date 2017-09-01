@@ -14,6 +14,7 @@ import numpy as np
 import galore
 import galore.formats
 import galore.cli
+import galore.plot
 
 from contextlib import contextmanager
 import io
@@ -48,7 +49,8 @@ class test_dos_functions(unittest.TestCase):
         xmin = -3
         xmax = 220
         sampling = 1e-1
-        plt = galore.cli.simple_dos(input=['test/test_xy_data.csv'],
+        plt = galore.cli.simple_dos(input=path_join(test_dir,
+                                                    'test_xy_data.csv'),
                                     return_plt=True, xmax=xmax, xmin=xmin,
                                     sampling=sampling,
                                     lorentzian=2.3, gaussian=3.2,
@@ -68,6 +70,19 @@ class test_dos_functions(unittest.TestCase):
         self.assertAlmostEqual(yvals[5], 0.0, places=3)
         self.assertAlmostEqual(yvals[2000], 3.84, places=2)
 
+    def test_overlay(self):
+        import matplotlib.pyplot as plt
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        galore.plot.add_overlay(plt, path_join(test_dir, 'test_xy_data.csv'),
+                                overlay_scale=2, overlay_offset=1,
+                                overlay_style="x:", overlay_label="foo")
+        ax = plt.gca()
+        line = ax.lines[0]
+        xy = line.get_xydata()
+        self.assertEqual(xy[3,0], 201)
+        self.assertEqual(xy[3,1], 0.6)
+        self.assertEqual(xy.shape, (8, 2))
 
 class test_xps_data(unittest.TestCase):
     def test_xps_defaults(self):
@@ -172,14 +187,14 @@ class test_io_functions(unittest.TestCase):
 
     @unittest.skipUnless(has_pymatgen, "requires pymatgen")
     def test_read_vasprun_totaldos(self):
-        vr_path = path_join(test_dir, 'MgO', 'vasprun.xml')
+        vr_path = path_join(test_dir, 'MgO', 'vasprun.xml.gz')
         data = galore.formats.read_vasprun_totaldos(vr_path)
         self.assertEqual(data[150, 0], -17.2715)
         self.assertEqual(data[195, 1], 16.8066)
 
     @unittest.skipUnless(has_pymatgen, "requires pymatgen")
-    def test_read_vasprun_totaldos(self):
-        vr_path = path_join(test_dir, 'MgO', 'vasprun.xml')
+    def test_read_vasprun_pdos(self):
+        vr_path = path_join(test_dir, 'MgO', 'vasprun.xml.gz')
         pdos = galore.formats.read_vasprun_pdos(vr_path)
         self.assertEqual(pdos['Mg']['s'][150], 0.053)
         self.assertEqual(pdos['O']['p'][189], 0.004)

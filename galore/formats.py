@@ -350,7 +350,7 @@ def read_vasprun_totaldos(filename='vasprun.xml'):
     if len(dos.densities) > 1:
         densities += dos.densities[Spin.down]
 
-    return np.array(zip(dos.energies, densities))
+    return np.array(list(zip(dos.energies, densities)))
 
 
 def read_vasprun_pdos(filename='vasprun.xml'):
