@@ -147,7 +147,9 @@ def get_cross_sections(weighting):
     weighting_files = {'xps': resource_filename(
                            __name__, "data/cross_sections.json"),
                        'ups': resource_filename(
-                           __name__, "data/cross_sections_ups.json")}
+                           __name__, "data/cross_sections_ups.json"),
+                        'haxpes': resource_filename(
+                            __name__, "data/cross_sections_haxpes.json")}
 
     if weighting.lower() in weighting_files:
         with open(weighting_files[weighting.lower()], 'r') as f:

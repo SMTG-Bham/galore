@@ -1,4 +1,4 @@
 include test/test*.py
-include galore/data/cross_sections.json
+recursive-include galore/data cross_sections.json cross_sections_ups.json cross_sections_haxpes.json
 include test/DOSCAR.1 test/test_xy_data.csv
 recursive-include test/MgO MgO_Mg_dos.dat MgO_O_dos.dat

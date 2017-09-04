@@ -158,19 +158,20 @@ input files. The element identity is read from these filenames, and is
 expected between two underscore characters. The orbital names are
 determined from the column headers in this file.
 
-Let's turn this into a useful XPS plot. The flag ``--xps`` can be used
-to pass a data file with cross-section data, or defaults to use data
-for Al k-α radiation. It also flips the x-axis to match the usual
-presentation of XPS data as positive ionisation or binding energies
-rather than the negative energy of the stable electron states. We'll
-also write the data to a CSV file with the ``--csv`` option.
+Let's turn this into a useful XPS plot. The flag ``--weightings`` can
+be used to pass a data file with cross-section data, but data for Al
+k-α radiation is built into Galore. We also flip the x-axis with
+``--flipx`` to match the usual presentation of XPS data as positive
+ionisation or binding energies rather than the negative energy of the
+stable electron states. We'll also write the data to a CSV file with
+the ``--csv`` option.
 
 .. code-block:: bash
 
     galore test/MgO/MgO_Mg_dos.dat test/MgO/MgO_O_dos.dat \
-      --plot mgo_xps.png --pdos -g 0.2 -l 0.2 --xps \
+      --plot mgo_xps.png --pdos -g 0.2 -l 0.2 --weighting xps \
       --units ev --xmin -1 --xmax 8 --ylabel Intensity \
-      --csv mgo_xps.csv
+      --csv mgo_xps.csv --flipx
 
 .. image:: figures/mgo_xps.png
            :alt: Simulated XPS for MgO
@@ -189,7 +190,11 @@ computed with the PBE0 functional, using a 4x4x5 **k**-point mesh and
 700 eV basis-set cutoff.  The structure was optimised to reduce forces
 to below 1E-3 eV Å\ `-1`:sup: using 0.05 eV of Gaussian broadening and
 the DOS was computed on an automatic tetrahedron mesh with Blöchl
-corrections.
+corrections. Instead of the separate .dat files used above, we will
+take advantage of Galore's ability to read a compressed *vasprun.xml*
+file directly. This requires the Pymatgen library to be installed::
+
+  pip3 install --user pymatgen
 
 XPS
 ^^^
@@ -204,17 +209,67 @@ We have digitised the experimental data plotted in Fig.3 of
 in order to aid a direct comparison::
 
   galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.3 \
-    --pdos --xps --xmin -2 --xmax 10 \
+    --pdos --w XPS --flipx --xmin -2 --xmax 10 \
     --overlay test/SnO2/xps_data.csv  --overlay_offset -4 \
     --overlay_scale 120 --units ev --ylabel Intensity
 
-As in the paper, the experimental results have been automatically
-scaled to the top of the peak. The general character and peak
-positions match well, but the second peak which aligns with Sn p
-states is a bit weak and gets lost in the Sn d states.
+(Note that here the shorter alias ``-w`` is used for the XPS
+weighting.)  As in the paper, the experimental results have been
+automatically scaled to the top of the peak. The general character and
+peak positions match well, but the relative peak intensities could be
+closer; the second peak which aligns with Sn p states is a bit weak
+and gets lost in the Sn d states.
 
-A slightly more generous assignment of 'p' vs 'd' charcter by the
+A slightly more generous assignment of 'p' vs 'd' character by the
 orbital projection scheme would have made for a better fit! The
 published results seem to fit better despite using similar calculation
 parameters; we can't see if the orbital breakdown is indeed the
 determining factor.
+
+UPS
+^^^
+
+.. image:: figures/sno2_ups_data.png
+           :alt: Simulated XPS for SnO2 overlaid with experimental data
+           :align: center
+           :scale: 50%
+
+Experimental UPS data was digitized from Fig. 1 of `Themlin et
+al. (1990) <https://doi.org/10.1103/PhysRevB.42.11914>`__. A
+satisfactory fit is obtained for the three main peaks, but the "bump" below
+zero suggests the presence of some phenomenon in the bandgap which was
+not captured by the *ab initio* calculation::
+
+  galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.3 \
+    --pdos --w XPS --flipx --xmin -2 --xmax 10 \
+    --overlay test/SnO2/xps_data.csv  --overlay_offset -4 \
+    --overlay_scale 120 --units ev --ylabel Intensity
+
+The authors noted this in their own comparison to a DOS from
+tight-binding calculations:
+
+  The location of the VBM in out UPS data was complicated by the
+  presence of a slowly varying photoelectron signal, resulting from a
+  surface-state band.
+
+HAXPES
+^^^^^^
+
+.. image:: figures/sno2_haxpes_data.png
+           :alt: Simulated XPS for SnO2 overlaid with experimental data
+           :align: center
+           :scale: 50%
+
+A HAXPES spectrum was obtained by digitizing Fig. 1 of `Nagata et
+al. (2011) <https://doi.org/10.1063/1.3596449>`__. These experiments
+were performed with 5.95 keV x-rays, while the weighting parameters
+from Yeh and Lindau are for 8.05 keV so an exact match is unlikely::
+
+   galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.5 --pdos \
+     --w haxpes --flipx --xmin -2 --xmax 10 \
+     --overlay test/SnO2/haxpes_data.csv --overlay_offset -4 \
+     --ylabel Intensity --overlay_style -
+
+We see that the weighting goes some way to rebalancing the peak
+intensities but once again the Sn-d states are over-represented.
+Surface states above the valence band are also seen again.
