@@ -3,7 +3,8 @@
 #                                                                             #
 # GALORE: Gaussian and Lorentzian broadening for simulated spectra            #
 #                                                                             #
-# Developed by Adam J. Jackson (2016) at University College London            #
+# Developed by Adam J. Jackson and Alex Ganose                                #
+# at University College London (2017)                                         #
 #                                                                             #
 ###############################################################################
 #                                                                             #
@@ -30,7 +31,6 @@ import numpy as np
 import galore
 import galore.formats
 import galore.plot
-from galore.plot import unit_labels
 from galore import auto_limits
 
 try:
@@ -47,6 +47,7 @@ def pdos(**kwargs):
     for pdos_file in kwargs['input']:
         if galore.formats.is_xml(pdos_file):
             pdos_data = galore.formats.read_vasprun_pdos(pdos_file)
+            kwargs['units'] = 'eV'
             break
 
         if not os.path.exists(pdos_file):
@@ -81,8 +82,8 @@ def pdos(**kwargs):
                                   for orbital in orbital_labels))
 
     # Work out sampling details; 5% pad added to data if no limits specified
-    # In XPS mode, the user specifies these as binding energies so values are
-    # reversed while treating DOS data.
+    # In x-flip mode, the user specifies these as binding energies so values
+    # are reversed while treating DOS data.
     d = kwargs['sampling']
     limits = (auto_limits(data['energy'], padding=0.05)
               for (element, data) in pdos_data.items())
@@ -94,7 +95,7 @@ def pdos(**kwargs):
     if kwargs['xmin'] is None:
         kwargs['xmin'] = min(xmins)
 
-    if kwargs['xps']:
+    if kwargs['flipx']:
         kwargs['xmin'], kwargs['xmax'] = -kwargs['xmax'], -kwargs['xmin']
 
     x_values = np.arange(kwargs['xmin'], kwargs['xmax'], d)
@@ -124,47 +125,30 @@ def pdos(**kwargs):
 
             pdos_plotting_data[element][orbital] = broadened_data
 
-    if kwargs['xps']:
-        if type(kwargs['xps']) is bool:
-            cross_sections = None
-        elif type(kwargs['xps']) is str:
-            if not os.path.exists(kwargs['xps']):
-                raise Exception("Cross-sections file {0} does not "
-                                "exist!".format(kwargs['xps']))
-            with open(kwargs['xps'], 'r') as f:
-                cross_sections = json_load(f)
+    if kwargs['weighting']:
+        cross_sections = galore.get_cross_sections(kwargs['weighting'])
 
-        pdos_plotting_data = galore.apply_xps_weights(
-            pdos_plotting_data, cross_sections=cross_sections)
+        pdos_plotting_data = galore.apply_orbital_weights(
+            pdos_plotting_data, cross_sections)
 
     # For plotting and writing, "None" means "write to screen"
     # while False means "do nothing"
     if kwargs['plot'] or kwargs['plot'] is None:
         plt = galore.plot.plot_pdos(pdos_plotting_data,
-                                    flipx=kwargs['xps'],  # Assume xflip wanted
-                                    **kwargs)
+                                    **kwargs)  # flipx is included in kwargs
 
         if kwargs['overlay'] is not None:
-            plt = galore.plot.add_overlay(plt, kwargs['overlay'],
+            plt = galore.plot.add_overlay(
+                plt, kwargs['overlay'],
                 overlay_offset=kwargs['overlay_offset'],
                 overlay_scale=kwargs['overlay_scale'],
                 overlay_style=kwargs['overlay_style'],
                 overlay_label=kwargs['overlay_label'])
             plt.legend(loc='best')
 
-        if kwargs['units'] and kwargs['units'].lower() in unit_labels:
-            unit_label = unit_labels[kwargs['units'].lower()]
-        else:
-            unit_label = kwargs['units']
-
-        if kwargs['xps'] and kwargs['units']:
-            xlabel = "Binding energy / " + unit_label
-        elif kwargs['xps']:
-            xlabel = "Binding energy"
-        elif kwargs['units']:
-            xlabel = energy_label + " / " + unit_label
-        else:
-            xlabel = energy_label
+        xlabel = galore.plot.guess_xlabel(units=kwargs['units'],
+                                          flipx=kwargs['flipx'],
+                                          energy_label=energy_label)
         plt.xlabel(xlabel)
 
         plt.gca().set_yticklabels([''])
@@ -180,13 +164,13 @@ def pdos(**kwargs):
         galore.formats.write_pdos(pdos_plotting_data,
                                   filename=kwargs['csv'],
                                   filetype='csv',
-                                  flipx=kwargs['xps'])
+                                  flipx=kwargs['flipx'])
 
     if kwargs['txt'] or kwargs['txt'] is None:
         galore.formats.write_pdos(pdos_plotting_data,
                                   filename=kwargs['txt'],
                                   filetype='txt',
-                                  flipx=kwargs['xps'])
+                                  flipx=kwargs['flipx'])
 
 
 def simple_dos(return_plt=False, **args):
@@ -316,19 +300,20 @@ def get_parser():
         type=float,
         help='Apply Gaussian broadening with specified width.')
     parser.add_argument(
-        '--xps',
-        nargs='?',
+        '-w', '--weighting',
+        type=str,
         default=None,
-        const=True,
-        help="Apply XPS cross-section weighting to data. Optionally, "
-              "provide JSON file with cross-section data; otherwise defaults "
-              "are used.")
+        help='Apply cross-section weighting to data. "XPS", "UPS" and "HAXPES"'
+             'select tabulated data for valence band at 1486.6 eV, 40.8 eV '
+             'and (HAXPES) respectively. Alternatively, provide path to a '
+             'JSON file with cross-section data.')
     parser.add_argument(
         '--units',
         '--x_units',
         type=str,
         default='',
-        choices=('cm', 'cm-1', 'thz', 'THz', 'ev', 'eV'),
+        choices=('cm', 'cm-1', 'thz', 'THz',
+                 'ev', 'eV', 'ry', 'Ry', 'ha', 'Ha'),
         help='Units for x axis (usually frequency or energy)')
     parser.add_argument(
         '--ylabel',
@@ -340,15 +325,15 @@ def get_parser():
         nargs='?',
         default=False,
         const=None,
-        help="Write broadened output as space-delimited text; file if path "
-        "provided, otherwise write to standard output.")
+        help='Write broadened output as space-delimited text; file if path '
+             'provided, otherwise write to standard output.')
     parser.add_argument(
         '--csv',
         nargs='?',
         default=False,
         const=None,
-        help="Write broadened output as comma-separated values; file if path "
-        "provided, otherwise write to standard output.")
+        help='Write broadened output as comma-separated values; file if path '
+             'provided, otherwise write to standard output.')
     parser.add_argument(
         '-p',
         '--plot',
@@ -356,7 +341,7 @@ def get_parser():
         default=False,
         const=None,
         help='Plot broadened spectrum. Plot to filename if provided,'
-        ' otherwise display to screen.')
+             ' otherwise display to screen.')
     parser.add_argument(
         '-d',
         '--sampling',
@@ -367,6 +352,10 @@ def get_parser():
              'default value is 1e-2.')
     parser.add_argument(
         '--pdos', action="store_true", help='Use orbital-projected data')
+    parser.add_argument(
+        '--flipx', '--xflip', action="store_true",
+        help='Negate x-values in output; this may be helpful for comparison '
+             'with binding energy measurments.')
     parser.add_argument(
         '--xmin', type=float, default=None, help='Minimum x axis value')
     parser.add_argument(

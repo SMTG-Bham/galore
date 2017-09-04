@@ -56,7 +56,8 @@ class test_dos_functions(unittest.TestCase):
                                     lorentzian=2.3, gaussian=3.2,
                                     csv=False, txt=False, plot=None,
                                     units='cm-1', ymax=None, ymin=None,
-                                    ylabel=ylabel)
+                                    ylabel=ylabel,
+                                    flipx=False)
         fig = plt.gcf()
         ax = fig.axes[0]
         self.assertEqual(ax.get_ylabel(), ylabel)
@@ -80,13 +81,14 @@ class test_dos_functions(unittest.TestCase):
         ax = plt.gca()
         line = ax.lines[0]
         xy = line.get_xydata()
-        self.assertEqual(xy[3,0], 201)
-        self.assertEqual(xy[3,1], 0.6)
+        self.assertEqual(xy[3, 0], 201)
+        self.assertEqual(xy[3, 1], 0.6)
         self.assertEqual(xy.shape, (8, 2))
+
 
 class test_xps_data(unittest.TestCase):
     def test_xps_defaults(self):
-        cross_sections = galore.get_default_cross_sections()
+        cross_sections = galore.get_cross_sections('xps')
         self.assertEqual(cross_sections['Lr']['p'], 0.10e-1)
         self.assertIsNone(cross_sections['H']['f'])
 

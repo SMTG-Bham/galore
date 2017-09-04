@@ -11,10 +11,44 @@ from matplotlib import pyplot as plt
 from galore import auto_limits
 import galore.formats
 
-unit_labels = {'cm': r'cm$^{-1}$',
-               'cm-1': r'cm$^{-1}$',
-               'thz': 'THz',
-               'ev': 'eV'}
+_unit_labels = {'cm': r'cm$^{-1}$',
+                'cm-1': r'cm$^{-1}$',
+                'thz': 'THz',
+                'ev': 'eV',
+                'ry': 'Ry',
+                'ha': 'Ha'}
+_energy_units = ('ev', 'ry', 'ha')
+_frequency_units = ('cm', 'cm-1', 'thz')
+
+
+def guess_xlabel(units=None, flipx=None, energy_label=None):
+    """Infer a decent x-xaxis label from available information
+
+    Args:
+        units (str): Energy or frequency unit string
+        flipx (bool): Is energy scale negated to form binding energy
+        energy_label (str): Header from .dat file if used"""
+
+    if units and units.lower() in _unit_labels:
+        unit_label = _unit_labels[units.lower()]
+    else:
+        unit_label = units
+
+    if flipx and units.lower() in _energy_units:
+        xlabel = "Binding energy / " + unit_label
+    elif flipx and units:
+        xlabel = "-" + energy_label + " / " + unit_label
+    elif flipx:
+        xlabel = "Binding energy"
+    elif units and energy_label is not None:
+        xlabel = energy_label + " / " + unit_label
+    elif units:
+        xlabel = unit_label
+    else:
+        xlabel = None
+
+    return xlabel
+
 
 def add_overlay(plt, overlay, overlay_scale=None, overlay_offset=0.,
                 overlay_style='o', overlay_label=None):
@@ -38,9 +72,9 @@ def add_overlay(plt, overlay, overlay_scale=None, overlay_offset=0.,
 
     ax = plt.gca()
     if overlay_scale is None:
-        ymax = np.max(xy_data[:,1])        
+        ymax = np.max(xy_data[:, 1])
         lines = ax.lines
-        ymax_plot = max(max(line.get_xydata()[:,1]) for line in lines)
+        ymax_plot = max(max(line.get_xydata()[:, 1]) for line in lines)
 
         overlay_scale = ymax_plot / ymax
         print("Scaling overlay intensity by {0}".format(overlay_scale))
@@ -61,7 +95,7 @@ def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
 
     Args:
         pdos_data (dict): Data for pdos plot in format::
-            
+
                 {'el1': {'energy': values, 's': values, 'p': values ...},
                  'el2': {'energy': values, 's': values, ...}, ...}
 
@@ -123,8 +157,8 @@ def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
     # been pruned already by kwargs['xmin'] and kwargs['xmax']
     ax.set_xlim([min(x_data), max(x_data)])
 
-    if kwargs['units'] and kwargs['units'].lower() in unit_labels:
-        xlabel = unit_labels[kwargs['units'].lower()]
+    if kwargs['units'] and kwargs['units'].lower() in _unit_labels:
+        xlabel = _unit_labels[kwargs['units'].lower()]
     else:
         xlabel = kwargs['units']
     ax.set_xlabel(xlabel)
@@ -170,13 +204,14 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
 
+    if kwargs['flipx']:
+        xdata = -xdata
+
     ax.plot(xdata, ydata, 'r-')
     ax.set_xlim([min(xdata), max(xdata)])
 
-    if kwargs['units'] and kwargs['units'].lower() in unit_labels:
-        xlabel = unit_labels[kwargs['units'].lower()]
-    else:
-        xlabel = kwargs['units']
+    xlabel = guess_xlabel(units=kwargs['units'], flipx=kwargs['flipx'])
+
     ax.set_xlabel(xlabel)
 
     if kwargs['ymax'] is None or kwargs['ymin'] is None:
