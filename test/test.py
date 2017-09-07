@@ -89,7 +89,7 @@ class test_dos_functions(unittest.TestCase):
 class test_xps_data(unittest.TestCase):
     def test_xps_defaults(self):
         cross_sections = galore.get_cross_sections('xps')
-        self.assertEqual(cross_sections['Lr']['p'], 0.10e-1)
+        self.assertAlmostEqual(cross_sections['Lr']['p'], 0.0016666666666666668)
         self.assertIsNone(cross_sections['H']['f'])
 
 
