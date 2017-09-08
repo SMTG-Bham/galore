@@ -137,3 +137,23 @@ License
 -------
 
 Galore is made available under the GNU Public License, version 3.
+
+
+Acknowledgements
+----------------
+
+Development work by AJJ took place in the course of research into new
+transparent conducting materials, led by David O. Scanlon and funded
+by EPSRC (project code EP/N01572X/1).  Work by AMG was supported by a
+studentship co-sponsored by the Diamond Light Source at the EPSRC
+Centre for Doctoral Training in Molecular Modelling and Materials
+Science (EP/L01582/1).
+
+We acknowledge useful discussions with Alexei Sokol (who proposed that
+a code such as this would be useful), Katie Inzani, Anna Regoutz and
+Tim Veal. Feature requests and user testing came from Benjamin
+Williamsion, Christopher Savory and Winnie L. Leung.
+
+This would have been much more painful if not for the excellent
+scientific Python ecosystem, and the Python Materials Genome project
+spared us the pain of writing Yet Another Vasp Parser.
