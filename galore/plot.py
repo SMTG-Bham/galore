@@ -45,7 +45,7 @@ def guess_xlabel(units=None, flipx=None, energy_label=None):
     elif units:
         xlabel = unit_label
     else:
-        xlabel = None
+        xlabel = ''
 
     return xlabel
 
