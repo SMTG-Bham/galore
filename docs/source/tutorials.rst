@@ -36,7 +36,7 @@ first. ``-g`` applies Gaussian broadening; here we specify a width of
 specified, the default 2 cm\ `-1`:sup: will be used. This is generally
 a sensible value for optical measurements, but some tuning may be
 needed.  Finally ``--plot`` will cause Galore to print to the screen
-using Matplotlib. (``-p`` can also be used a short form.)
+using Matplotlib. (The abbreviation ``-p`` can also be used.)
 
 To see the full list of command-line arguments you can use ``galore
 -h`` or check the :doc:`cli` section in this manual.
@@ -55,7 +55,7 @@ axis range, add axis labels and write to a file.
 
   galore test/CaF2/ir_lda_700.txt -g 1.2 -l \
     --plot ir_lda_700_better.png \
-    --xmin=200 --xmax=350 --units cm-1 --ylabel Intensity
+    --xmin 200 --xmax 350 --units cm-1 --ylabel Intensity
 
 .. image:: figures/ir_lda_700_better.png
            :alt: IR output plot with adjustments
@@ -68,7 +68,7 @@ file by simply replacing ``--plot`` with ``--csv``:
 
 .. code-block:: bash
 
-  galore test/CaF2/ir_lda_700.txt -g 1.2 -l --csv --xmin=200 --xmax=350
+  galore test/CaF2/ir_lda_700.txt -g 1.2 -l --csv --xmin 200 --xmax 350
 
 This will write a csv file to the standard output as no filename was
 given. We can also write space-separated text data, so for example
@@ -130,8 +130,8 @@ In *ab initio* codes it is often possible to assign states to
 particular orbital characters; often this is limited to s-p-d-f
 (i.e. the second quantum number) but in principle an all-electron
 code can also assign the first quantum number. Directional character
-is also sometimes assigned, usually relative to the crystallographic
-axes. These various schemes are used to construct a "projected density
+is also sometimes assigned, usually relative to Cartesian axes.
+These various schemes are used to construct a "projected density
 of states" (PDOS).
 
 The construction of a PDOS in *ab initio* calculations is slightly
@@ -146,25 +146,27 @@ exchange-correlation functional.
 .. code-block:: bash
 
      galore test/MgO/MgO_Mg_dos.dat test/MgO/MgO_O_dos.dat \
-       --plot --pdos -g 0.2 -l 0.2 --ylabel DOS
+       --plot --pdos -g 0.2 -l 0.2 --ylabel DOS --units eV
 
 .. image:: figures/mgo_pdos_quick.png
            :alt: Quick PDOS plot for MgO
            :align: center
            :scale: 50%
 
-Note that the ``--pdos`` flag is required to interpret the multiple
-input files. The element identity is read from these filenames, and is
-expected between two underscore characters. The orbital names are
-determined from the column headers in this file.
+Note that the ``--pdos`` flag is required to enable the reading of
+orbital-projected input files.  The element identity is read from
+these filenames, and is expected between two underscore
+characters. The orbital names are determined from the column headers
+in this file.
 
 Let's turn this into a useful XPS plot. The flag ``--weightings`` can
-be used to pass a data file with cross-section data, but data for Al
-k-α radiation is built into Galore. We also flip the x-axis with
-``--flipx`` to match the usual presentation of XPS data as positive
-ionisation or binding energies rather than the negative energy of the
-stable electron states. We'll also write the data to a CSV file with
-the ``--csv`` option.
+be used to pass a data file with cross-section data; for some cases
+data is build into Galore. Here we will use the data for Al k-α
+radiation which is denoted ``xps`` is built into Galore.  We also flip
+the x-axis with ``--flipx`` to match the usual presentation of XPS
+data as positive ionisation or binding energies rather than the
+negative energy of the stable electron states. Finally the
+data is written to a CSV file with the ``--csv`` option.
 
 .. code-block:: bash
 
@@ -208,17 +210,17 @@ We have digitised the experimental data plotted in Fig.3 of
 `Farahani et al. (2014) <https://doi.org/10.1103/PhysRevB.90.155413>`__
 in order to aid a direct comparison::
 
-  galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.3 \
+  galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.4 \
     --pdos --w XPS --flipx --xmin -2 --xmax 10 \
     --overlay test/SnO2/xps_data.csv  --overlay_offset -4 \
-    --overlay_scale 120 --units ev --ylabel Intensity
+    --overlay_scale 9 --units ev --ylabel Intensity
 
 (Note that here the shorter alias ``-w`` is used for the XPS
-weighting.)  As in the paper, the experimental results have been
-automatically scaled to the top of the peak. The general character and
-peak positions match well, but the relative peak intensities could be
-closer; the second peak which aligns with Sn p states is a bit weak
-and gets lost in the Sn d states.
+weighting.) The general character and peak positions match well, but
+the relative peak intensities could be closer; the first peak is very
+strong even with cross-section weightings applied. We can see that the
+dip in between the second an third main peak corresponds to a crossing
+point between the contributions of the Sn-s and Sn-d orbitals.
 
 A slightly more generous assignment of 'p' vs 'd' character by the
 orbital projection scheme would have made for a better fit! The
@@ -240,10 +242,10 @@ satisfactory fit is obtained for the three main peaks, but the "bump" below
 zero suggests the presence of some phenomenon in the bandgap which was
 not captured by the *ab initio* calculation::
 
-  galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.3 \
-    --pdos --w XPS --flipx --xmin -2 --xmax 10 \
-    --overlay test/SnO2/xps_data.csv  --overlay_offset -4 \
-    --overlay_scale 120 --units ev --ylabel Intensity
+  galore test/SnO2/vasprun.xml.gz --plot -g 0.5 -l 0.7 \
+    --pdos --w ups --flipx --xmin -2 --xmax 10 \
+    --overlay test/SnO2/ups_data.csv --overlay_offset 0.44 \
+    --units ev --ylabel Intensity --overlay_style x    
 
 The authors noted this in their own comparison to a DOS from
 tight-binding calculations:
@@ -267,7 +269,7 @@ from Yeh and Lindau are for 8.05 keV so an exact match is unlikely::
 
    galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.5 --pdos \
      --w haxpes --flipx --xmin -2 --xmax 10 \
-     --overlay test/SnO2/haxpes_data.csv --overlay_offset -4 \
+     --overlay test/SnO2/haxpes_data.csv --overlay_offset -3.7 \
      --ylabel Intensity --overlay_style -
 
 We see that the weighting goes some way to rebalancing the peak
