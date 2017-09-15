@@ -40,96 +40,41 @@ except ImportError:
     has_matplotlib = False
 
 
-def pdos(**kwargs):
-    # Read files into dict, check for consistency
-    energy_label = None
-    pdos_data = OrderedDict()
-    for pdos_file in kwargs['input']:
-        if galore.formats.is_xml(pdos_file):
-            pdos_data = galore.formats.read_vasprun_pdos(pdos_file)
-            kwargs['units'] = 'eV'
-            break
+def main():
+    parser = get_parser()
+    args = parser.parse_args()
+    args = vars(args)
+    run(**args)
 
-        if not os.path.exists(pdos_file):
-            raise Exception("Input file {0} does not "
-                            "exist!".format(kwargs['input']))
 
-        basename = os.path.basename(pdos_file)
-        try:
-            element = basename.split("_")[-2]
-        except IndexError:
-            raise Exception("Couldn't guess element name from filename. "
-                            "Please format filename as XXX_EL_YYY.EXT"
-                            "Where EL is the element label, and XXX, YYY "
-                            "and EXT are labels of your choice. We recommend"
-                            "SYSTEM_EL_dos.dat")
+def run(**kwargs):
+    if kwargs['sampling']:
+        pass
+    elif kwargs['units'] in ('cm', 'cm-1'):
+        kwargs['sampling'] = 0.1
+    elif kwargs['units'] in ('THz', 'thz'):
+        kwargs['sampling'] = 1e-3
+    elif kwargs['units'] in ('ev', 'eV'):
+        kwargs['sampling'] = 1e-2
+    else:
+        kwargs['sampling'] = 1e-2
 
-        data = galore.formats.read_pdos_txt(pdos_file)
+    if kwargs['pdos']:
+        pdos_from_files(**kwargs)
+    else:
+        simple_dos_from_files(**kwargs)
 
-        if energy_label is None:
-            energy_label = data.dtype.names[0]
-        else:
-            try:
-                assert data.dtype.names[0] == energy_label
-            except AssertionError as error:
-                error.args += ("Energy labels are not consistent "
-                               "between input files",)
-                raise
 
-        orbital_labels = data.dtype.names[1:]
-        pdos_data[element] = OrderedDict([('energy', data[energy_label])])
-        pdos_data[element].update(OrderedDict((orbital, data[orbital])
-                                  for orbital in orbital_labels))
+def pdos_from_files(return_plt=False, **kwargs):
+    """Read input data, process for PDOS before plotting and/or writing
 
-    # Work out sampling details; 5% pad added to data if no limits specified
-    # In x-flip mode, the user specifies these as binding energies so values
-    # are reversed while treating DOS data.
-    d = kwargs['sampling']
-    limits = (auto_limits(data['energy'], padding=0.05)
-              for (element, data) in pdos_data.items())
-    xmins, xmaxes = zip(*limits)
+    Args:
+        return_plt (bool): If True, return the pyplot object instead of writing
+            or displaying plot output.
+        **kwargs: See command reference for full argument list
 
-    if kwargs['xmax'] is None:
-        kwargs['xmax'] = max(xmaxes)
-
-    if kwargs['xmin'] is None:
-        kwargs['xmin'] = min(xmins)
-
-    if kwargs['flipx']:
-        kwargs['xmin'], kwargs['xmax'] = -kwargs['xmax'], -kwargs['xmin']
-
-    x_values = np.arange(kwargs['xmin'], kwargs['xmax'], d)
-
-    # Resample data into new dictionary
-    pdos_plotting_data = OrderedDict()
-    for element, el_data in pdos_data.items():
-        pdos_plotting_data[element] = OrderedDict([('energy', x_values)])
-        for orbital, orb_data in el_data.items():
-            if orbital == 'energy':
-                continue
-
-            xy_data = np.column_stack([el_data['energy'], orb_data])
-
-            pdos_resampled = galore.xy_to_1d(xy_data, x_values)
-            broadened_data = pdos_resampled.copy()
-
-            if kwargs['lorentzian']:
-                broadened_data = galore.broaden(broadened_data, d=d,
-                                                dist='lorentzian',
-                                                width=kwargs['lorentzian'])
-
-            if kwargs['gaussian']:
-                broadened_data = galore.broaden(broadened_data, d=d,
-                                                dist='gaussian',
-                                                width=kwargs['gaussian'])
-
-            pdos_plotting_data[element][orbital] = broadened_data
-
-    if kwargs['weighting']:
-        cross_sections = galore.get_cross_sections(kwargs['weighting'])
-
-        pdos_plotting_data = galore.apply_orbital_weights(
-            pdos_plotting_data, cross_sections)
+    """
+    pdos_plotting_data = galore.process_pdos(**kwargs)
 
     # For plotting and writing, "None" means "write to screen"
     # while False means "do nothing"
@@ -155,7 +100,9 @@ def pdos(**kwargs):
         if kwargs['ylabel'] is not None:
             plt.ylabel(kwargs['ylabel'])
 
-        if kwargs['plot']:
+        if return_plt:
+            return plt
+        elif kwargs['plot']:
             plt.savefig(kwargs['plot'])
         elif kwargs['plot'] is None:
             plt.show()
@@ -173,109 +120,54 @@ def pdos(**kwargs):
                                   flipx=kwargs['flipx'])
 
 
-def simple_dos(return_plt=False, **args):
+def simple_dos_from_files(return_plt=False, **kwargs):
     """Generate a spectrum or DOS over one data series
 
-    args['input'] can be a string or a list containing one string.
-    In addition to main args documented for CLI
+    kwargs['input'] can be a string or a list containing one string.
+    In addition to main kwargs documented for CLI
 
     Args:
         return_plt (bool): If True, return the pyplot object instead of writing
             or displaying plot output.
+        **kwargs: See command reference for full argument list
 
     """
-    if type(args['input']) == str:
-        pass
-    elif len(args['input']) > 1:
-        raise ValueError("Simple DOS only uses one input file, "
-                         "not list: {0}".format(args['input']))
-    else:
-        args['input'] = args['input'][0]
 
-    if not os.path.exists(args['input']):
-        raise Exception("Input file {0} does not exist!".format(args['input']))
-    if galore.formats.is_doscar(args['input']):
-        xy_data = galore.formats.read_doscar(args['input'])
-    elif galore.formats.is_xml(args['input']):
-        xy_data = galore.formats.read_vasprun_totaldos(args['input'])
-    elif galore.formats.is_vasp_raman(args['input']):
-        xy_data = galore.formats.read_vasp_raman(args['input'])
-    elif galore.formats.is_csv(args['input']):
-        xy_data = galore.formats.read_csv(args['input'])
-    else:
-        xy_data = galore.formats.read_txt(args['input'])
+    x_values, broadened_data = galore.process_1d_data(**kwargs)
 
-    # Add 5% to data range if not specified
-    auto_xmin, auto_xmax = auto_limits(xy_data[:, 0], padding=0.05)
-    if args['xmax'] is None:
-        args['xmax'] = auto_xmax
-    if args['xmin'] is None:
-        args['xmin'] = auto_xmin
-
-    d = args['sampling']
-    x_values = np.arange(args['xmin'], args['xmax'], d)
-    data_1d = galore.xy_to_1d(xy_data, x_values)
-
-    broadened_data = data_1d.copy()
-    if args['lorentzian']:
-        broadened_data = galore.broaden(
-            broadened_data, d=d, dist='lorentzian', width=args['lorentzian'])
-
-    if args['gaussian']:
-        broadened_data = galore.broaden(
-            broadened_data, d=d, dist='gaussian', width=args['gaussian'])
-
-    if not any(
-        ((args['csv'] is None), (args['txt'] is None),
-         (args['plot'] is None), args['csv'], args['txt'], args['plot'])):
+    if not any(((kwargs['csv'] is None), (kwargs['txt'] is None),
+                (kwargs['plot'] is None),
+                kwargs['csv'], kwargs['txt'], kwargs['plot'])):
         print("No output selected. Please use at least one of the output "
               "options (CSV, txt, plotting). For usage information, run "
               "galore with -h argument.")
 
-    if args['csv'] is None:
-        galore.formats.write_csv(x_values, broadened_data, filename=None)
-    elif args['csv']:
-        galore.formats.write_csv(
-            x_values, broadened_data, filename=args['csv'])
-
-    if args['txt'] is None:
-        galore.formats.write_txt(x_values, broadened_data, filename=None)
-    elif args['txt']:
-        galore.formats.write_txt(
-            x_values, broadened_data, filename=args['txt'])
-
-    if args['plot'] or args['plot'] is None:
+    if kwargs['plot'] or kwargs['plot'] is None:
         if not has_matplotlib:
             print("Can't plot, no Matplotlib")
         else:
-            plt = galore.plot.plot_tdos(x_values, broadened_data, **args)
+            plt = galore.plot.plot_tdos(x_values, broadened_data, **kwargs)
             plt.gca().set_yticklabels([''])
-            if args['ylabel'] is not None:
-                plt.ylabel(args['ylabel'])
+            if kwargs['ylabel'] is not None:
+                plt.ylabel(kwargs['ylabel'])
             if return_plt:
                 return plt
-            elif args['plot']:
-                plt.savefig(args['plot'])
+            elif kwargs['plot']:
+                plt.savefig(kwargs['plot'])
             else:
                 plt.show()
 
+    if kwargs['csv'] is None:
+        galore.formats.write_csv(x_values, broadened_data, filename=None)
+    elif kwargs['csv']:
+        galore.formats.write_csv(
+            x_values, broadened_data, filename=kwargs['csv'])
 
-def run(**args):
-    if args['sampling']:
-        pass
-    elif args['units'] in ('cm', 'cm-1'):
-        args['sampling'] = 0.1
-    elif args['units'] in ('THz', 'thz'):
-        args['sampling'] = 1e-3
-    elif args['units'] in ('ev', 'eV'):
-        args['sampling'] = 1e-2
-    else:
-        args['sampling'] = 1e-2
-
-    if args['pdos']:
-        pdos(**args)
-    else:
-        simple_dos(**args)
+    if kwargs['txt'] is None:
+        galore.formats.write_txt(x_values, broadened_data, filename=None)
+    elif kwargs['txt']:
+        galore.formats.write_txt(
+            x_values, broadened_data, filename=kwargs['txt'])
 
 
 def get_parser():
@@ -382,14 +274,6 @@ def get_parser():
         )
 
     return parser
-
-
-def main():
-    parser = get_parser()
-    args = parser.parse_args()
-    args = vars(args)
-    run(**args)
-
 
 if __name__ == '__main__':
     main()
