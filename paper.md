@@ -22,6 +22,7 @@ affiliations:
   - name: Dept of Chemistry, University College London, 20 Gordon Street, London WC1H 0AJ, UK
     index: 1
   - name: Diamond Light Source Ltd., Diamond House, Harwell Science and Innovation Campus, Didcot, Oxfordshire OX11 0DE, UK
+    index: 2
 date: September 2017
 bibliography: paper.bib
 ---
@@ -30,9 +31,9 @@ In the analysis of chemical systems, physical measurements are often
 obtained as diffuse _spectra_ where a model system would be occupied
 at discrete levels. In order to compare simulated and measured spectra
 it is commonplace to broaden the model values by convolution with a
-Gaussian-Lorentzian function. Accounting in this way for both the
-genuine bandwidth of physical interactions and for instrumental
-limitations allows for direct comparisons to be made.
+Gaussian-Lorentzian function[@Hills1975, @Grevels1998]. Accounting in
+this way for both the genuine bandwidth of physical interactions and
+for instrumental limitations allows for direct comparisons to be made.
 
 The features of Galore are based on two cases, particularly relevant
 to materials chemistry: vibration spectroscopy and photoemission
@@ -78,8 +79,8 @@ electron is used to determine the "binding energy" which originally
 held it. The names of various PE methods refer to the energy range
 and/or equipment involved:
 - ultraviolet photoelectron spectroscopy (UPS)
-- x-ray photoelectron spectroscopy (XPS)
-- hard x-ray photoelectron spectroscopy (HAXPES, HXPS, HX-PES, ...)
+- X-ray photoelectron spectroscopy (XPS)
+- hard X-ray photoelectron spectroscopy (HAXPES, HXPS, HX-PES, ...)
 
 These methods are not restricted by symmetry in the way vibrational
 spectroscopy is and generate broad spectra related to the electronic
@@ -89,7 +90,7 @@ calculation is ultimately an integral over the occupied states. When
 comparing the computed DOS with a measured PE spectrum it becomes
 clear that the broadening plays a very significant role in
 interpretation, often merging multiple peaks into a single visible
-peak with a different energy value.
+peak with a different energy value [@Veal2015, @Savory2016, @Sathasivam2017].
 
 ## Galore
 
