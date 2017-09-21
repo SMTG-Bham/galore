@@ -289,6 +289,11 @@ manipulate their appearance, rescale them etc.
 Overlaying different amounts of broadening
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. image:: figures/api_dos_gaussian.png
+           :alt: MgO DOS with different degrees of Lorentzian broadening
+           :align: center
+           :scale: 60%
+
 .. literalinclude:: api_demo_dos_broadening.py
    :language: python
    :linenos:
@@ -298,7 +303,7 @@ Plotting different amounts of broadening on tiles
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. image:: figures/api_pdos_lorentz.png
-           :alt: MgO PDOS with different degress of Lorentzian broadening
+           :alt: MgO PDOS with different degrees of Lorentzian broadening
            :align: center
            :scale: 80%
 
@@ -311,9 +316,9 @@ Comparing different photoemission weightings
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. image:: figures/api_demo_weightings.png
-           :alt: MgO PDOS with different degress of Lorentzian broadening
+           :alt: SnO2 PDOS with different XPS weightings
            :align: center
-           :scale: 50%
+           :scale: 60%
 
 .. literalinclude:: api_demo_weightings.py
    :language: python

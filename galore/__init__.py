@@ -58,14 +58,14 @@ def process_1d_data(input=['vasprun.xml'],
 
     Args:
         input (str or 1-list):
-            Input data file. Pass as either a string or a list containing one 
+            Input data file. Pass as either a string or a list containing one
             string
         **kwargs:
             See main command reference
 
     Returns:
         2-tuple (np.ndarray, np.ndarray):
-            Resampled x-values and corresponding broadened data as 1D numpy 
+            Resampled x-values and corresponding broadened data as 1D numpy
             arrays
 
     """
@@ -84,10 +84,10 @@ def process_1d_data(input=['vasprun.xml'],
     if not os.path.exists(input):
         raise Exception(
             "Input file {0} does not exist!".format(input))
-    if galore.formats.is_doscar(input):
-        xy_data = galore.formats.read_doscar(input)
-    elif galore.formats.is_xml(input):
+    if galore.formats.is_xml(input):
         xy_data = galore.formats.read_vasprun_totaldos(input)
+    elif galore.formats.is_doscar(input):
+        xy_data = galore.formats.read_doscar(input)
     elif galore.formats.is_vasp_raman(input):
         xy_data = galore.formats.read_vasp_raman(input)
     elif galore.formats.is_csv(input):
@@ -144,7 +144,7 @@ def process_pdos(input=['vasprun.xml'],
 
     if type(input) is str:
         input = [input]
-        
+
     # Read files into dict, check for consistency
     energy_label = None
     pdos_data = OrderedDict()
@@ -297,10 +297,10 @@ def lorentzian(f, f0=0, fwhm=1):
 def gaussian(f, f0=0, fwhm=1):
     """Gaussian function with height 1 centered on f0
 
-        f (np.array): 1D array of x-values (e.g. frequencies)
-        f0 (float): Origin of function
-        fwhm (float): full-width half-maximum (FWHM);
-            i.e. the width of the function at half its maximum value.
+       f (np.array): 1D array of x-values (e.g. frequencies)
+       f0 (float): Origin of function
+       fwhm (float): full-width half-maximum (FWHM); i.e. the width of the 
+       function at half its maximum value.
 
     """
     c = fwhm / (2 * sqrt(2 * log(2)))
@@ -337,6 +337,7 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     pad_points = int(pad / d)
     broadened_data = np.convolve(broadening, data)
     broadened_data = broadened_data[pad_points:len(data) + pad_points]
+
     return broadened_data
 
 
