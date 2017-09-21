@@ -27,6 +27,7 @@ from collections import OrderedDict
 from pkg_resources import resource_filename
 from json import load as json_load
 
+from math import sqrt, log
 import numpy as np
 
 import galore.formats
@@ -280,13 +281,29 @@ def delta(f1, f2, w=1):
         return 0
 
 
-def lorentzian(f, f0=0, gamma=1):
-    """Lorentzian function with height 1 centered on f0"""
-    return 0.5 * gamma / (np.pi * (f - f0)**2 + (0.5 * gamma)**2)
+def lorentzian(f, f0=0, fwhm=1):
+    """Lorentzian function with height 1 centered on f0.
+
+    Args:
+        f (np.array): 1D array of x-values (e.g. frequencies)
+        f0 (float): Origin of function
+        fwhm (float): full-width half-maximum (FWHM);
+            i.e. the width of the function at half its maximum value.
+
+    """
+    return 0.5 * fwhm / (np.pi * ((f - f0)**2 + (0.5 * fwhm)**2))
 
 
-def gaussian(f, f0=0, c=1):
-    """Gaussian function with height 1 centered on f0"""
+def gaussian(f, f0=0, fwhm=1):
+    """Gaussian function with height 1 centered on f0
+
+        f (np.array): 1D array of x-values (e.g. frequencies)
+        f0 (float): Origin of function
+        fwhm (float): full-width half-maximum (FWHM);
+            i.e. the width of the function at half its maximum value.
+
+    """
+    c = fwhm / (2 * sqrt(2 * log(2)))
     return np.exp(-np.power(f - f0, 2) / (2 * c**2))
 
 
@@ -294,13 +311,13 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     """Given a 1d data set, use convolution to apply a broadening function
 
     Args:
-        data: (np.array) 1D array of data points to broaden
-        dist: (str) Type of distribution used for broadening. Currently only
+        data (np.array): 1D array of data points to broaden
+        dist (str): Type of distribution used for broadening. Currently only
             "Lorentz" is supported.
-        width: (float) Width parameter for broadening function. Units
-            should be consistent with d.
-        pad: (float) Distance sampled on each side of broadening function.
-        d: (float) x-axis distance associated with each sample in 1D data
+        width (float): Width parameter for broadening function. Determines the
+            full-width at half-maximum (FWHM) of the broadening function.
+        pad (float): Distance sampled on each side of broadening function.
+        d (float): x-axis distance associated with each sample in 1D data
 
     """
 
@@ -308,11 +325,11 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
         pad = width * 20
 
     if dist.lower() in ('lorentz', 'lorentzian'):
-        gamma = width
-        broadening = lorentzian(np.arange(-pad, pad, d), f0=0, gamma=gamma)
+        fwhm = width
+        broadening = lorentzian(np.arange(-pad, pad, d), f0=0, fwhm=fwhm)
     elif dist.lower() in ('gauss', 'gaussian'):
-        c = width
-        broadening = gaussian(np.arange(-pad, pad, d), f0=0, c=c)
+        fwhm = width
+        broadening = gaussian(np.arange(-pad, pad, d), f0=0, fwhm=fwhm)
     else:
         raise Exception('Broadening distribution '
                         ' "{0}" not known.'.format(dist))
