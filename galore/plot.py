@@ -1,6 +1,7 @@
 """Plotting routines with Matplotlib"""
 from __future__ import division
 
+from collections import defaultdict
 from os.path import basename as path_basename
 from itertools import cycle
 from six import itervalues
@@ -90,7 +91,8 @@ def add_overlay(plt, overlay, overlay_scale=None, overlay_offset=0.,
     return plt
 
 
-def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
+def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
+              offset=0, flipx=False, **kwargs):
     """Plot a projected density of states (PDOS)
 
     Args:
@@ -105,9 +107,11 @@ def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
             a new figure and axes will be created.
         total (bool): Include total DOS. This is sum over all others.
             Input x-values must be consistent, no further resampling is done.
-        offset (float): Bias x-axis values (e.g. to account for XPS E-Fermi)
+        show_orbitals (bool): Show orbital contributions. If False, they will
+            not be plotted but are still used to calculate the total DOS.
+        offset (float): Bias x-axis values (e.g. to account for XPS E-Fermi),
         flipx (bool): Negate x-axis values to express negative VB energies as
-            positive binding energies
+            positive binding energies.
 
     Returns:
         (matplotlib.pyplot):
@@ -115,6 +119,9 @@ def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
             and axes.
 
         """
+
+    # Any unset kwargs will be seen as None
+    kwargs = defaultdict((lambda : None), **kwargs)
 
     plt.style.use("seaborn-colorblind")
 
@@ -145,9 +152,10 @@ def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
             else:
                 max_y = max(max_y, max(el_data[orbital]))
 
-            ax.plot(x_data, el_data[orbital],
-                    label="{0}: {1}".format(element, orbital),
-                    marker='', linestyle=next(linecycler))
+            if show_orbitals:
+                ax.plot(x_data, el_data[orbital],
+                        label="{0}: {1}".format(element, orbital),
+                        marker='', linestyle=next(linecycler))
 
     if total:
         max_y = max(tdos)
@@ -157,10 +165,9 @@ def plot_pdos(pdos_data, ax=None, total=True, offset=0, flipx=False, **kwargs):
     # been pruned already by kwargs['xmin'] and kwargs['xmax']
     ax.set_xlim([min(x_data), max(x_data)])
 
-    if kwargs['units'] and kwargs['units'].lower() in _unit_labels:
-        xlabel = _unit_labels[kwargs['units'].lower()]
-    else:
-        xlabel = kwargs['units']
+
+    xlabel = guess_xlabel(units=kwargs['units'], flipx=flipx,
+                          energy_label=None)
     ax.set_xlabel(xlabel)
 
     if kwargs['ymax'] is None or kwargs['ymin'] is None:
@@ -195,6 +202,9 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
             and axes.
 
     """
+
+    # Any unset kwargs will be seen as None
+    kwargs = defaultdict((lambda : None), **kwargs)
 
     plt.style.use("seaborn-colorblind")
 

@@ -2,7 +2,8 @@
 #                                                                             #
 # GALORE: Gaussian and Lorentzian broadening for simulated spectra            #
 #                                                                             #
-# Developed by Adam J. Jackson (2016) at University College London            #
+# Developed by Scanlon Materials Theory Group at University College London    #
+# (c) 2017                                                                    #
 #                                                                             #
 ###############################################################################
 #                                                                             #
@@ -124,7 +125,7 @@ def process_pdos(input=['vasprun.xml'],
     """Read PDOS from files, process for output
 
     Args:
-        input (list):
+        input (list or str):
             Files for processing. Vasp output or space-separated files with
                 XXX_EL_YYY.EXT filename pattern where EL is the element label.
                 We recommend SYSTEM_EL_dos.dat
@@ -139,6 +140,10 @@ def process_pdos(input=['vasprun.xml'],
                  'el2': {'energy': values, 's': values, ...}, ...}
 
     """
+
+    if type(input) is str:
+        input = [input]
+        
     # Read files into dict, check for consistency
     energy_label = None
     pdos_data = OrderedDict()
@@ -228,6 +233,8 @@ def process_pdos(input=['vasprun.xml'],
         pdos_plotting_data = galore.apply_orbital_weights(
             pdos_plotting_data, cross_sections)
 
+
+    return pdos_plotting_data
 
 
 def xy_to_1d(xy, x_values):

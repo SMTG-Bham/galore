@@ -93,7 +93,7 @@ def pdos_from_files(return_plt=False, **kwargs):
 
         xlabel = galore.plot.guess_xlabel(units=kwargs['units'],
                                           flipx=kwargs['flipx'],
-                                          energy_label=energy_label)
+                                          energy_label=None)
         plt.xlabel(xlabel)
 
         plt.gca().set_yticklabels([''])

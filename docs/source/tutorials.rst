@@ -275,3 +275,46 @@ from Yeh and Lindau are for 8.05 keV so an exact match is unlikely::
 We see that the weighting goes some way to rebalancing the peak
 intensities but once again the Sn-d states are over-represented.
 Surface states above the valence band are also seen again.
+
+
+Python API
+----------
+
+The Python API allows custom plots to be produced by generating data
+sets Galore's core functions and passing Matplotlib axes to the
+plotting functions. A few examples are provided below. It is not
+especially difficult to access the lines plotted to an axis and
+manipulate their appearance, rescale them etc.
+
+Overlaying different amounts of broadening
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: api_demo_dos_broadening.py
+   :language: python
+   :linenos:
+
+
+Plotting different amounts of broadening on tiles
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: figures/api_pdos_lorentz.png
+           :alt: MgO PDOS with different degress of Lorentzian broadening
+           :align: center
+           :scale: 80%
+
+.. literalinclude:: api_demo_pdos_broadening.py
+   :language: python
+   :linenos:
+
+
+Comparing different photoemission weightings
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: figures/api_demo_weightings.png
+           :alt: MgO PDOS with different degress of Lorentzian broadening
+           :align: center
+           :scale: 50%
+
+.. literalinclude:: api_demo_weightings.py
+   :language: python
+   :linenos:
