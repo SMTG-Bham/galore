@@ -6,7 +6,7 @@ import galore
 import galore.plot
 
 vasprun = './test/MgO/vasprun.xml.gz'
-xmin, xmax = (-4, 6)
+xmin, xmax = (-10, 2)
 
 fig = plt.figure()
 
