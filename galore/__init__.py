@@ -32,6 +32,7 @@ import numpy as np
 
 import galore.formats
 
+
 def auto_limits(data_1d, padding=0.05):
     """Return limiting values outside data range
 
@@ -121,8 +122,7 @@ def process_1d_data(input=['vasprun.xml'],
 def process_pdos(input=['vasprun.xml'],
                  gaussian=None, lorentzian=None,
                  weighting=None, sampling=1e-2,
-                 xmin=None, xmax=None, flipx=False,
-                 **kwargs):
+                 xmin=None, xmax=None, flipx=False, **kwargs):
     """Read PDOS from files, process for output
 
     Args:
@@ -234,7 +234,6 @@ def process_pdos(input=['vasprun.xml'],
         pdos_plotting_data = galore.apply_orbital_weights(
             pdos_plotting_data, cross_sections)
 
-
     return pdos_plotting_data
 
 
@@ -299,7 +298,7 @@ def gaussian(f, f0=0, fwhm=1):
 
        f (np.array): 1D array of x-values (e.g. frequencies)
        f0 (float): Origin of function
-       fwhm (float): full-width half-maximum (FWHM); i.e. the width of the 
+       fwhm (float): full-width half-maximum (FWHM); i.e. the width of the
        function at half its maximum value.
 
     """
@@ -345,11 +344,11 @@ def get_cross_sections(weighting):
     """Interpret input to select weightings data"""
 
     weighting_files = {'xps': resource_filename(
-                           __name__, "data/cross_sections.json"),
+                       __name__, "data/cross_sections.json"),
                        'ups': resource_filename(
                            __name__, "data/cross_sections_ups.json"),
-                        'haxpes': resource_filename(
-                            __name__, "data/cross_sections_haxpes.json")}
+                       'haxpes': resource_filename(
+                           __name__, "data/cross_sections_haxpes.json")}
 
     if weighting.lower() in weighting_files:
         with open(weighting_files[weighting.lower()], 'r') as f:
