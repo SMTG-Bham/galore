@@ -177,7 +177,7 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
         if kwargs['ymin'] is None:
             kwargs['ymin'] = 0
     ax.set_ylim([kwargs['ymin'], kwargs['ymax']])
-
+    ax.set_yticklabels([''])
     ax.legend(loc='best')
 
     return plt
@@ -232,5 +232,6 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
         if kwargs['ymin'] is None:
             kwargs['ymin'] = 0
     ax.set_ylim([kwargs['ymin'], kwargs['ymax']])
+    ax.set_yticklabels([''])
 
     return plt

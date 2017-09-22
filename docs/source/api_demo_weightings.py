@@ -32,9 +32,6 @@ for i, weighting in enumerate(weightings):
     line.set_data(line.get_xdata(), line.get_ydata() / ymax)
 
 ax.set_ylim((0, 1.2))
-ax.set_yticklabels([''])
-
-#fig.tight_layout()
 legend = ax.legend(loc='best')
 legend.set_title('Weighting')
 plt.show()

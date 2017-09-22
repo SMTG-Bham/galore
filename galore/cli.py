@@ -96,7 +96,6 @@ def pdos_from_files(return_plt=False, **kwargs):
                                           energy_label=None)
         plt.xlabel(xlabel)
 
-        plt.gca().set_yticklabels([''])
         if kwargs['ylabel'] is not None:
             plt.ylabel(kwargs['ylabel'])
 
@@ -147,7 +146,6 @@ def simple_dos_from_files(return_plt=False, **kwargs):
             print("Can't plot, no Matplotlib")
         else:
             plt = galore.plot.plot_tdos(x_values, broadened_data, **kwargs)
-            plt.gca().set_yticklabels([''])
             if kwargs['ylabel'] is not None:
                 plt.ylabel(kwargs['ylabel'])
             if return_plt:

@@ -13,7 +13,7 @@ fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 
 widths = np.arange(0, 2.01, 0.4)
-widths[0] = 0.05 # Use a finite width in smallest case
+widths[0] = 0.05  # Use a finite width in smallest case
 
 for g in widths:
 
@@ -21,7 +21,7 @@ for g in widths:
                                                       gaussian=g,
                                                       xmin=xmin, xmax=xmax)
 
-    broadened_data /= g # Scale values by broadening width to conserve area
+    broadened_data /= g  # Scale values by broadening width to conserve area
 
     galore.plot.plot_tdos(x_values, broadened_data, ax=ax)
     line = ax.lines[-1]
@@ -29,7 +29,6 @@ for g in widths:
     line.set_color(cmap(g / max(widths)))
 
 ax.set_ylim(0, 1000)
-ax.set_yticklabels([''])
 legend = ax.legend(loc='best')
 legend.set_title('Gaussian $\gamma$')
 plt.show()
