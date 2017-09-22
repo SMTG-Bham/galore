@@ -2,7 +2,8 @@
 #                                                                             #
 # GALORE: Gaussian and Lorentzian broadening for simulated spectra            #
 #                                                                             #
-# Developed by Adam J. Jackson (2016) at University College London            #
+# Developed by Scanlon Materials Theory Group at University College London    #
+# (c) 2017                                                                    #
 #                                                                             #
 ###############################################################################
 #                                                                             #
@@ -26,7 +27,10 @@ from collections import OrderedDict
 from pkg_resources import resource_filename
 from json import load as json_load
 
+from math import sqrt, log
 import numpy as np
+
+import galore.formats
 
 
 def auto_limits(data_1d, padding=0.05):
@@ -46,13 +50,191 @@ def auto_limits(data_1d, padding=0.05):
     return auto_xmin, auto_xmax
 
 
-def random_raman_xy(max_freq=1000):
-    """Generate some plausible Raman frequencies and intensities
+def process_1d_data(input=['vasprun.xml'],
+                    gaussian=None, lorentzian=None,
+                    sampling=1e-2,
+                    xmin=None, xmax=None,
+                    **kwargs):
+    """Read 1D data series from files, process for output
 
-    For development purposes only!"""
-    raman_sim = np.random.rand(15, 2)
-    raman_sim[:, 0] = raman_sim[:, 0] * max_freq
-    return raman_sim
+    Args:
+        input (str or 1-list):
+            Input data file. Pass as either a string or a list containing one
+            string
+        **kwargs:
+            See main command reference
+
+    Returns:
+        2-tuple (np.ndarray, np.ndarray):
+            Resampled x-values and corresponding broadened data as 1D numpy
+            arrays
+
+    """
+
+    if 'flipx' in kwargs and kwargs['flipx']:
+        raise Exception("x-flip not currently implemented in 1D mode.")
+
+    if type(input) == str:
+        pass
+    elif len(input) > 1:
+        raise ValueError("Simple DOS only uses one input file, "
+                         "not list: {0}".format(input))
+    else:
+        input = input[0]
+
+    if not os.path.exists(input):
+        raise Exception(
+            "Input file {0} does not exist!".format(input))
+    if galore.formats.is_xml(input):
+        xy_data = galore.formats.read_vasprun_totaldos(input)
+    elif galore.formats.is_doscar(input):
+        xy_data = galore.formats.read_doscar(input)
+    elif galore.formats.is_vasp_raman(input):
+        xy_data = galore.formats.read_vasp_raman(input)
+    elif galore.formats.is_csv(input):
+        xy_data = galore.formats.read_csv(input)
+    else:
+        xy_data = galore.formats.read_txt(input)
+
+    # Add 5% to data range if not specified
+    auto_xmin, auto_xmax = auto_limits(xy_data[:, 0], padding=0.05)
+    if xmax is None:
+        xmax = auto_xmax
+    if xmin is None:
+        xmin = auto_xmin
+
+    d = sampling
+    x_values = np.arange(xmin, xmax, d)
+    data_1d = galore.xy_to_1d(xy_data, x_values)
+
+    broadened_data = data_1d.copy()
+    if lorentzian:
+        broadened_data = galore.broaden(
+            broadened_data, d=d, dist='lorentzian', width=lorentzian)
+
+    if gaussian:
+        broadened_data = galore.broaden(
+            broadened_data, d=d, dist='gaussian', width=gaussian)
+
+    return (x_values, broadened_data)
+
+
+def process_pdos(input=['vasprun.xml'],
+                 gaussian=None, lorentzian=None,
+                 weighting=None, sampling=1e-2,
+                 xmin=None, xmax=None, flipx=False, **kwargs):
+    """Read PDOS from files, process for output
+
+    Args:
+        input (list or str):
+            Files for processing. Vasp output or space-separated files with
+                XXX_EL_YYY.EXT filename pattern where EL is the element label.
+                We recommend SYSTEM_EL_dos.dat
+        **kwargs:
+            See main command reference
+
+    Returns:
+        dict:
+            Weighted and resampled orbital data in format::
+
+                {'el1': {'energy': values, 's': values, 'p': values ...},
+                 'el2': {'energy': values, 's': values, ...}, ...}
+
+    """
+
+    if type(input) is str:
+        input = [input]
+
+    # Read files into dict, check for consistency
+    energy_label = None
+    pdos_data = OrderedDict()
+    for pdos_file in input:
+        if galore.formats.is_xml(pdos_file):
+            pdos_data = galore.formats.read_vasprun_pdos(pdos_file)
+            kwargs['units'] = 'eV'
+            break
+
+        if not os.path.exists(pdos_file):
+            raise Exception("Input file {0} does not "
+                            "exist!".format(input))
+
+        basename = os.path.basename(pdos_file)
+        try:
+            element = basename.split("_")[-2]
+        except IndexError:
+            raise Exception("Couldn't guess element name from filename. "
+                            "Please format filename as XXX_EL_YYY.EXT"
+                            "Where EL is the element label, and XXX, YYY "
+                            "and EXT are labels of your choice. We recommend"
+                            "SYSTEM_EL_dos.dat")
+
+        data = galore.formats.read_pdos_txt(pdos_file)
+
+        if energy_label is None:
+            energy_label = data.dtype.names[0]
+        else:
+            try:
+                assert data.dtype.names[0] == energy_label
+            except AssertionError as error:
+                error.args += ("Energy labels are not consistent "
+                               "between input files",)
+                raise
+
+        orbital_labels = data.dtype.names[1:]
+        pdos_data[element] = OrderedDict([('energy', data[energy_label])])
+        pdos_data[element].update(OrderedDict((orbital, data[orbital])
+                                  for orbital in orbital_labels))
+
+    # Work out sampling details; 5% pad added to data if no limits specified
+    # In x-flip mode, the user specifies these as binding energies so values
+    # are reversed while treating DOS data.
+    d = sampling
+    limits = (auto_limits(data['energy'], padding=0.05)
+              for (element, data) in pdos_data.items())
+    xmins, xmaxes = zip(*limits)
+
+    if xmax is None:
+        xmax = max(xmaxes)
+
+    if xmin is None:
+        xmin = min(xmins)
+
+    if flipx:
+        xmin, xmax = -xmax, -xmin
+
+    x_values = np.arange(xmin, xmax, d)
+
+    # Resample data into new dictionary
+    pdos_plotting_data = OrderedDict()
+    for element, el_data in pdos_data.items():
+        pdos_plotting_data[element] = OrderedDict([('energy', x_values)])
+        for orbital, orb_data in el_data.items():
+            if orbital == 'energy':
+                continue
+
+            xy_data = np.column_stack([el_data['energy'], orb_data])
+
+            pdos_resampled = galore.xy_to_1d(xy_data, x_values)
+            broadened_data = pdos_resampled.copy()
+
+            if lorentzian:
+                broadened_data = galore.broaden(broadened_data, d=d,
+                                                dist='lorentzian',
+                                                width=lorentzian)
+
+            if gaussian:
+                broadened_data = galore.broaden(broadened_data, d=d,
+                                                dist='gaussian',
+                                                width=gaussian)
+
+            pdos_plotting_data[element][orbital] = broadened_data
+
+    if weighting:
+        cross_sections = galore.get_cross_sections(weighting)
+        pdos_plotting_data = galore.apply_orbital_weights(
+            pdos_plotting_data, cross_sections)
+
+    return pdos_plotting_data
 
 
 def xy_to_1d(xy, x_values):
@@ -98,13 +280,29 @@ def delta(f1, f2, w=1):
         return 0
 
 
-def lorentzian(f, f0=0, gamma=1):
-    """Lorentzian function with height 1 centered on f0"""
-    return 0.5 * gamma / (np.pi * (f - f0)**2 + (0.5 * gamma)**2)
+def lorentzian(f, f0=0, fwhm=1):
+    """Lorentzian function with height 1 centered on f0.
+
+    Args:
+        f (np.array): 1D array of x-values (e.g. frequencies)
+        f0 (float): Origin of function
+        fwhm (float): full-width half-maximum (FWHM);
+            i.e. the width of the function at half its maximum value.
+
+    """
+    return 0.5 * fwhm / (np.pi * ((f - f0)**2 + (0.5 * fwhm)**2))
 
 
-def gaussian(f, f0=0, c=1):
-    """Gaussian function with height 1 centered on f0"""
+def gaussian(f, f0=0, fwhm=1):
+    """Gaussian function with height 1 centered on f0
+
+       f (np.array): 1D array of x-values (e.g. frequencies)
+       f0 (float): Origin of function
+       fwhm (float): full-width half-maximum (FWHM); i.e. the width of the
+       function at half its maximum value.
+
+    """
+    c = fwhm / (2 * sqrt(2 * log(2)))
     return np.exp(-np.power(f - f0, 2) / (2 * c**2))
 
 
@@ -112,13 +310,13 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     """Given a 1d data set, use convolution to apply a broadening function
 
     Args:
-        data: (np.array) 1D array of data points to broaden
-        dist: (str) Type of distribution used for broadening. Currently only
+        data (np.array): 1D array of data points to broaden
+        dist (str): Type of distribution used for broadening. Currently only
             "Lorentz" is supported.
-        width: (float) Width parameter for broadening function. Units
-            should be consistent with d.
-        pad: (float) Distance sampled on each side of broadening function.
-        d: (float) x-axis distance associated with each sample in 1D data
+        width (float): Width parameter for broadening function. Determines the
+            full-width at half-maximum (FWHM) of the broadening function.
+        pad (float): Distance sampled on each side of broadening function.
+        d (float): x-axis distance associated with each sample in 1D data
 
     """
 
@@ -126,11 +324,11 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
         pad = width * 20
 
     if dist.lower() in ('lorentz', 'lorentzian'):
-        gamma = width
-        broadening = lorentzian(np.arange(-pad, pad, d), f0=0, gamma=gamma)
+        fwhm = width
+        broadening = lorentzian(np.arange(-pad, pad, d), f0=0, fwhm=fwhm)
     elif dist.lower() in ('gauss', 'gaussian'):
-        c = width
-        broadening = gaussian(np.arange(-pad, pad, d), f0=0, c=c)
+        fwhm = width
+        broadening = gaussian(np.arange(-pad, pad, d), f0=0, fwhm=fwhm)
     else:
         raise Exception('Broadening distribution '
                         ' "{0}" not known.'.format(dist))
@@ -138,6 +336,7 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     pad_points = int(pad / d)
     broadened_data = np.convolve(broadening, data)
     broadened_data = broadened_data[pad_points:len(data) + pad_points]
+
     return broadened_data
 
 
@@ -145,11 +344,11 @@ def get_cross_sections(weighting):
     """Interpret input to select weightings data"""
 
     weighting_files = {'xps': resource_filename(
-                           __name__, "data/cross_sections.json"),
+                       __name__, "data/cross_sections.json"),
                        'ups': resource_filename(
                            __name__, "data/cross_sections_ups.json"),
-                        'haxpes': resource_filename(
-                            __name__, "data/cross_sections_haxpes.json")}
+                       'haxpes': resource_filename(
+                           __name__, "data/cross_sections_haxpes.json")}
 
     if weighting.lower() in weighting_files:
         with open(weighting_files[weighting.lower()], 'r') as f:
@@ -223,73 +422,3 @@ def apply_orbital_weights(pdos_data, cross_sections):
         weighted_pdos_data.update({el: weighted_orbitals})
 
     return weighted_pdos_data
-
-
-def main():
-    """For now main() contains a proof-of-concept example with random data.
-
-    This example should be replaced with a useful user interface, and
-    fresh examples prepared to demonstrate the UI and API.
-    """
-    # Set up a mesh for discrete analysis
-    d = 1
-    # Need some negative frequency points so Lorentzian can be correctly
-    # defined symmetrically
-    pad = 50
-    max_freq = 1000
-    raman_sim = random_raman_xy(max_freq=max_freq)
-
-    gamma = 2
-    frequencies = np.arange(0, max_freq, d)
-
-    raman_spikes = xy_to_1d(raman_sim, frequencies)
-    broadened_spikes = broaden(raman_spikes, pad=pad, d=d, width=gamma)
-
-    broadening = lorentzian(np.arange(-pad, pad, d), f0=0, gamma=gamma)
-
-    triple_plot(raman_sim, frequencies, d, broadening, pad, raman_spikes,
-                broadened_spikes)
-
-
-def triple_plot(raman_sim,
-                frequencies,
-                d,
-                broadening,
-                pad,
-                raman_spikes,
-                broadened_spikes,
-                filename=False):
-    """Plot the proof-of-concept with random data which is set up in main().
-    """
-    max_freq = max(frequencies)
-    # Plot them
-    plt.subplot(3, 1, 1)
-    plt.vlines(raman_sim[:, 0], 0, raman_sim[:, 1])
-    plt.xlabel('Frequency / cm$^{-1}$')
-    plt.xlim([0, max_freq])
-    plt.ylabel('Intensity')
-    plt.title('Random data')
-
-    plt.subplot(3, 1, 2)
-    plt.title('Broadening function')
-    plt.plot(np.arange(-pad, pad, d), broadening, 'r-')
-
-    plt.subplot(3, 1, 3)
-    plt.title('Discretised data, broadening')
-    plt.vlines(frequencies, 0, raman_spikes)
-    plt.plot(frequencies, broadened_spikes, 'r-')
-
-    plt.xlabel('Frequency / cm$^{-1}$')
-    plt.xlim([0, max_freq])
-    plt.ylabel('Intensity')
-
-    plt.tight_layout()
-
-    if filename:
-        plt.savefig(filename)
-    else:
-        plt.show()
-
-
-if __name__ == '__main__':
-    main()

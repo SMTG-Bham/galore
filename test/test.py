@@ -49,7 +49,8 @@ class test_dos_functions(unittest.TestCase):
         xmin = -3
         xmax = 220
         sampling = 1e-1
-        plt = galore.cli.simple_dos(input=path_join(test_dir,
+        plt = galore.cli.simple_dos_from_files(
+                                    input=path_join(test_dir,
                                                     'test_xy_data.csv'),
                                     return_plt=True, xmax=xmax, xmin=xmin,
                                     sampling=sampling,
@@ -69,7 +70,7 @@ class test_dos_functions(unittest.TestCase):
         xvals, yvals = ax.lines[0].get_xydata().T
         self.assertAlmostEqual(xvals[5], (xmin + 5 * sampling))
         self.assertAlmostEqual(yvals[5], 0.0, places=3)
-        self.assertAlmostEqual(yvals[2000], 3.84, places=2)
+        self.assertAlmostEqual(yvals[2000], 0.65245445, places=4)
 
     def test_overlay(self):
         import matplotlib.pyplot as plt
@@ -104,7 +105,8 @@ class test_array_functions(unittest.TestCase):
             np.array([0., 0., 0.6, 0., 0.2, 0.3]))
 
     def test_gaussian(self):
-        self.assertAlmostEqual(galore.gaussian(3., f0=1, c=3), 0.8007374029168)
+        self.assertAlmostEqual(galore.gaussian(3., f0=1, fwhm=(3 * 2.35482)),
+                               0.8007374029168)
 
 
 class test_io_functions(unittest.TestCase):
