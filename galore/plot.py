@@ -123,13 +123,12 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
     # Any unset kwargs will be seen as None
     kwargs = defaultdict((lambda : None), **kwargs)
 
-    plt.style.use("seaborn-colorblind")
-
     linecycler = cycle(['--'] * 6 + [':'] * 6 + ['-.'] * 6)
 
     max_y = 0
 
     if ax is None:
+        plt.style.use("seaborn-colorblind")
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
 

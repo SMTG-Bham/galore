@@ -2,6 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+plt.style.use("seaborn-colorblind")
 import galore
 import galore.plot
 
