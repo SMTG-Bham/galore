@@ -90,6 +90,12 @@ comparing the computed DOS with a measured PE spectrum it becomes
 clear that the broadening plays a very significant role in
 interpretation, often merging multiple peaks into a single visible
 peak with a different energy value.
+The other processing step is the weighting of contributions by their
+photoionisation cross-sections.
+Data is included for some standard energy values, from tabulated ab
+initio calculations.[@Yeh1985] This determines the different shapes
+observed in the valence band edge when examined with different x-ray
+sources.
 
 ## Galore
 
