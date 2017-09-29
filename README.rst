@@ -18,11 +18,9 @@ Documentation
 -------------
 
 A brief overview is given in this README file.
-Full documentation can be built using Sphinx; try ``make html`` from
+Full documentation is available online: `readthedocs <http://galore.readthedocs.io/en/latest/>`__.
+You can build a local version using Sphinx with ``make html`` from
 the *docs* directory of this project.
-Pre-compiled documentation will be made available through `readthedocs
-<https://readthedocs.org>`__ when this project is made publicly
-viewable.
 
 Usage
 -----

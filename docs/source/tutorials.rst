@@ -146,7 +146,7 @@ exchange-correlation functional.
 .. code-block:: bash
 
      galore test/MgO/MgO_Mg_dos.dat test/MgO/MgO_O_dos.dat \
-       --plot --pdos -g 0.2 -l 0.2 --ylabel DOS --units eV
+       --plot --pdos -g 0.5 -l 0.2 --ylabel DOS --units eV
 
 .. image:: figures/mgo_pdos_quick.png
            :alt: Quick PDOS plot for MgO
@@ -210,10 +210,10 @@ We have digitised the experimental data plotted in Fig.3 of
 `Farahani et al. (2014) <https://doi.org/10.1103/PhysRevB.90.155413>`__
 in order to aid a direct comparison::
 
-  galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.4 \
+  galore test/SnO2/vasprun.xml.gz --plot -g 0.5 -l 0.4 \
     --pdos --w XPS --flipx --xmin -2 --xmax 10 \
     --overlay test/SnO2/xps_data.csv  --overlay_offset -4 \
-    --overlay_scale 9 --units ev --ylabel Intensity
+    --overlay_scale 3.5 --units ev --ylabel Intensity
 
 (Note that here the shorter alias ``-w`` is used for the XPS
 weighting.) The general character and peak positions match well, but
@@ -242,7 +242,7 @@ satisfactory fit is obtained for the three main peaks, but the "bump" below
 zero suggests the presence of some phenomenon in the bandgap which was
 not captured by the *ab initio* calculation::
 
-  galore test/SnO2/vasprun.xml.gz --plot -g 0.5 -l 0.7 \
+  galore test/SnO2/vasprun.xml.gz --plot -g 0.5 -l 0.9 \
     --pdos --w ups --flipx --xmin -2 --xmax 10 \
     --overlay test/SnO2/ups_data.csv --overlay_offset 0.44 \
     --units ev --ylabel Intensity --overlay_style x    
