@@ -1,0 +1,6 @@
+/* Fix for RTD bug adding lines to code output */
+/* https://github.com/rtfd/sphinx_rtd_theme/issues/417 */
+
+.rst-content .highlight>pre {
+    line-height: 18px;
+}
