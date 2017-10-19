@@ -31,7 +31,7 @@ In the analysis of chemical systems, physical measurements are often
 obtained as diffuse _spectra_ where a model system would be occupied
 at discrete levels. In order to compare simulated and measured spectra
 it is commonplace to broaden the model values by convolution with a
-Gaussian-Lorentzian function[@Hills1975, @Grevels1998]. Accounting in
+Gaussian-Lorentzian function [@Hills1975, @Grevels1998]. Accounting in
 this way for both the genuine bandwidth of physical interactions and
 for instrumental limitations allows for direct comparisons to be made.
 
@@ -44,7 +44,7 @@ spectroscopy.
 In infrared (IR) spectroscopy, low-energy photons are absorbed
 corresponding to the energies of lattice vibrations and an absorption
 spectrum is obtained. In a highly-crystalline system, symmetry
-selection rules reduce the "allowable" range of photons to a small
+selection rules limit the absorption activity to a small
 number of possible excitations with zero crystal momentum
 ("Gamma-point phonons"). In Raman spectroscopy another optical method
 is used to observe lattice vibrations and different selection rules
@@ -56,15 +56,15 @@ vibrational modes by performing *ab initio* lattice dynamics
 calculations. Usually these will be performed within the
 generalised-gradient approximation within density-functional theory
 (DFT), using variations of density-functional perturbation theory
-(DFPT) or the frozen-phonon ("direct") method.[@gonze; @fropho] The
-Phonopy package is a popular open-source tool for managing
-frozen-phonon calculations with a range of DFT codes.[@phonopy]
+(DFPT) or the frozen-phonon ("direct") method [@Gonze1997; @Parlinski1997; @Togo2008].
+The Phonopy package is a popular open-source tool for managing
+frozen-phonon calculations with a range of DFT codes [@Togo2015].
 Scripts are available for intensity
 calculation:
-[David Karhanek's IR intensity script](http://homepage.univie.ac.at/david.karhanek/downloads.html) does
+David Karhanek's IR intensity script [-@karhanek] does
 not have a Free Software license at this point in time; Fonari and
 Stauffer have published a program under the MIT license for
-calculating Raman intensities.[-@vasp_raman_py] Theoretical Raman
+calculating Raman intensities.[@vasp_raman_py] Theoretical Raman
 linewidths can be computed using higher-order phonon calculations, but
 in practice it is helpful to apply additional Lorentzian
 broadening.[@Skelton2014, @Togo2015a, @Skelton2015]
@@ -114,13 +114,13 @@ directly from calculations with the Vienna Ab Initio Simulations
 Package (VASP).
 
 The Gaussian and Lorentzian functions follow standard general forms:
-\begin{equation}
-y = \exp \left( \frac{-(f - f_0)^2}{2 * $\gamma$**2} \right)
-\end{equation}
+$$
+y = \exp \left( \frac{-(f - f_0)^2}{2 * \gamma**2} \right)
+$$
 and
-\begin{equation}
+$$
 y = \frac{0.5 \gamma}{\pi (f - f_0)^2 + (0.5 \gamma)**2}
-\end{equation}
+$$
 
 where $f$ is the x-axis value, $f_0$ is the mid-point, $\gamma$ controls the width.
 

@@ -22,6 +22,10 @@ Full documentation is available online: `readthedocs <http://galore.readthedocs.
 You can build a local version using Sphinx with ``make html`` from
 the *docs* directory of this project.
 
+The academic paper can be compiled to a PDF file with pandoc and LaTeX::
+
+  pandoc --filter pandoc-citeproc --bibliography=paper.bib -V geometry:margin=2cm -V fontsize:12pt -s paper.md -o paper.pdf
+
 Usage
 -----
 
