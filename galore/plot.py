@@ -5,6 +5,7 @@ from collections import defaultdict
 from os.path import basename as path_basename
 from itertools import cycle
 from six import itervalues
+import logging
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -78,7 +79,7 @@ def add_overlay(plt, overlay, overlay_scale=None, overlay_offset=0.,
         ymax_plot = max(max(line.get_xydata()[:, 1]) for line in lines)
 
         overlay_scale = ymax_plot / ymax
-        print("Scaling overlay intensity by {0}".format(overlay_scale))
+        logging.info("Scaling overlay intensity by {0}".format(overlay_scale))
 
     if overlay_label is None:
         overlay_label = path_basename(overlay)

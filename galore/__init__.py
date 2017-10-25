@@ -26,6 +26,7 @@ from itertools import repeat
 from collections import OrderedDict
 from pkg_resources import resource_filename
 from json import load as json_load
+import logging
 
 from math import sqrt, log
 import numpy as np
@@ -400,8 +401,13 @@ def apply_orbital_weights(pdos_data, cross_sections):
         raise TypeError('Cross-section data should be a dictionary. Try using '
                         'galore.get_cross_sections for a suitable data set.')
 
+    logging.info("Applying cross-section weighting values to PDOS:")
+
     weighted_pdos_data = OrderedDict()
     for el, orbitals in pdos_data.items():
+        if 'warning' in cross_sections[el]:
+            logging.warning("{0}: {1}".format(el,
+                                              cross_sections[el]['warning']))
         weighted_orbitals = OrderedDict()
         for orbital, data in orbitals.items():
             if orbital == 'energy':
@@ -417,6 +423,7 @@ def apply_orbital_weights(pdos_data, cross_sections):
                 if cs is None:
                     pass
                 else:
+                    logging.info("{0} {1}: {2:.3e}".format(el, orbital, cs))
                     weighted_orbitals.update({orbital: data * cs})
 
         weighted_pdos_data.update({el: weighted_orbitals})

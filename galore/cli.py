@@ -25,6 +25,8 @@ import os
 import argparse
 from collections import OrderedDict
 from json import load as json_load
+import logging
+import warnings
 
 import numpy as np
 
@@ -41,6 +43,13 @@ except ImportError:
 
 
 def main():
+    logging.basicConfig(filename='galore.log', level=logging.INFO)
+    console = logging.StreamHandler()
+    logging.getLogger().addHandler(console)
+
+    warnings.filterwarnings("ignore", module="matplotlib")
+    warnings.filterwarnings("ignore", module="pymatgen")
+
     parser = get_parser()
     args = parser.parse_args()
     args = vars(args)
