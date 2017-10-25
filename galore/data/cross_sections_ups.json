@@ -149,7 +149,8 @@
         "d": null,
         "f": null,
         "p": 0.25433333333333336,
-        "s": 0.2433
+        "s": 0.12165,
+        "warning": "No data for Cs 6s orbital: using Cs 5s"
     },
     "Cu": {
         "d": 0.9934,
@@ -203,7 +204,8 @@
         "d": null,
         "f": null,
         "p": 0.2748333333333333,
-        "s": 0.2007
+        "s": 0.10035,
+        "warning": "No data for Fe 7s orbital: using Fr 6s"
     },
     "Ga": {
         "d": 0.3626,
@@ -455,7 +457,8 @@
         "d": null,
         "f": null,
         "p": 0.3833333333333333,
-        "s": 0.1672
+        "s": 0.0836,
+        "warning": "No data for Rb 5s orbital: using Rb 4s"
     },
     "Re": {
         "d": 2.42,

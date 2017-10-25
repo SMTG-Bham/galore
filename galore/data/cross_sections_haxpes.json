@@ -149,7 +149,8 @@
         "d": 4.2000000000000004e-05,
         "f": null,
         "p": 2.8333333333333335e-05,
-        "s": 0.0001
+        "s": 0.00005,
+        "warning": "No data for Cs 6s orbital: using Cs 5s"
     },
     "Cu": {
         "d": 3.2000000000000005e-05,
@@ -203,7 +204,8 @@
         "d": 0.00011999999999999999,
         "f": 9.285714285714286e-05,
         "p": 4e-05,
-        "s": 0.0001
+        "s": 0.00005,
+        "warning": "No data for Fr 7s orbital: using Fr 6s"
     },
     "Ga": {
         "d": 1.7e-06,
@@ -275,7 +277,8 @@
         "d": null,
         "f": null,
         "p": 4e-06,
-        "s": 8.5e-05
+        "s": 4.25e-05,
+        "warning": "No data for K 4s orbital: using data for K 3s"
     },
     "Kr": {
         "d": 8.2e-06,
@@ -455,7 +458,8 @@
         "d": 1.2e-05,
         "f": null,
         "p": 2.1666666666666664e-05,
-        "s": 0.00011
+        "s": 5.5e-05,
+        "warning": "No data for Rb 5s orbital: using Rb 4s"
     },
     "Re": {
         "d": 3.2000000000000005e-05,
