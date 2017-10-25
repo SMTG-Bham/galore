@@ -121,7 +121,7 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
         """
 
     # Any unset kwargs will be seen as None
-    kwargs = defaultdict((lambda : None), **kwargs)
+    kwargs = defaultdict((lambda: None), **kwargs)
 
     plt.style.use("seaborn-colorblind")
 
@@ -165,7 +165,6 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
     # been pruned already by kwargs['xmin'] and kwargs['xmax']
     ax.set_xlim([min(x_data), max(x_data)])
 
-
     xlabel = guess_xlabel(units=kwargs['units'], flipx=flipx,
                           energy_label=None)
     ax.set_xlabel(xlabel)
@@ -204,7 +203,7 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
     """
 
     # Any unset kwargs will be seen as None
-    kwargs = defaultdict((lambda : None), **kwargs)
+    kwargs = defaultdict((lambda: None), **kwargs)
 
     plt.style.use("seaborn-colorblind")
 
