@@ -379,6 +379,9 @@ def apply_orbital_weights(pdos_data, cross_sections):
              collections.OrderedDict instead of regular dictionaries, to ensure
              consistent output.
 
+             In addition, the fields "citation", "link" and "energy" are
+             recognised and logged as "INFO".
+
         cross_sections (dict): Weightings in format::
 
                 {'el1': {'1s': x1, '2s': x2, '2p': x3 ...},
@@ -402,6 +405,13 @@ def apply_orbital_weights(pdos_data, cross_sections):
                         'galore.get_cross_sections for a suitable data set.')
 
     logging.info("Applying cross-section weighting values to PDOS:")
+
+    if 'energy' in cross_sections:
+        logging.info("Photon energy: {0}".format(cross_sections['energy']))
+    if 'citation' in cross_sections:
+        logging.info("Citation: {0}".format(cross_sections['citation']))
+    if 'link' in cross_sections:
+        logging.info("Link: {0}".format(cross_sections['link']))
 
     weighted_pdos_data = OrderedDict()
     for el, orbitals in pdos_data.items():

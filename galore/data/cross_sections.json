@@ -6,7 +6,10 @@
  "comment": "Limited here to levels immediately below valence band;",
  "comment": "to use core levels with Galore notate them 1s, 2s etc.",
  "comment": "Values were divided through by electrons per shell to yield per-electron weighting.",
- "comment": "These values are for 1486.6 eV photons (i.e. Al Kalpha)",    
+ "comment": "These values are for 1486.6 eV photons (i.e. Al Kalpha)",
+ "citation": "Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155",
+ "link": "https://doi.org/10.1016/0092-640X(85)90016-6",
+ "energy": "1486.6 eV",
     "Ac": {
         "d": 0.00072,
         "f": 0.04152857142857143,
