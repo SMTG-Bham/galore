@@ -24,14 +24,13 @@ from __future__ import print_function
 import os.path
 from itertools import repeat
 from collections import OrderedDict
-from pkg_resources import resource_filename
-from json import load as json_load
 import logging
 
 from math import sqrt, log
 import numpy as np
 
 import galore.formats
+from galore.cross_sections import get_cross_sections
 
 
 def auto_limits(data_1d, padding=0.05):
@@ -339,30 +338,6 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     broadened_data = broadened_data[pad_points:len(data) + pad_points]
 
     return broadened_data
-
-
-def get_cross_sections(weighting):
-    """Interpret input to select weightings data"""
-
-    weighting_files = {'xps': resource_filename(
-                       __name__, "data/cross_sections.json"),
-                       'ups': resource_filename(
-                           __name__, "data/cross_sections_ups.json"),
-                       'haxpes': resource_filename(
-                           __name__, "data/cross_sections_haxpes.json")}
-
-    if weighting.lower() in weighting_files:
-        with open(weighting_files[weighting.lower()], 'r') as f:
-            cross_sections = json_load(f)
-
-    else:
-        if not os.path.exists(weighting):
-            raise Exception("Cross-sections file {0} does not "
-                            "exist!".format(weighting))
-        with open(weighting) as f:
-            cross_sections = json_load(f)
-
-    return cross_sections
 
 
 def apply_orbital_weights(pdos_data, cross_sections):
