@@ -382,17 +382,18 @@ def apply_orbital_weights(pdos_data, cross_sections):
     logging.info("Applying cross-section weighting values to PDOS:")
 
     if 'energy' in cross_sections:
-        logging.info("Photon energy: {0}".format(cross_sections['energy']))
+        logging.info("  Photon energy: {0}".format(cross_sections['energy']))
     if 'citation' in cross_sections:
-        logging.info("Citation: {0}".format(cross_sections['citation']))
+        logging.info("  Citation: {0}".format(cross_sections['citation']))
     if 'link' in cross_sections:
-        logging.info("Link: {0}".format(cross_sections['link']))
+        logging.info("  Link: {0}".format(cross_sections['link']))
 
+    logging.info("  Orbital cross-section weights per electron:")
     weighted_pdos_data = OrderedDict()
     for el, orbitals in pdos_data.items():
         if 'warning' in cross_sections[el]:
-            logging.warning("{0}: {1}".format(el,
-                                              cross_sections[el]['warning']))
+            logging.warning("  {0}: {1}".format(
+                el, cross_sections[el]['warning']))
         weighted_orbitals = OrderedDict()
         for orbital, data in orbitals.items():
             if orbital == 'energy':
@@ -410,7 +411,7 @@ def apply_orbital_weights(pdos_data, cross_sections):
                 if cs is None:
                     pass
                 else:
-                    logging.info("{0} {1}: {2:.3e}".format(el, orbital, cs))
+                    logging.info("   {0} {1}: {2:.3e}".format(el, orbital, cs))
                     weighted_orbitals.update({orbital: data * cs})
 
         weighted_pdos_data.update({el: weighted_orbitals})

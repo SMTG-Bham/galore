@@ -100,8 +100,8 @@ def get_cross_sections_json(path):
         with open(path, 'r') as f:
             cross_sections = json_load(f)
     else:
-        raise Exception("Cross-sections file {0} does not "
-                        "exist!".format(weighting))
+        raise IOError("Cross-sections file {0} does not "
+                      "exist!".format(path))
 
     return cross_sections
 
