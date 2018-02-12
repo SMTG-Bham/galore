@@ -230,7 +230,8 @@ def process_pdos(input=['vasprun.xml'],
             pdos_plotting_data[element][orbital] = broadened_data
 
     if weighting:
-        cross_sections = galore.get_cross_sections(weighting)
+        cross_sections = galore.get_cross_sections(weighting,
+                                                   elements=pdos_data.keys())
         pdos_plotting_data = galore.apply_orbital_weights(
             pdos_plotting_data, cross_sections)
 
