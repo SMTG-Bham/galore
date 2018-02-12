@@ -8,31 +8,62 @@ from numpy import fromstring as np_fromstr
 from numpy import exp, log
 
 
-def get_cross_sections(weighting):
-    """Interpret input to select weightings data"""
+def get_cross_sections(weighting, elements=None):
+    """Get photoionization cross-section weighting data.
 
-    weighting_files = {'xps': resource_filename(
-                       __name__, "data/cross_sections.json"),
-                       'ups': resource_filename(
-                           __name__, "data/cross_sections_ups.json"),
-                       'haxpes': resource_filename(
-                           __name__, "data/cross_sections_haxpes.json")}
+    For known sources, data is based on tabulation of Yeh/Lindau (1985).[1]
+    Otherwise, energies in keV from 1-1500 are used with log-log polynomial
+    parametrisation of data from Scofield.[2]
 
-    if weighting.lower() in weighting_files:
-        with open(weighting_files[weighting.lower()], 'r') as f:
-            cross_sections = json_load(f)
+    References:
+    1. Yeh, J.J. and Lindau, I. (1985)
+       Atomic Data and Nuclear Data Tables 32 pp 1-155
+    2. J. H. Scofield (1973) Lawrence Livermore National Laboratory
+       Report No. UCRL-51326
 
-    else:
-        if not os.path.exists(weighting):
-            raise Exception("Cross-sections file {0} does not "
-                            "exist!".format(weighting))
-        with open(weighting) as f:
-            cross_sections = json_load(f)
+    Args:
+        weighting (str or float): Data source for photoionization
+            cross-sections. If the string is a known keyword then data will
+            be drawn from files included with Galore. Otherwise, the string
+            will be interpreted as a path to a JSON file containing data
+            arranged in the same way as the output of this function.
+        elements (iterable or None): Collection of element symbols to include
+            in the data set. If None, a full set of available elements will be
+            included. When using a JSON dataset (including the inbuilt
+            Yeh/Lindau) this parameter will be ignored as the entire dataset
+            has already been loaded into memory.
 
-    return cross_sections
+    Returns:
+        dict: Photoionization cross-section weightings arranged by element and
+            orbital as nested dictionaries of floats, i.e.::
+
+                {el1: {orb1: cs11, orb2: cs12, ...},
+                 el2: {orb1: cs21, orb2: cs22, ...}, ... }
+
+            In addition the keys "reference", "link", "energy" and "warning"
+            may be used to store metadata.
+
+    """
 
 
-def get_cross_sections_json(element, path):
+    try:
+        energy = float(weighting)
+        return get_cross_sections_scofield(energy, elements=elements)
+
+    except ValueError:
+        if isinstance(weighting, str):
+            if weighting in ('xps', 'ups', 'haxpes'):
+                return get_cross_sections_yeh(weighting)
+            else:
+                return get_cross_sections_json(weighting)
+
+    # A string or a number would have hit a return statement by now
+    raise ValueError("Weighting not understood as string or float. ",
+                     "Please use a keyword, path to JSON file or an "
+                      "energy value in eV")
+
+
+def get_cross_sections_json(path):
     """Get valence-band cross-sections from JSON file
 
     Read photoionization data from a JSON file. File is expected to contain
@@ -52,25 +83,30 @@ def get_cross_sections_json(element, path):
          ...}
 
     Args:
-        element (str): Element symbol
         path (str): Path to JSON file
 
     Returns:
-        dict: Weighted photoionization cross-sections for each orbital in form
-            {'s': c1, 'p': c2, ...} in tabulated units.
+        dict: Weighted photoionization cross-sections for each element and
+            orbital in form::
+
+                {el1: {'s': c11, 'p': c12, ... },
+                 el2: {'s': c21, 'p': c22, ... }, ... }
+
+            in tabulated units.
+
     """
 
-    if os.path.exists(source):
-        with open(source, 'r') as f:
+    if os.path.exists(path):
+        with open(path, 'r') as f:
             cross_sections = json_load(f)
     else:
         raise Exception("Cross-sections file {0} does not "
                         "exist!".format(weighting))
 
-    return cross_sections[element]
+    return cross_sections
 
 
-def get_cross_sections_yeh(element, source):
+def get_cross_sections_yeh(source):
     """Get valence-band cross-sections from tabulated data
 
     Tabulated values of photoionization cross-sections were drawn from ref [1]
@@ -84,13 +120,16 @@ def get_cross_sections_yeh(element, source):
        Atomic Data and Nuclear Data Tables 32 pp 1-155
 
     Args:
-        element (str): Element symbol
         source (str): Label corresponding to radiation source. Accepted values
             'xps' (1486.6 eV), 'ups' (40.8 eV), 'haxpes' (8047.8).
 
     Returns:
         dict: Weighted photoionization cross-sections in megaBarns/electron
-            for each orbital in form {'s': c1, 'p': c2, ...}
+            for each orbital in form::
+
+                {el1: {'s': c11, 'p': c12, ... },
+                 el2: {'s': c21, 'p': c22, ... }, ... }
+
     """
 
     weighting_files = {'xps': resource_filename(
@@ -102,7 +141,7 @@ def get_cross_sections_yeh(element, source):
 
     if source.lower() in weighting_files:
         path = weighting_files[source.lower()]
-        return get_cross_sections_json(element, path)
+        return get_cross_sections_json(path)
 
     else:
         raise Exception(
@@ -110,7 +149,7 @@ def get_cross_sections_yeh(element, source):
             "Accepted values: {0}".format(", ".join((weighting_files.keys()))))
 
 
-def get_cross_sections_scofield(element, energy):
+def get_cross_sections_scofield(energy, elements=None):
     """Get valence-band cross-sections from fitted data
 
     Energy-dependent cross-sections have been averaged and weighted for
@@ -123,29 +162,62 @@ def get_cross_sections_scofield(element, energy):
     values will be arrays with the same shape as the energy arrays.
 
     Args:
-        element (str): Element symbol
         energy (float or array-like): Incident energy in keV
+        element (iterable or None): Iterable (e.g. list) of element symbols. If
+            None, include all available elements (1 <= Z <= 100).
 
     Returns:
         dict:
             Weighted photoionization cross-sections in Barns/electron
-            for each orbital in form {'s': c1, 'p': c2, ...}
+            for each orbital in form::
+
+                {el1: {'s': c11, 'p': c12, ... },
+                 el2: {'s': c21, 'p': c22, ... }, ... }
+
     """
 
+    if energy < 1.:
+        raise ValueError("Scofield data not available below 1 keV: refusing"
+                         " to extrapolate to {0} keV".format(energy))
+    elif energy > 1500.:
+        raise ValueError("Scofield data not available above 1500 keV: refusing"
+                         " to extrapolate to {0} keV".format(energy))
+
     db_file = resource_filename(__name__, "data/scofield_data.db")
+
+    if elements is None:
+        elements = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na',
+                    'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca', 'Sc',
+                    'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Ga',
+                    'Ge', 'As', 'Se', 'Br', 'Kr', 'Rb', 'Sr', 'Y', 'Zr', 'Nb',
+                    'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb',
+                    'Te', 'I', 'Xe', 'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd', 'Pm',
+                    'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu',
+                    'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 'Tl',
+                    'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 'Pa',
+                    'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm']
 
     def _eval_fit(energy, coeffs):
         """Convert log-log polynomial fit to cross-section value"""
         log_val = polyval(coeffs, log(energy))
         return exp(log_val)
 
-    with sqlite3.connect('galore/data/scofield_data.db') as con:
-        cur = con.cursor()
-        cur.execute('SELECT orbital, coeffs_np FROM fits WHERE Element=?;',
-                    [element])
-        orbitals_fits = cur.fetchall()
+    el_cross_sections = {'energy': energy,
+                         'citation': "J. H. Scofield (1973) Lawrence Livermore"
+                                     " National Laboratory "
+                                     "Report No. UCRL-51326, \n"
+                                     "Parametrised as log-log order 8 "
+                                      "polynomial (A. J. Jackson 2018)",
+                         'link': "https://doi.org/10.2172/4545040"}
 
-    return {
-        orb: _eval_fit(energy, np_fromstr(coeffs))
-        for orb, coeffs in orbitals_fits
-        }
+    with sqlite3.connect('galore/data/scofield_data.db') as con:
+        for element in elements:
+            cur = con.cursor()
+            cur.execute('SELECT orbital, coeffs_np FROM fits WHERE Element=?;',
+                        [element])
+            orbitals_fits = cur.fetchall()
+
+            el_cross_sections.update({element: {
+                orb: _eval_fit(energy, np_fromstr(coeffs))
+                for orb, coeffs in orbitals_fits}})
+    return el_cross_sections
