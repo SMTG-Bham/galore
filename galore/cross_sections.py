@@ -16,10 +16,10 @@ def get_cross_sections(weighting, elements=None):
     parametrisation of data from Scofield.[2]
 
     References:
-    1. Yeh, J.J. and Lindau, I. (1985)
-       Atomic Data and Nuclear Data Tables 32 pp 1-155
-    2. J. H. Scofield (1973) Lawrence Livermore National Laboratory
-       Report No. UCRL-51326
+      1. Yeh, J.J. and Lindau, I. (1985)
+         Atomic Data and Nuclear Data Tables 32 pp 1-155
+      2. J. H. Scofield (1973) Lawrence Livermore National Laboratory
+         Report No. UCRL-51326
 
     Args:
         weighting (str or float): Data source for photoionization
@@ -34,7 +34,8 @@ def get_cross_sections(weighting, elements=None):
             has already been loaded into memory.
 
     Returns:
-        dict: Photoionization cross-section weightings arranged by element and
+        dict:
+            Photoionization cross-section weightings arranged by element and
             orbital as nested dictionaries of floats, i.e.::
 
                 {el1: {orb1: cs11, orb2: cs12, ...},
@@ -44,7 +45,6 @@ def get_cross_sections(weighting, elements=None):
             may be used to store metadata.
 
     """
-
 
     try:
         energy = float(weighting)
@@ -60,7 +60,7 @@ def get_cross_sections(weighting, elements=None):
     # A string or a number would have hit a return statement by now
     raise ValueError("Weighting not understood as string or float. ",
                      "Please use a keyword, path to JSON file or an "
-                      "energy value in eV")
+                     "energy value in eV")
 
 
 def get_cross_sections_json(path):
@@ -86,7 +86,8 @@ def get_cross_sections_json(path):
         path (str): Path to JSON file
 
     Returns:
-        dict: Weighted photoionization cross-sections for each element and
+        dict:
+            Weighted photoionization cross-sections for each element and
             orbital in form::
 
                 {el1: {'s': c11, 'p': c12, ... },
@@ -116,15 +117,16 @@ def get_cross_sections_yeh(source):
     - 8047.8 eV, corresponding to a possible HAXPES source
 
     References:
-    1. Yeh, J.J. and Lindau, I. (1985)
-       Atomic Data and Nuclear Data Tables 32 pp 1-155
+        1. Yeh, J.J. and Lindau, I. (1985)
+           Atomic Data and Nuclear Data Tables 32 pp 1-155
 
     Args:
         source (str): Label corresponding to radiation source. Accepted values
             'xps' (1486.6 eV), 'ups' (40.8 eV), 'haxpes' (8047.8).
 
     Returns:
-        dict: Weighted photoionization cross-sections in megaBarns/electron
+        dict:
+            Weighted photoionization cross-sections in megaBarns/electron
             for each orbital in form::
 
                 {el1: {'s': c11, 'p': c12, ... },
@@ -207,7 +209,7 @@ def get_cross_sections_scofield(energy, elements=None):
                                      " National Laboratory "
                                      "Report No. UCRL-51326, \n"
                                      "Parametrised as log-log order 8 "
-                                      "polynomial (A. J. Jackson 2018)",
+                                     "polynomial (A. J. Jackson 2018)",
                          'link': "https://doi.org/10.2172/4545040"}
 
     with sqlite3.connect('galore/data/scofield_data.db') as con:

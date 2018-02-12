@@ -7,7 +7,10 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 
 `Unreleased <https://github.com/smtg-ucl/galore/compare/0.2.0...HEAD>`__
 -------------------------------------------------------------------------
-
+- BUGFIX: Yeh/Lindau weightings for partially-occupied orbitals
+- BUGFIX: Odd behaviour in s orbitals including one transcription error
+- Expanded weighting features: HAXPES data parametrised from Scofield tables
+- Verbose output including cross sections, warnings and data source citations
 
 `[0.2.0] <https://github.com/smtg-ucl/galore/compare/0.1.0...0.2.0>`__ - 2017-09-29
 -----------------------------------------------------------------------------------
