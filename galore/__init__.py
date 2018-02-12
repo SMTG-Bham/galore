@@ -401,10 +401,12 @@ def apply_orbital_weights(pdos_data, cross_sections):
                 try:
                     cs = cross_sections[el][orbital]
                 except KeyError as error:
-                    error.args += ("Could not find cross-section data for "
-                                   "element {0}, orbital {1}".format(el,
-                                                                     orbital),)
-                    raise
+                    logging.warning("Could not find cross-section data for " +
+                                    "element {0}, ".format(el) +
+                                    "orbital {0}. ".format(orbital) +
+                                    "Skipping this orbital.")
+                    cs = None
+
                 if cs is None:
                     pass
                 else:

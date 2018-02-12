@@ -202,7 +202,7 @@ def get_cross_sections_scofield(energy, elements=None):
         log_val = polyval(coeffs, log(energy))
         return exp(log_val)
 
-    el_cross_sections = {'energy': energy,
+    el_cross_sections = {'energy': '{0} keV'.format(energy),
                          'citation': "J. H. Scofield (1973) Lawrence Livermore"
                                      " National Laboratory "
                                      "Report No. UCRL-51326, \n"
