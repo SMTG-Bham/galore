@@ -84,6 +84,8 @@ free atoms.
 These values have been previously computed and are available as
 reference data.
 
+![Procedure (left to right) for simulated photoelectron spectrum from _ab initio_ DOS](docs/source/figures/pe_schematic.pdf)
+
 ### Vibrational spectroscopy (IR and Raman)
 
 In infrared (IR) spectroscopy, low-energy photons are absorbed
