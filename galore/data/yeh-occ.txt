@@ -1,0 +1,104 @@
+H 1s 1
+He 1s 2
+Li 2s 1
+Be 2s 2
+B 2p 1
+C 2p 2
+N 2p 3
+O 2p 4
+F 2p 5
+Ne 2p 6
+Na 3s 1
+Mg 3s 2
+Al 3p 1
+Si 3p 2
+P 3p 3
+S 3p 4
+Cl 3p 5
+Ar 3p 6
+K 4s 1
+Ca 4s 2
+Sc 3d 1
+Ti 3d 2
+V 3d 3
+Cr 4s 1 3d 5
+Mn 3d 5
+Fe 3d 6
+Co 3d 7
+Ni 3d 8
+Cu 4s 1 3d 10
+Zn 3d 10
+Ga 4p 1
+Ge 4p 2
+As 4p 3
+Se 4p 4
+Br 4p 5
+Kr 4p 6
+Rb 5s 1
+Sr 5s 2
+Y 4d 1
+Zr 4d 2
+Nb 5s 1 4d 4
+Mo 5s 1 4d 5
+Tc 4d 5
+Ru 5s 1 4d 7
+Rh 5s 1 4d 8
+Pd 5s 0 4d 10
+Ag 5s 1
+Cd 4d 10
+In 5p 1
+Sn 5p 2
+Sb 5p 3
+Te 5p 4
+I 5p 5
+Xe 5p 6
+Cs 6s 1
+Ba 6s 2
+La 5d 1
+Ce 4f 2
+Pr 4f 3
+Nd 4f 4
+Pm 4f 5
+Sm 4f 6
+Eu 4f 7
+Gd 5d 1 4f 7
+Tb 4f 9
+Dy 5f 10
+Ho 4f 11
+Er 4f 12
+Tm 4f 13
+Yb 4f 14
+Lu 5d 1
+Hf 5d 2
+Ta 5d 3
+W 5d 4
+Re 5d 5
+Os 5d 6
+Ir 5d 7
+Pt 6s 1 5d 9
+Au 6s 1 5d 10
+Hg 5d 10
+Tl 6p 1
+Pb 6p 2
+Bi 6p 3
+Po 6p 4
+At 6p 5
+Rn 6p 6
+Fr 7s 1
+Ra 7s 2
+Ac 6d 1
+Th 6d 2
+Pa 6d 1 5f 2
+U 6d 1 5f 3
+Np 6d 1 5f 4
+Pu 5f 6
+Am 5f 7
+Cm 6d 1 5f 7
+Bk 6d 1 5f 8
+Cf 6d 1 5f 9
+Es 6d 1 5f 10
+Fm 6d 1 5f 11
+Md 6d 1 5f 12
+No 6d 1 5f 13
+Lr 6d 1 5f 14
+

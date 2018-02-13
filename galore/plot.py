@@ -5,6 +5,7 @@ from collections import defaultdict
 from os.path import basename as path_basename
 from itertools import cycle
 from six import itervalues
+import logging
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -78,7 +79,7 @@ def add_overlay(plt, overlay, overlay_scale=None, overlay_offset=0.,
         ymax_plot = max(max(line.get_xydata()[:, 1]) for line in lines)
 
         overlay_scale = ymax_plot / ymax
-        print("Scaling overlay intensity by {0}".format(overlay_scale))
+        logging.info("Scaling overlay intensity by {0}".format(overlay_scale))
 
     if overlay_label is None:
         overlay_label = path_basename(overlay)
@@ -121,7 +122,7 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
         """
 
     # Any unset kwargs will be seen as None
-    kwargs = defaultdict((lambda : None), **kwargs)
+    kwargs = defaultdict((lambda: None), **kwargs)
 
     linecycler = cycle(['--'] * 6 + [':'] * 6 + ['-.'] * 6)
 
@@ -164,7 +165,6 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
     # been pruned already by kwargs['xmin'] and kwargs['xmax']
     ax.set_xlim([min(x_data), max(x_data)])
 
-
     xlabel = guess_xlabel(units=kwargs['units'], flipx=flipx,
                           energy_label=None)
     ax.set_xlabel(xlabel)
@@ -203,7 +203,7 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
     """
 
     # Any unset kwargs will be seen as None
-    kwargs = defaultdict((lambda : None), **kwargs)
+    kwargs = defaultdict((lambda: None), **kwargs)
 
     plt.style.use("seaborn-colorblind")
 

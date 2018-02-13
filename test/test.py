@@ -87,13 +87,6 @@ class test_dos_functions(unittest.TestCase):
         self.assertEqual(xy.shape, (8, 2))
 
 
-class test_xps_data(unittest.TestCase):
-    def test_xps_defaults(self):
-        cross_sections = galore.get_cross_sections('xps')
-        self.assertAlmostEqual(cross_sections['Lr']['p'], 0.001666666666666667)
-        self.assertIsNone(cross_sections['H']['f'])
-
-
 class test_array_functions(unittest.TestCase):
     def test_delta(self):
         self.assertEqual(galore.delta(1, 1.5, w=1), 1)

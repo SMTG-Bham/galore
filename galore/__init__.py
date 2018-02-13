@@ -24,13 +24,13 @@ from __future__ import print_function
 import os.path
 from itertools import repeat
 from collections import OrderedDict
-from pkg_resources import resource_filename
-from json import load as json_load
+import logging
 
 from math import sqrt, log
 import numpy as np
 
 import galore.formats
+from galore.cross_sections import get_cross_sections
 
 
 def auto_limits(data_1d, padding=0.05):
@@ -230,7 +230,8 @@ def process_pdos(input=['vasprun.xml'],
             pdos_plotting_data[element][orbital] = broadened_data
 
     if weighting:
-        cross_sections = galore.get_cross_sections(weighting)
+        cross_sections = galore.get_cross_sections(weighting,
+                                                   elements=pdos_data.keys())
         pdos_plotting_data = galore.apply_orbital_weights(
             pdos_plotting_data, cross_sections)
 
@@ -340,30 +341,6 @@ def broaden(data, dist='lorentz', width=2, pad=False, d=1):
     return broadened_data
 
 
-def get_cross_sections(weighting):
-    """Interpret input to select weightings data"""
-
-    weighting_files = {'xps': resource_filename(
-                       __name__, "data/cross_sections.json"),
-                       'ups': resource_filename(
-                           __name__, "data/cross_sections_ups.json"),
-                       'haxpes': resource_filename(
-                           __name__, "data/cross_sections_haxpes.json")}
-
-    if weighting.lower() in weighting_files:
-        with open(weighting_files[weighting.lower()], 'r') as f:
-            cross_sections = json_load(f)
-
-    else:
-        if not os.path.exists(weighting):
-            raise Exception("Cross-sections file {0} does not "
-                            "exist!".format(weighting))
-        with open(weighting) as f:
-            cross_sections = json_load(f)
-
-    return cross_sections
-
-
 def apply_orbital_weights(pdos_data, cross_sections):
     """Weight orbital intensities by cross-section for photoemission simulation
 
@@ -377,6 +354,9 @@ def apply_orbital_weights(pdos_data, cross_sections):
              cross_sections data. It is recommended to use
              collections.OrderedDict instead of regular dictionaries, to ensure
              consistent output.
+
+             In addition, the fields "citation", "link" and "energy" are
+             recognised and logged as "INFO".
 
         cross_sections (dict): Weightings in format::
 
@@ -400,8 +380,21 @@ def apply_orbital_weights(pdos_data, cross_sections):
         raise TypeError('Cross-section data should be a dictionary. Try using '
                         'galore.get_cross_sections for a suitable data set.')
 
+    logging.info("Applying cross-section weighting values to PDOS:")
+
+    if 'energy' in cross_sections:
+        logging.info("  Photon energy: {0}".format(cross_sections['energy']))
+    if 'citation' in cross_sections:
+        logging.info("  Citation: {0}".format(cross_sections['citation']))
+    if 'link' in cross_sections:
+        logging.info("  Link: {0}".format(cross_sections['link']))
+
+    logging.info("  Orbital cross-section weights per electron:")
     weighted_pdos_data = OrderedDict()
     for el, orbitals in pdos_data.items():
+        if 'warning' in cross_sections[el]:
+            logging.warning("  {0}: {1}".format(
+                el, cross_sections[el]['warning']))
         weighted_orbitals = OrderedDict()
         for orbital, data in orbitals.items():
             if orbital == 'energy':
@@ -410,13 +403,16 @@ def apply_orbital_weights(pdos_data, cross_sections):
                 try:
                     cs = cross_sections[el][orbital]
                 except KeyError as error:
-                    error.args += ("Could not find cross-section data for "
-                                   "element {0}, orbital {1}".format(el,
-                                                                     orbital),)
-                    raise
+                    logging.warning("Could not find cross-section data for " +
+                                    "element {0}, ".format(el) +
+                                    "orbital {0}. ".format(orbital) +
+                                    "Skipping this orbital.")
+                    cs = None
+
                 if cs is None:
                     pass
                 else:
+                    logging.info("   {0} {1}: {2:.3e}".format(el, orbital, cs))
                     weighted_orbitals.update({orbital: data * cs})
 
         weighted_pdos_data.update({el: weighted_orbitals})
