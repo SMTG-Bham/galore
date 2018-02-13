@@ -100,9 +100,8 @@ selection of Gamma-point movements.
 
 It is possible to predict the frequencies and intensities of these
 vibrational modes by performing *ab initio* lattice dynamics
-calculations. Usually these will be performed within the
-generalised-gradient approximation within density-functional theory
-(DFT), using variations of density-functional perturbation theory
+calculations. Usually these will be performed within density-functional theory
+(DFT), either using variations of density-functional perturbation theory
 (DFPT) or the frozen-phonon ("direct") method [@Gonze1997; @Parlinski1997; @Togo2008].
 When the underlying set of vibrational frequencies and mode
 intensities has been calculated it is typical to broaden the data by
@@ -151,7 +150,7 @@ y = \exp \left( \frac{-(f - f_0)^2}{2 c^2} \right) \quad \text{where} \quad c = 
 $$
 and
 $$
-y = \frac{0.5 \gamma}{\pi (f - f_0)^2 + (0.5 \gamma)**2}
+y = \frac{0.5 \gamma}{\pi (f - f_0)^2 + (0.5 \gamma)^2}
 $$
 
 where $f$ is the x-axis value, $f_0$ is the mid-point, $\gamma$ is the
@@ -183,10 +182,10 @@ studentship co-sponsored by the Diamond Light Source at the EPSRC
 Centre for Doctoral Training in Molecular Modelling and Materials
 Science (EP/L01582/1).
 
-We acknowledge useful discussions with Alexei Sokol (who proposed that
+We acknowledge useful discussions with Alexey Sokol (who proposed that
 a code such as this would be useful), Katie Inzani and
 Tim Veal. Feature requests and user testing came from Benjamin
-Williamsion, Christopher Savory and Winnie L. Leung.
+Williamson, Christopher Savory and Winnie L. Leung.
 
 This would have been much more painful if not for the excellent
 scientific Python ecosystem, and the Python Materials Genome project
