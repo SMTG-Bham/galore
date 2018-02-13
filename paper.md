@@ -109,9 +109,11 @@ intensities has been calculated it is typical to broaden the data by
 convolution with a Gaussian--Lorentzian function [@Hills1975,
 @Grevels1998].
 This is necessary to correctly intepret the effect of overlapping
-peaks; for example, a group of peaks with low intensities may combine to
-make a large peak in the broadened spectrum.
-The individual peak intensities would be misleading in such a case.
+peaks; for example, Figure 2 shows a case in which a group of peaks
+with low intensities combine to form a large peak in the broadened
+spectrum.
+
+![Schematic example of misleading peak intensities due to overlap](docs/source/figures/ir_schematic.pdf)
 
 <!-- It is possible to predict the frequencies and intensities of these -->
 <!-- vibrational modes by performing *ab initio* lattice dynamics -->
