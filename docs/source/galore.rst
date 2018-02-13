@@ -7,6 +7,7 @@ Submodules
 .. toctree::
 
    galore.cli
+   galore.cross_sections
    galore.formats
    galore.plot
 
