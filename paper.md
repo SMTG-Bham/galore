@@ -1,5 +1,5 @@
 ---
-title: 'Galore: Gaussian and Lorentzian broadening of simulated spectra'
+title: 'Galore: Broadening and weighting for simulation of photoelectron spectroscopy'
 tags:
   - ab initio
   - density of states
@@ -10,34 +10,79 @@ tags:
   - physics
 authors:
   - name: Adam J Jackson
-    orcid: XXX
+    orcid: 0000-0001-5272-6530
     affiliation: 1
   - name: Alex M Ganose
-    orcid: XXX
+    orcid: 0000-0002-4486-3321
     affiliation: 1,2
+  - name: Anna Regoutz
+    orcid: 0000-0002-3747-3763
+    affiliation: 3
   - name: David O Scanlon
-    orcid: XXX
+    orcid: 0000-0001-9174-8601
     affiliation: 1,2
 affiliations:
   - name: Dept of Chemistry, University College London, 20 Gordon Street, London WC1H 0AJ, UK
     index: 1
   - name: Diamond Light Source Ltd., Diamond House, Harwell Science and Innovation Campus, Didcot, Oxfordshire OX11 0DE, UK
     index: 2
-date: September 2017
+  - name: Dept of Materials, Imperial College London, London SW7 2AZ, UK
+  - index: 3
+date: February 2018
 bibliography: paper.bib
 ---
 
-In the analysis of chemical systems, physical measurements are often
-obtained as diffuse _spectra_ where a model system would be occupied
-at discrete levels. In order to compare simulated and measured spectra
-it is commonplace to broaden the model values by convolution with a
-Gaussian-Lorentzian function [@Hills1975, @Grevels1998]. Accounting in
-this way for both the genuine bandwidth of physical interactions and
-for instrumental limitations allows for direct comparisons to be made.
+Galore simplifies and automates the process of simulating
+photoelectron spectra from _ab initio_ calculations.
+This replaces the tedious process of looking-up and interpolating
+cross-sectional weights from reference data and generates tabulated
+data or publication-ready plots as needed.
+The broadening tools may also be used to obtain realistic diffuse
+spectra from a theoretical set of discrete lines (e.g. infrared or
+Raman spectroscopy).
 
-The features of Galore are based on two cases, particularly relevant
-to materials chemistry: vibration spectroscopy and photoemission
-spectroscopy.
+### Photoelectron spectroscopy
+
+Photoelectron (PE) spectroscopy is a family of methods used to
+characterise the electronic structure of materials.
+High-energy photons eject electrons from the occupied states of a
+sample and the momentum of this electron is used to determine its
+"binding energy". 
+The names of various PE methods refer to the energy range and/or
+equipment involved:
+
+- ultraviolet photoelectron spectroscopy (UPS)
+- X-ray photoelectron spectroscopy (XPS)
+- hard X-ray photoelectron spectroscopy (HAXPES, HXPS, HX-PES, ...)
+
+These methods generate broad spectra related to the electronic density
+of states (DOS), a distribution which is routinely calculated in _ab
+intio_ materials chemistry.
+When comparing the computed DOS with a measured PE spectrum it is
+clear that broadening effects play a significant role in
+interpretation, often merging multiple peaks into a single visible
+peak with a different energy value [@Veal2015, @Savory2016, @Sathasivam2017].
+Broadening is generally applied by convolution with a Gaussian
+and/or Lorentzian function: nominally, the Gaussian distribution
+describes instrumental measurement noise while the Lorentzian shape is
+used to describe optical broadening effects.
+
+Photoemission spectra for the same material will vary depending on the
+radiation source used. 
+The probabilities of the underlying photoionisation events are based
+on the radiation and orbital energies, as well as the shape of the
+orbital.
+In order to account for this it is necessary to apply weighting to
+states according to their photoionisation cross-sections.
+This is accomplished by projecting the full DOS onto contributions
+from atom-like _s_, _p_, _d_, _f_ orbitals (PDOS), as is done
+routinely in analysis of _ab initio_ calculations.
+It is then assumed that the contributions of these projected orbital
+densities to the total photoelectron spectrum will be proportional to
+the photoionisation cross section of the corresponding orbitals in
+free atoms. 
+These values have been previously computed and are available as
+reference data.
 
 ### Vibrational spectroscopy (IR and Raman)
 
@@ -48,7 +93,7 @@ selection rules limit the absorption activity to a small
 number of possible excitations with zero crystal momentum
 ("Gamma-point phonons"). In Raman spectroscopy another optical method
 is used to observe lattice vibrations and different selection rules
-apply; however, again the resulting spectrum corresponds to a limited
+apply; again, the resulting spectrum corresponds to a limited
 selection of Gamma-point movements.
 
 It is possible to predict the frequencies and intensities of these
@@ -57,72 +102,73 @@ calculations. Usually these will be performed within the
 generalised-gradient approximation within density-functional theory
 (DFT), using variations of density-functional perturbation theory
 (DFPT) or the frozen-phonon ("direct") method [@Gonze1997; @Parlinski1997; @Togo2008].
-The Phonopy package is a popular open-source tool for managing
-frozen-phonon calculations with a range of DFT codes [@Togo2015].
-Scripts are available for intensity
-calculation:
-David Karhanek's IR intensity script [-@karhanek] does
-not have a Free Software license at this point in time; Fonari and
-Stauffer have published a program under the MIT license for
-calculating Raman intensities.[@vasp_raman_py] Theoretical Raman
-linewidths can be computed using higher-order phonon calculations, but
-in practice it is helpful to apply additional Lorentzian
-broadening.[@Skelton2014, @Togo2015a, @Skelton2015]
+When the underlying set of vibrational frequencies and mode
+intensities has been calculated it is typical to broaden the data by
+convolution with a Gaussian--Lorentzian function [@Hills1975,
+@Grevels1998].
+This is necessary to correctly intepret the effect of overlapping
+peaks; for example, a group of peaks with low intensities may combine to
+make a large peak in the broadened spectrum.
+The individual peak intensities would be misleading in such a case.
 
-
-### Photoemission spectroscopy
-
-Photoemission/photoionization/photoelectron (PE) spectroscopy is a
-family of methods in which high-energy photons eject electrons from
-the stable electronic structure of a sample and the momentum of this
-electron is used to determine the "binding energy" which originally
-held it. The names of various PE methods refer to the energy range
-and/or equipment involved:
-- ultraviolet photoelectron spectroscopy (UPS)
-- X-ray photoelectron spectroscopy (XPS)
-- hard X-ray photoelectron spectroscopy (HAXPES, HXPS, HX-PES, ...)
-
-These methods are not restricted by symmetry in the way vibrational
-spectroscopy is and generate broad spectra related to the electronic
-density of states (DOS). Computing the DOS is a routine part of *ab
-initio* materials chemistry; the "total energy" of any such
-calculation is ultimately an integral over the occupied states. When
-comparing the computed DOS with a measured PE spectrum it becomes
-clear that the broadening plays a very significant role in
-interpretation, often merging multiple peaks into a single visible
-peak with a different energy value [@Veal2015, @Savory2016, @Sathasivam2017].
-
-The other processing step is the weighting of contributions by their
-photoionisation cross-sections.
-Data is included for some standard energy values, from tabulated ab
-initio calculations.[@Yeh1985] This determines the different shapes
-observed in the valence band edge when examined with different x-ray
-sources.
+<!-- It is possible to predict the frequencies and intensities of these -->
+<!-- vibrational modes by performing *ab initio* lattice dynamics -->
+<!-- calculations. Usually these will be performed within the -->
+<!-- generalised-gradient approximation within density-functional theory -->
+<!-- (DFT), using variations of density-functional perturbation theory -->
+<!-- (DFPT) or the frozen-phonon ("direct") method [@Gonze1997; @Parlinski1997; @Togo2008]. -->
+<!-- The Phonopy package is a popular open-source tool for managing -->
+<!-- frozen-phonon calculations with a range of DFT codes [@Togo2015]. -->
+<!-- Scripts are available for intensity -->
+<!-- calculation: -->
+<!-- David Karhanek's IR intensity script [-@karhanek] does -->
+<!-- not have a Free Software license at this point in time; Fonari and -->
+<!-- Stauffer have published a program under the MIT license for -->
+<!-- calculating Raman intensities [@vasp_raman_py]. Theoretical Raman -->
+<!-- linewidths can be computed using higher-order phonon calculations, but -->
+<!-- in practice it is helpful to apply additional Lorentzian -->
+<!-- broadening [@Skelton2014, @Togo2015a, @Skelton2015]. -->
 
 ## Galore
 
-Galore provides a command-line tool and Python API for 
-- importing data
-- resampling it to a dense, regular X-Y series
-- generating a weighted total of multiple data series
-- convoluting this series with Gaussian and Lorentzian functions
-- plotting or exporting the broadened data
+Galore provides a command-line tool and Python API to import data and
+resample it to a dense, regular X-Y series.
+This mesh can then be convoluted with Gaussian and Lorentzian functions
+to yield a smooth output, in the form of a plot or data file.
+Numpy functions are used for data manipulation and convolution on a
+finite grid and Matplotlib is used for plotting [@Numpy2011, @Hunter2007].
+As well as simple tabular data files, the electronic DOS or PDOS may
+be imported directly from the output of the Vienna Ab Initio
+Simulations Package (VASP).
 
-Data can be imported from simple tabular data files, or the
-orbital-projected electronic density of states (DOS) can be imported
-directly from calculations with the Vienna Ab Initio Simulations
-Package (VASP).
-
-The Gaussian and Lorentzian functions follow standard general forms:
+The Gaussian and Lorentzian functions employed have the forms:
 $$
-y = \exp \left( \frac{-(f - f_0)^2}{2 * \gamma**2} \right)
+y = \exp \left( \frac{-(f - f_0)^2}{2 c^2} \right) \quad \text{where} \quad c = \frac{\gamma}{2 \sqrt{2 \log 2}}
 $$
 and
 $$
 y = \frac{0.5 \gamma}{\pi (f - f_0)^2 + (0.5 \gamma)**2}
 $$
 
-where $f$ is the x-axis value, $f_0$ is the mid-point, $\gamma$ controls the width.
+where $f$ is the x-axis value, $f_0$ is the mid-point, $\gamma$ is the
+full-width-half-maximum of the peak.
+
+Cross-sectional weights are included for some standard energy values
+(He(II) UPS and Al k-alpha) from tabulated ab initio calculations
+[@Yeh1985].
+Users may provide their own weighting values in the same
+human-readable JSON file format.
+Higher-energy (HAXPES) spectra may be simulated using cross-sections
+from fitted data over an energy range 1-1500 keV.
+Tabulated data [@Scofield1973] was fitted to an order-8
+polynomial on a log-log scale, and coefficients for each element and
+orbital shape are stored in a database file. The fitting error is 
+generally below 1%, with outliers in the region of 2--3%.
+The order-8 fit was selected based on cross-validation in order to
+avoid over-fitting.
+
+![Cross-validation error of HAXPES data fitting over full energy range across all elements and orbitals](docs/source/figures/haxpes_fit_paper.pdf)
+
 
 # Acknowledgements
 
@@ -134,7 +180,7 @@ Centre for Doctoral Training in Molecular Modelling and Materials
 Science (EP/L01582/1).
 
 We acknowledge useful discussions with Alexei Sokol (who proposed that
-a code such as this would be useful), Katie Inzani, Anna Regoutz and
+a code such as this would be useful), Katie Inzani and
 Tim Veal. Feature requests and user testing came from Benjamin
 Williamsion, Christopher Savory and Winnie L. Leung.
 
