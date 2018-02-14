@@ -212,7 +212,7 @@ def get_cross_sections_scofield(energy, elements=None):
                                      "polynomial (A. J. Jackson 2018)",
                          'link': "https://doi.org/10.2172/4545040"}
 
-    with sqlite3.connect('galore/data/scofield_data.db') as con:
+    with sqlite3.connect(db_file) as con:
         for element in elements:
             cur = con.cursor()
             cur.execute('SELECT orbital, coeffs_np FROM fits WHERE Element=?;',
