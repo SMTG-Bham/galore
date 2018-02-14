@@ -51,7 +51,7 @@ if __name__ == "__main__":
         packages=find_packages(exclude=['docs', 'test']),
         install_requires=['numpy', 'scipy', 'matplotlib', 'six'],
         extras_require={'docs': ["sphinx",
-                                 #"sphinx_rtd_theme",
+                                 "sphinx_rtd_theme",
                                  "sphinx-argparse"]},
         entry_points={
             'console_scripts': [
