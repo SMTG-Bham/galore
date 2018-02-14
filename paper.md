@@ -34,7 +34,7 @@ bibliography: paper.bib
 
 Galore simplifies and automates the process of simulating
 photoelectron spectra from _ab initio_ calculations.
-This replaces the tedious process of looking-up and interpolating
+This replaces the tedious process of extracting and interpolating
 cross-sectional weights from reference data and generates tabulated
 data or publication-ready plots as needed.
 The broadening tools may also be used to obtain realistic diffuse
@@ -43,25 +43,32 @@ Raman spectroscopy).
 
 ### Photoelectron spectroscopy
 
-Photoelectron (PE) spectroscopy is a family of methods used to
-characterise the electronic structure of materials.
-High-energy photons eject electrons from the occupied states of a
-sample and the momentum of this electron is used to determine its
-"binding energy". 
-The names of various PE methods refer to the energy range and/or
-equipment involved:
+Photoelectron spectroscopy (PES) is a family of methods used to
+characterise the chemical nature and electronic structure of
+materials.
+XPS is based on the photoelectric effect, which was discovered by
+Hertz in 1887, and later refined by Rutherford in 1914 as
+$$E_\text{k} = h\nu - E_\text{B}.$$
+Photons with energies $h\nu$ ranging from 10--$10^4$ eV eject
+electrons (referred to as "photoelectrons") from the occupied 
+orbitals of a sample. The kinetic energy $E_\text{k}$ of each 
+photoelectron therefore depends on its binding energy $E_\text{B}$.
+The names of various PES methods refer to the photon energy range used:
 
-- ultraviolet photoelectron spectroscopy (UPS)
-- X-ray photoelectron spectroscopy (XPS)
-- hard X-ray photoelectron spectroscopy (HAXPES, HXPS, HX-PES, ...)
+- ultraviolet photoelectron spectroscopy (UPS): 5--100 eV
+- X-ray photoelectron spectroscopy (XPS): 0.3--2 keV
+- hard X-ray photoelectron spectroscopy (HAXPES, HXPS, HX-PES, ...): above 2 keV
 
-These methods generate broad spectra related to the electronic density
-of states (DOS), a distribution which is routinely calculated in _ab
-intio_ materials chemistry.
-When comparing the computed DOS with a measured PE spectrum it is
-clear that broadening effects play a significant role in
-interpretation, often merging multiple peaks into a single visible
-peak with a different energy value [@Veal2015, @Savory2016, @Sathasivam2017].
+These methods generate broad spectra that are directly related 
+to the electronic density of states (DOS),
+a distribution which is routinely calculated in _ab initio_ 
+materials chemistry.
+When comparing the computed DOS with a PES measurement, it is often
+possible to identify general peak agreement simply by inverting the
+energy scale (i.e. replace a positive binding energy with a negative 
+orbital energy), applying a little broadening, and shifting the energy
+scale to account for different energy references.
+This approach is taken in, e.g. @Veal2015 and @Savory2016.
 Broadening is generally applied by convolution with a Gaussian
 and/or Lorentzian function: nominally, the Gaussian distribution
 describes instrumental measurement noise while the Lorentzian shape is
@@ -79,12 +86,16 @@ from atom-like _s_, _p_, _d_, _f_ orbitals (PDOS), as is done
 routinely in analysis of _ab initio_ calculations.
 It is then assumed that the contributions of these projected orbital
 densities to the total photoelectron spectrum will be proportional to
-the photoionisation cross section of the corresponding orbitals in
-free atoms. 
-These values have been previously computed and are available as
-reference data.
+the photoionisation cross section of corresponding orbitals in free atoms. 
+These cross-sections have been computed by several methods and are
+available as reference data (e.g. @Yeh1985).
+Implemented with ad-hoc scripts and spreadsheets, this method has
+already been used in a number of academic studies
+(e.g. @Farahani2014, @Sathasivam2017).
 
 ![Procedure (left to right) for simulated photoelectron spectrum from _ab initio_ DOS](docs/source/figures/pe_schematic.pdf)
+
+For further information about PES see [@Huefner2005; @Fadley2009; @Fadley2010].
 
 ### Vibrational spectroscopy (IR and Raman)
 
@@ -105,8 +116,7 @@ calculations. Usually these will be performed within density-functional theory
 (DFPT) or the frozen-phonon ("direct") method [@Gonze1997; @Parlinski1997; @Togo2008].
 When the underlying set of vibrational frequencies and mode
 intensities has been calculated it is typical to broaden the data by
-convolution with a Gaussian--Lorentzian function [@Hills1975,
-@Grevels1998].
+convolution with a Gaussian--Lorentzian function [@Hills1975; @Grevels1998].
 This is necessary to correctly intepret the effect of overlapping
 peaks; for example, Figure 2 shows a case in which a group of peaks
 with low intensities combine to form a large peak in the broadened
@@ -139,7 +149,7 @@ resample it to a dense, regular X-Y series.
 This mesh can then be convoluted with Gaussian and Lorentzian functions
 to yield a smooth output, in the form of a plot or data file.
 Numpy functions are used for data manipulation and convolution on a
-finite grid and Matplotlib is used for plotting [@Numpy2011, @Hunter2007].
+finite grid and Matplotlib is used for plotting [@Numpy2011; @Hunter2007].
 As well as simple tabular data files, the electronic DOS or PDOS may
 be imported directly from the output of the Vienna Ab Initio
 Simulations Package (VASP).
