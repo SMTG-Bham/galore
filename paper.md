@@ -49,7 +49,7 @@ materials.
 XPS is based on the photoelectric effect, which was discovered by
 Hertz in 1887, and later refined by Rutherford in 1914 as
 $$E_\text{k} = h\nu - E_\text{B}.$$
-Photons with energies $h\nu$ ranging from 10--$10^4$ eV eject
+Photons with energies $h\nu$ ranging from 5 eV up to 12 keV eject
 electrons (referred to as "photoelectrons") from the occupied
 orbitals of a sample. The kinetic energy $E_\text{k}$ of each
 photoelectron therefore depends on its binding energy $E_\text{B}$.
@@ -57,9 +57,9 @@ The names of various PES methods refer to the photon energy range used:
 
 - ultraviolet photoelectron spectroscopy (UPS): 5--100 eV
 - X-ray photoelectron spectroscopy (XPS): 0.3--2 keV
-- hard X-ray photoelectron spectroscopy (HAXPES, HXPS, HX-PES, ...): above 2 keV
+- hard X-ray photoelectron spectroscopy (HAXPES, HE-PES, HXPS, HX-PES): above 2 keV
 
-These methods generate broad spectra that are directly related
+These methods generate spectra that are directly related
 to the electronic density of states (DOS),
 a distribution which is routinely calculated in _ab initio_
 materials chemistry.
@@ -70,9 +70,10 @@ orbital energy), applying a little broadening, and shifting the energy
 scale to account for different energy references.
 This approach is taken in, e.g. @Veal2015 and @Savory2016.
 Broadening is generally applied by convolution with a Gaussian
-and/or Lorentzian function: nominally, the Gaussian distribution
-describes instrumental measurement noise while the Lorentzian shape is
-used to describe optical broadening effects.
+and/or Lorentzian function: intrinsic lifetime broadening causes a
+Lorentzian energy distribution of the photoelectrons, whilst instrumental
+factors, including the width of the X-ray source and analyser resolution,
+give rise to a Gaussian line shape.
 
 Photoemission spectra for the same material will vary depending on the
 radiation source used.
