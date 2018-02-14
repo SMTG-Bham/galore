@@ -83,11 +83,11 @@ orbital.
 In order to account for this it is necessary to apply weighting to
 states according to their photoionisation cross-sections.
 This is accomplished by projecting the full DOS onto contributions
-from atom-like _s_, _p_, _d_, _f_ orbitals (PDOS), as is done
+from atomic _s_, _p_, _d_, _f_ orbitals (PDOS), as is done
 routinely in analysis of _ab initio_ calculations.
-It is then assumed that the contributions of these projected orbital
-densities to the total photoelectron spectrum will be proportional to
-the photoionisation cross section of corresponding orbitals in free atoms.
+It is then assumed that the contributions of these orbital-projected
+states to the total photoelectron spectrum will be proportional to
+the photoionisation cross-sections of corresponding orbitals in free atoms.
 These cross-sections have been computed by several methods and are
 available as reference data (e.g. @Yeh1985).
 Implemented with ad-hoc scripts and spreadsheets, this method has
