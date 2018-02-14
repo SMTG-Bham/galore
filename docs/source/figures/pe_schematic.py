@@ -6,7 +6,7 @@ import galore.formats
 import galore.plot
 
 
-fig = plt.figure(figsize=(6, 2))
+fig = plt.figure(figsize=(6.2, 2))
 xlim = (-6, 2)
 new_ylim = (0, 6e-6)
 final_ylim = (0, 1.5e-4)
@@ -41,7 +41,7 @@ weighted_data = galore.apply_orbital_weights(pdos_data,
                                              galore.get_cross_sections(
                                                  weighting))
 galore.plot.plot_pdos(weighted_data, ax=ax3, total=False)
-ax3.set_title("Weight by CS")
+ax3.set_title("Weight by \n cross-section")
 ax3.set_xlim(xlim)
 ax3.legend().remove()
 
@@ -70,5 +70,5 @@ ax5.set_xlim(xlim)
 ax5.set_ylim(final_ylim)
 ax5.legend().remove()
 
-fig.subplots_adjust(left=0.03, right=0.98)
+fig.subplots_adjust(left=0.03, right=0.98, top=0.78)
 fig.savefig('docs/source/figures/pe_schematic.pdf')
