@@ -50,8 +50,8 @@ XPS is based on the photoelectric effect, which was discovered by
 Hertz in 1887, and later refined by Rutherford in 1914 as
 $$E_\text{k} = h\nu - E_\text{B}.$$
 Photons with energies $h\nu$ ranging from 10--$10^4$ eV eject
-electrons (referred to as "photoelectrons") from the occupied 
-orbitals of a sample. The kinetic energy $E_\text{k}$ of each 
+electrons (referred to as "photoelectrons") from the occupied
+orbitals of a sample. The kinetic energy $E_\text{k}$ of each
 photoelectron therefore depends on its binding energy $E_\text{B}$.
 The names of various PES methods refer to the photon energy range used:
 
@@ -59,13 +59,13 @@ The names of various PES methods refer to the photon energy range used:
 - X-ray photoelectron spectroscopy (XPS): 0.3--2 keV
 - hard X-ray photoelectron spectroscopy (HAXPES, HXPS, HX-PES, ...): above 2 keV
 
-These methods generate broad spectra that are directly related 
+These methods generate broad spectra that are directly related
 to the electronic density of states (DOS),
-a distribution which is routinely calculated in _ab initio_ 
+a distribution which is routinely calculated in _ab initio_
 materials chemistry.
 When comparing the computed DOS with a PES measurement, it is often
 possible to identify general peak agreement simply by inverting the
-energy scale (i.e. replace a positive binding energy with a negative 
+energy scale (i.e. replace a positive binding energy with a negative
 orbital energy), applying a little broadening, and shifting the energy
 scale to account for different energy references.
 This approach is taken in, e.g. @Veal2015 and @Savory2016.
@@ -75,7 +75,7 @@ describes instrumental measurement noise while the Lorentzian shape is
 used to describe optical broadening effects.
 
 Photoemission spectra for the same material will vary depending on the
-radiation source used. 
+radiation source used.
 The probabilities of the underlying photoionisation events are based
 on the radiation and orbital energies, as well as the shape of the
 orbital.
@@ -86,7 +86,7 @@ from atom-like _s_, _p_, _d_, _f_ orbitals (PDOS), as is done
 routinely in analysis of _ab initio_ calculations.
 It is then assumed that the contributions of these projected orbital
 densities to the total photoelectron spectrum will be proportional to
-the photoionisation cross section of corresponding orbitals in free atoms. 
+the photoionisation cross section of corresponding orbitals in free atoms.
 These cross-sections have been computed by several methods and are
 available as reference data (e.g. @Yeh1985).
 Implemented with ad-hoc scripts and spreadsheets, this method has
@@ -95,7 +95,8 @@ already been used in a number of academic studies
 
 ![Procedure (left to right) for simulated photoelectron spectrum from _ab initio_ DOS](docs/source/figures/pe_schematic.pdf)
 
-For further information about PES see [@Huefner2005; @Fadley2009; @Fadley2010].
+For further information about PES there are some helpful reviews in the
+academic literature, including @Huefner2005, @Fadley2009 and @Fadley2010.
 
 ### Vibrational spectroscopy (IR and Raman)
 
@@ -113,10 +114,11 @@ It is possible to predict the frequencies and intensities of these
 vibrational modes by performing *ab initio* lattice dynamics
 calculations. Usually these will be performed within density-functional theory
 (DFT), either using variations of density-functional perturbation theory
-(DFPT) or the frozen-phonon ("direct") method [@Gonze1997; @Parlinski1997; @Togo2008].
+(DFPT) (based on the work of @Gonze1997)
+or the frozen-phonon ("direct") method  [@Parlinski1997; @Togo2008].
 When the underlying set of vibrational frequencies and mode
 intensities has been calculated it is typical to broaden the data by
-convolution with a Gaussian--Lorentzian function [@Hills1975; @Grevels1998].
+convolution with a Gaussian--Lorentzian function [e.g. @Hills1975; @Grevels1998].
 This is necessary to correctly intepret the effect of overlapping
 peaks; for example, Figure 2 shows a case in which a group of peaks
 with low intensities combine to form a large peak in the broadened
@@ -175,7 +177,7 @@ Higher-energy (HAXPES) spectra may be simulated using cross-sections
 from fitted data over an energy range 1-1500 keV.
 Tabulated data [@Scofield1973] was fitted to an order-8
 polynomial on a log-log scale, and coefficients for each element and
-orbital shape are stored in a database file. The fitting error is 
+orbital shape are stored in a database file. The fitting error is
 generally below 1%, with outliers in the region of 2--3%.
 The order-8 fit was selected based on cross-validation in order to
 avoid over-fitting.
