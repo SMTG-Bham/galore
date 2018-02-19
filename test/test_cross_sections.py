@@ -38,8 +38,8 @@ class test_cross_sections_dispatch(unittest.TestCase):
                          side_effect=mock_get_cross_sections_yeh)
     def test_yeh_dispatch(self, mock_func):
         """Check tabulated weightings are dispatched correctly"""
-        self.assertEqual(get_cross_sections('xps'),
-                         ('xps', 'YEH'))
+        self.assertEqual(get_cross_sections('alka'),
+                         ('alka', 'YEH'))
 
     @unittest.mock.patch('galore.cross_sections.get_cross_sections_scofield',
                          side_effect=mock_get_cross_sections_scofield)
@@ -68,17 +68,26 @@ class test_json_data(unittest.TestCase):
 class test_yeh_data(unittest.TestCase):
     def test_xps_yeh(self):
         """Check Al k-alpha data from Yeh/Lindau"""
-        Lr_cs = get_cross_sections_yeh('xps')['Lr']
+        Lr_cs = get_cross_sections_yeh('AlKa')['Lr']
         self.assertAlmostEqual(Lr_cs['p'], 0.001666666666666667)
 
-        H_cs = get_cross_sections_yeh('xps')['H']
+        H_cs = get_cross_sections_yeh('alka')['H']
         self.assertIsNone(H_cs['f'])
 
     def test_ups_yeh(self):
         """Check He(II) data from Yeh/Lindau"""
-        Pr_cs = get_cross_sections_yeh('ups')['Pr']
+        Pr_cs = get_cross_sections_yeh('He2')['Pr']
         self.assertAlmostEqual(Pr_cs['f'], 0.848)
 
+class test_yeh_old_keys(unittest.TestCase):
+    def test_yeh_old_keys(self):
+        with self.assertRaises(ValueError):
+            get_cross_sections('xps')
+        with self.assertRaises(ValueError):
+            get_cross_sections('ups')
+        with self.assertRaises(ValueError):
+            get_cross_sections('haxpes')
+        
 
 class test_scofield_data(unittest.TestCase):
     def setUp(self):

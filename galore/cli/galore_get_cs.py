@@ -34,7 +34,7 @@ def get_parser():
     parser = ArgumentParser()
     parser.add_argument('energy', type=str,
                         help="""
-        Photon energy, expressed as source type: "ups" for He (II), "xps" for
+        Photon energy, expressed as source type: "he2" for He (II), "alka" for
         Al k-alpha, (values from Yeh/Lindau (1985)) or as energy in keV (values
         from polynomial fit to Scofield (1973)).""")
     parser.add_argument('elements', type=str, nargs='+', help="""

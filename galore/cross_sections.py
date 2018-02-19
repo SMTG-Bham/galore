@@ -53,8 +53,13 @@ def get_cross_sections(weighting, elements=None):
 
     except ValueError:
         if isinstance(weighting, str):
-            if weighting in ('xps', 'ups', 'haxpes'):
+            if weighting.lower() in ('alka', 'he2', 'yeh_haxpes'):
                 return get_cross_sections_yeh(weighting)
+            elif weighting.lower() in ('xps', 'ups', 'haxpes'):
+                raise ValueError("Key '{0}' is no longer accepted for "
+                                 "weighting. Please use 'alka' for Al k-alpha,"
+                                 " 'he2' for He (II) or 'yeh_haxpes' for "
+                                 "8047.8 eV HAXPES".format(weighting))
             else:
                 return get_cross_sections_json(weighting)
 
@@ -155,7 +160,9 @@ def get_cross_sections_yeh(source):
 
     Args:
         source (str): Label corresponding to radiation source. Accepted values
-            'xps' (1486.6 eV), 'ups' (40.8 eV), 'haxpes' (8047.8).
+            'alka' (1486.6 eV), 'he2' (40.8 eV), 'yeh_haxpes' (8047.8).
+            These keys are not case-sensitive and correspond to Al k-alpha,
+            He(II) and hard x-ray sources.
 
     Returns:
         dict:
@@ -167,11 +174,11 @@ def get_cross_sections_yeh(source):
 
     """
 
-    weighting_files = {'xps': resource_filename(
+    weighting_files = {'alka': resource_filename(
                        __name__, "data/cross_sections.json"),
-                       'ups': resource_filename(
+                       'he2': resource_filename(
                            __name__, "data/cross_sections_ups.json"),
-                       'haxpes': resource_filename(
+                       'yeh_haxpes': resource_filename(
                            __name__, "data/cross_sections_haxpes.json")}
 
     if source.lower() in weighting_files:

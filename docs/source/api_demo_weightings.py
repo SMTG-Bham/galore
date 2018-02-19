@@ -12,7 +12,7 @@ xmin, xmax = (-10, 4)
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 
-weightings = ('UPS', 'XPS', 'HAXPES')
+weightings = ('He2', 'Alka', 'Yeh_HAXPES')
 
 for i, weighting in enumerate(weightings):
 
