@@ -9,6 +9,6 @@ galore
 ------
 
 .. argparse::
-   :module: galore.cli
+   :module: galore.cli.galore
    :func: get_parser
    :prog: galore

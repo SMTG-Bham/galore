@@ -55,7 +55,7 @@ if __name__ == "__main__":
                                  "sphinx-argparse"]},
         entry_points={
             'console_scripts': [
-                'galore=galore.cli:main',
+                'galore=galore.cli.galore:main',
                 ]
             },
         test_suite='setup.unit_tests'
