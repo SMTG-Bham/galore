@@ -70,7 +70,7 @@ several inputs:
   necessary to include the elements and orbitals used in the DOS input
   files.
 
-See the Tutorials for a walkthrough using sample data.
+See the `Tutorials <http://galore.readthedocs.io/en/latest/tutorials.html>`__ for a walkthrough using sample data.
 
 Requirements
 ------------
