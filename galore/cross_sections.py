@@ -1,6 +1,7 @@
 import os.path
 from pkg_resources import resource_filename
 from json import load as json_load
+from collections import Iterable
 
 import sqlite3
 from scipy import polyval
@@ -176,14 +177,32 @@ def get_cross_sections_scofield(energy, elements=None):
                 {el1: {'s': c11, 'p': c12, ... },
                  el2: {'s': c21, 'p': c22, ... }, ... }
 
+    Raises:
+        ValueError: Energy values must lie within interpolation range
+            1--1500keV
+
     """
 
-    if energy < 1.:
+    min_energy, max_energy = 1., 1500.
+
+    def _low_value(energy):
         raise ValueError("Scofield data not available below 1 keV: refusing"
                          " to extrapolate to {0} keV".format(energy))
-    elif energy > 1500.:
+
+    def _high_value(energy):
         raise ValueError("Scofield data not available above 1500 keV: refusing"
                          " to extrapolate to {0} keV".format(energy))
+
+    if isinstance(energy, Iterable):
+        if min(energy) < min_energy:
+            _low_value(energy)
+        elif max(energy) > max_energy:
+            _high_value(energy)
+    else:
+        if energy < min_energy:
+            _low_value(energy)
+        elif energy > max_energy:
+            _high_value(energy)
 
     db_file = resource_filename(__name__, "data/scofield_data.db")
 

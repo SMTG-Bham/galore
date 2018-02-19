@@ -99,7 +99,11 @@ class test_scofield_data(unittest.TestCase):
         with self.assertRaises(ValueError):
             get_cross_sections_scofield(0.5, elements=['H'])
         with self.assertRaises(ValueError):
+            get_cross_sections_scofield((10, 11, 0.5), elements=['H'])
+        with self.assertRaises(ValueError):
             get_cross_sections_scofield(1600, elements=['H'])
+        with self.assertRaises(ValueError):
+            get_cross_sections_scofield((10, 11, 1600, 12), elements=['H'])
 
     def test_scofield_ref(self):
         """Check Scofield parametrisation: spot-check vs tables"""
