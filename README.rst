@@ -8,23 +8,24 @@ Galore is a package which applies Gaussian and Lorentzian broadening
 to data from *ab initio* calculations. The two main intended
 applications are
 
-1. Application of Lorentzian instrumental broadening to simulated Raman
-   spectra from DFPT calculations.
-2. Gaussian and Lorentzian broadening of electronic density-of-states,
+1. Gaussian and Lorentzian broadening of electronic density-of-states,
    with orbital weighting to simulate UPS/XPS/HAXPES measurements.
-
+2. Application of Lorentzian instrumental broadening to simulated Raman
+   spectra from DFPT calculations.
 
 Documentation
 -------------
 
 A brief overview is given in this README file.
-Full documentation is available online: `readthedocs <http://galore.readthedocs.io/en/latest/>`__.
+A full manual, including tutorials and API documentation,
+is available online at `readthedocs.io <http://galore.readthedocs.io/en/latest/>`__.
 You can build a local version using Sphinx with ``make html`` from
 the *docs* directory of this project.
 
 Usage
 -----
 
+Broadening, weighting and plotting are accessed with the ``galore`` program.
 For full documentation of the command-line flags, please use the
 in-built help::
 
@@ -71,6 +72,16 @@ several inputs:
   files.
 
 See the `Tutorials <http://galore.readthedocs.io/en/latest/tutorials.html>`__ for a walkthrough using sample data.
+
+The orbital data can also be accessed without working on a particular
+spectrum with the ``galore-get-cs`` program. For example::
+
+  galore-get-cs 4 Sn O
+
+will print a set of valence orbital weightings for Sn and O
+corresponding to a 4 keV hard x-ray source.
+These values have been converted from atomic orbital data
+to *per electron* cross-sections.
 
 Requirements
 ------------
