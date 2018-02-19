@@ -264,17 +264,18 @@ HAXPES
 
 A HAXPES spectrum was obtained by digitizing Fig. 1 of `Nagata et
 al. (2011) <https://doi.org/10.1063/1.3596449>`__. These experiments
-were performed with 5.95 keV x-rays, while the weighting parameters
-from Yeh and Lindau are for 8.05 keV so an exact match is unlikely::
+were performed with 5.95 keV x-rays; we set ``--w 5.95`` to estimate
+corresponding cross-sections by fitting to
+`Scofield (1973) <https://doi.org/10.2172/4545040>`__::
 
    galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.5 --pdos \
-     --w yeh_haxpes --flipx --xmin -2 --xmax 10 \
+     --w 5.95 --flipx --xmin -2 --xmax 10 \
      --overlay test/SnO2/haxpes_data.csv --overlay_offset -3.7 \
      --ylabel Intensity --overlay_style -
 
 We see that the weighting goes some way to rebalancing the peak
 intensities but once again the Sn-d states are over-represented.
-Surface states above the valence band are also seen again.
+Surface states above the valence band are seen in the experimental data.
 
 
 Python API
