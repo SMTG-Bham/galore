@@ -13,7 +13,7 @@ import numpy as np
 
 import galore
 import galore.formats
-import galore.cli
+from galore.cli.galore import simple_dos_from_files
 import galore.plot
 
 from contextlib import contextmanager
@@ -49,8 +49,7 @@ class test_dos_functions(unittest.TestCase):
         xmin = -3
         xmax = 220
         sampling = 1e-1
-        plt = galore.cli.simple_dos_from_files(
-                                    input=path_join(test_dir,
+        plt = simple_dos_from_files(input=path_join(test_dir,
                                                     'test_xy_data.csv'),
                                     return_plt=True, xmax=xmax, xmin=xmin,
                                     sampling=sampling,
