@@ -30,7 +30,7 @@ from math import sqrt, log
 import numpy as np
 
 import galore.formats
-from galore.cross_sections import get_cross_sections
+from galore.cross_sections import get_cross_sections, cross_sections_info
 
 
 def auto_limits(data_1d, padding=0.05):
@@ -382,14 +382,10 @@ def apply_orbital_weights(pdos_data, cross_sections):
 
     logging.info("Applying cross-section weighting values to PDOS:")
 
-    if 'energy' in cross_sections:
-        logging.info("  Photon energy: {0}".format(cross_sections['energy']))
-    if 'citation' in cross_sections:
-        logging.info("  Citation: {0}".format(cross_sections['citation']))
-    if 'link' in cross_sections:
-        logging.info("  Link: {0}".format(cross_sections['link']))
+    cross_sections_info(cross_sections, logging=logging)
 
     logging.info("  Orbital cross-section weights per electron:")
+
     weighted_pdos_data = OrderedDict()
     for el, orbitals in pdos_data.items():
         if 'warning' in cross_sections[el]:

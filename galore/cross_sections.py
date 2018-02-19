@@ -64,6 +64,38 @@ def get_cross_sections(weighting, elements=None):
                      "energy value in eV")
 
 
+def cross_sections_info(cross_sections, logging=None):
+    """Log basic info from cross-sections dict.
+
+    Args:
+        cross_sections (dict): The keys 'energy', 'citation',
+            'link' and 'warning' are checked for relevant information
+
+        logging (module): Active logging module from Python standard
+            library. If None, logging will be set up.
+
+    Returns:
+        module:
+            Active logging module from Python standard library
+
+    """
+
+    if logging is None:
+        import logging
+        logging.basicConfig(filename='galore.log', level=logging.INFO)
+        console = logging.StreamHandler()
+        logging.getLogger().addHandler(console)
+
+    if 'energy' in cross_sections:
+        logging.info("  Photon energy: {0}".format(cross_sections['energy']))
+    if 'citation' in cross_sections:
+        logging.info("  Citation: {0}".format(cross_sections['citation']))
+    if 'link' in cross_sections:
+        logging.info("  Link: {0}".format(cross_sections['link']))
+
+    return logging
+
+
 def get_cross_sections_json(path):
     """Get valence-band cross-sections from JSON file
 

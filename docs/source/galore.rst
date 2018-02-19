@@ -9,7 +9,7 @@ Submodules
    galore.cross_sections
    galore.formats
    galore.plot
-   galore.cli.galore
+   galore.cli
 
 Module contents
 ---------------

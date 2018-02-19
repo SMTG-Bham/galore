@@ -178,6 +178,7 @@ def simple_dos_from_files(return_plt=False, **kwargs):
 
 
 def get_parser():
+    """Parse command-line arguments. Function is used to build the CLI docs."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'input', type=str, default='vasprun.xml', nargs='+',
