@@ -26,6 +26,10 @@ from collections import OrderedDict
 import numpy as np
 
 
+def is_gpw(filename):
+    """Determine whether file is GPAW calculation by checking extension"""
+    return filename.split('.')[-1] == 'gpw'
+
 def is_doscar(filename):
     """Determine whether file is a DOSCAR by checking fourth line"""
 
@@ -330,6 +334,103 @@ def read_vasprun(filename='vasprun.xml'):
     return dos
 
 
+def read_gpaw_totaldos(filename, npts=50001, width=1e-3, ref='vbm'):
+    """Read total DOS from GPAW with minimal broadening
+
+    This requires GPAW to be installed and on your PYTHONPATH!
+
+    Args:
+        filename (str): Path to GPAW calculation file. This should be a .gpw
+            file generated with ``calc.write('myfilename.gpw')``.
+        npts (int): Number of DOS samples
+        width (float): Gaussian broadening parameter applied by GPAW. Default
+            is minimal so that broadening is dominated by choices in Galore.
+            Beware that there is a strong interaction between this parameter
+            and npts; with a small npts and small width, many energy levels
+            will be missed from the DOS!
+        ref (str): Reference energy for DOS. 'vbm' or 'efermi' are accepted for
+            the valence-band maximum or the Fermi energy, respectively. VBM is
+            determined from calculation eigenvalues and not DOS values. If set
+            to None, raw values are used.
+    Returns:
+        data (np.ndarray): 2D array of energy and DOS values
+    """
+    from gpaw import GPAW
+    calc = GPAW(filename)
+
+    if ref is None:
+        ref_energy = 0
+    elif ref.lower() == 'vbm':
+        ref_energy, _ = calc.get_homo_lumo()
+    elif ref.lower() == 'efermi':
+        ref_energy = calc.get_fermi_level()
+
+    energies, dos = calc.get_dos()
+    return np.array(list(zip(energies - ref_energy, dos)))
+
+
+def read_gpaw_pdos(filename, npts=50001, width=1e-3, ref='vbm'):
+    """Read orbital-projected DOS from GPAW with minimal broadening.
+
+    This requires GPAW to be installed and on your PYTHONPATH!
+
+    Args:
+        filename (str): Path to GPAW calculation file. This should be a .gpw
+            file generated with ``calc.write('myfilename.gpw')``.
+        npts (int): Number of DOS samples
+        width (float): Gaussian broadening parameter applied by GPAW. Default
+            is minimal so that broadening is dominated by choices in Galore.
+            Beware that there is a strong interaction between this parameter
+            and npts; with a small npts and small width, many energy levels
+            will be missed from the DOS!
+        ref (str): Reference energy for DOS. 'vbm' or 'efermi' are accepted for
+            the valence-band maximum or the Fermi energy, respectively. VBM is
+            determined from calculation eigenvalues and not DOS values. If set
+            to None, raw values are used.
+
+    Returns:
+        pdos_data (OrderedDict): PDOS data formatted as nestled OrderedDict of:
+            {element: {'energy': energies, 's': densities, 'p' ... }
+    """
+    from gpaw import GPAW
+    calc = GPAW(filename)
+
+    if ref is None:
+        ref_energy = 0
+    elif ref.lower() == 'vbm':
+        ref_energy, _ = calc.get_homo_lumo()
+    elif ref.lower() == 'efermi':
+        ref_energy = calc.get_fermi_level()
+
+    # Set up the structure of elements and orbitals.
+    # Repeated elements will leave a single entry in the dict
+    proto_orbitals = OrderedDict((('energy', np.zeros(npts)),
+                                  ('s', np.zeros(npts)),
+                                  ('p', np.zeros(npts)),
+                                  ('d', np.zeros(npts)),
+                                  ('f', np.zeros(npts))))
+    pdos_data = OrderedDict([(atom.symbol, proto_orbitals.copy())
+                             for atom in calc.atoms])
+
+    # Read orbital DOS, adding to collected PDOS for that element/orbital
+    for atom in calc.atoms:
+        for orbital in 'spdf':
+            energies, dos = calc.get_orbital_ldos(atom.index, angular=orbital,
+                                                  npts=npts, width=width)
+            pdos_data[atom.symbol][orbital] += dos
+
+        pdos_data[atom.symbol]['energy'] = energies - ref_energy
+
+    # Set any zero arrays to None so they can be easily skipped over
+    # This should get rid of unused orbitals; if GPAW put some density in those
+    # orbitals then we should keep that evidence rather than discard it.
+    for element, orbitals in pdos_data.items():
+        for orbital, dos in orbitals.items():
+            if orbital != 'energy' and max(dos) == 0.:
+                pdos_data[element][orbital] = None
+
+    return pdos_data
+
 def read_vasprun_totaldos(filename='vasprun.xml'):
     """Read an x, y series of energies and DOS from a VASP vasprun.xml file
 
@@ -339,7 +440,7 @@ def read_vasprun_totaldos(filename='vasprun.xml'):
         filename (str): Path to vasprun.xml file
 
     Returns:
-        data (2-tuple): Tuple containing x values and y values as lists
+        data (np.ndarray): 2D array of energy and DOS values
     """
     dos = read_vasprun(filename)
 
@@ -383,7 +484,6 @@ def read_vasprun_pdos(filename='vasprun.xml'):
             pdos_data[element][orbital.name] = densities
 
     return pdos_data
-
 
 def read_vasp_raman(filename="vasp_raman.dat"):
     """Read output file from Vasp raman simulation
