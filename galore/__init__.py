@@ -87,6 +87,8 @@ def process_1d_data(input=['vasprun.xml'],
             "Input file {0} does not exist!".format(input))
     if galore.formats.is_xml(input):
         xy_data = galore.formats.read_vasprun_totaldos(input)
+    elif galore.formats.is_gpw(input):
+        xy_data = galore.formats.read_gpaw_totaldos(input)
     elif galore.formats.is_doscar(input):
         xy_data = galore.formats.read_doscar(input)
     elif galore.formats.is_vasp_raman(input):
@@ -154,6 +156,11 @@ def process_pdos(input=['vasprun.xml'],
             kwargs['units'] = 'eV'
             break
 
+        elif galore.formats.is_gpw(pdos_file):
+            pdos_data = galore.formats.read_gpaw_pdos(pdos_file)
+            kwargs['units'] = 'eV'
+            break
+
         if not os.path.exists(pdos_file):
             raise Exception("Input file {0} does not "
                             "exist!".format(input))
@@ -210,6 +217,8 @@ def process_pdos(input=['vasprun.xml'],
         pdos_plotting_data[element] = OrderedDict([('energy', x_values)])
         for orbital, orb_data in el_data.items():
             if orbital == 'energy':
+                continue
+            elif orb_data is None:
                 continue
 
             xy_data = np.column_stack([el_data['energy'], orb_data])
