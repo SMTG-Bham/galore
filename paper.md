@@ -28,7 +28,7 @@ affiliations:
     index: 2
   - name: Dept of Materials, Imperial College London, London SW7 2AZ, UK
   - index: 3
-date: February 2018
+date: March 2018
 bibliography: paper.bib
 ---
 
@@ -64,10 +64,10 @@ to the electronic density of states (DOS),
 a distribution which is routinely calculated in _ab initio_
 materials chemistry.
 When comparing the computed DOS with a PES measurement, it is often
-possible to identify general peak agreement simply by inverting the
-energy scale (i.e. replace a positive binding energy with a negative
-orbital energy), applying a little broadening, and shifting the energy
-scale to account for different energy references.
+possible to identify general peak agreement simply by reversing the
+energy scale (i.e. replacing negative orbital energies with positive
+binding energies), applying a little broadening, and shifting the energy
+values to account for different references.
 This approach is taken in, e.g. @Veal2015 and @Savory2016.
 Broadening is generally applied by convolution with a Gaussian
 and/or Lorentzian function: intrinsic lifetime broadening causes a
@@ -112,11 +112,11 @@ apply; again, the resulting spectrum corresponds to a limited
 selection of Gamma-point movements.
 
 It is possible to predict the frequencies and intensities of these
-vibrational modes by performing *ab initio* lattice dynamics
+vibrational modes by performing _ab initio_ lattice dynamics
 calculations. Usually these will be performed within density-functional theory
 (DFT), either using variations of density-functional perturbation theory
 (DFPT) (based on the work of @Gonze1997)
-or the frozen-phonon ("direct") method  [@Parlinski1997; @Togo2008].
+or the frozen-phonon ("direct") method  [see @Parlinski1997; @Togo2008].
 When the underlying set of vibrational frequencies and mode
 intensities has been calculated it is typical to broaden the data by
 convolution with a Gaussian--Lorentzian function [e.g. @Hills1975; @Grevels1998].
@@ -170,7 +170,7 @@ where $f$ is the x-axis value, $f_0$ is the mid-point, $\gamma$ is the
 full-width-half-maximum of the peak.
 
 Cross-sectional weights are included for some standard energy values
-(He(II) UPS and Al k-alpha) from tabulated ab initio calculations
+(He(II) UPS and Al k-alpha) from tabulated _ab initio_ calculations
 [@Yeh1985].
 Users may provide their own weighting values in the same
 human-readable JSON file format.
@@ -181,7 +181,7 @@ polynomial on a log-log scale, and coefficients for each element and
 orbital shape are stored in a database file. The fitting error is
 generally below 1%, with outliers in the region of 2--3%.
 The order-8 fit was selected based on cross-validation in order to
-avoid over-fitting.
+avoid over-fitting (Figure 3).
 
 ![Cross-validation error of HAXPES data fitting over full energy range across all elements and orbitals](docs/source/figures/haxpes_fit_paper.pdf)
 
