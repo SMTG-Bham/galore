@@ -193,7 +193,7 @@ transparent conducting materials, led by David O. Scanlon and funded
 by EPSRC (project code EP/N01572X/1).  Work by AMG was supported by a
 studentship co-sponsored by the Diamond Light Source at the EPSRC
 Centre for Doctoral Training in Molecular Modelling and Materials
-Science (EP/L01582/1).
+Science (EP/L01582/1). AR acknowledges the support from Imperial College London for her Imperial College Research Fellowship. 
 
 We acknowledge useful discussions with Alexey Sokol (who proposed that
 a code such as this would be useful), Katie Inzani and
