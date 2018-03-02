@@ -178,6 +178,7 @@ def simple_dos_from_files(return_plt=False, **kwargs):
 
 
 def get_parser():
+    """Parse command-line arguments. Function is used to build the CLI docs."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'input', type=str, default='vasprun.xml', nargs='+',
@@ -202,10 +203,14 @@ def get_parser():
         '-w', '--weighting',
         type=str,
         default=None,
-        help='Apply cross-section weighting to data. "XPS", "UPS" and "HAXPES"'
-             'select tabulated data for valence band at 1486.6 eV, 40.8 eV '
-             'and (HAXPES) respectively. Alternatively, provide path to a '
-             'JSON file with cross-section data.')
+        help='Apply cross-section weighting to data. "alka", "he2" and '
+             '"yeh_haxpes" select tabulated data for valence band at 1486.6 '
+             'eV, 40.8 eV and 8047.8 eV respectively. '
+             'Numerical values will be interpreted as an energy in keV; '
+             'for energies from 1-1500 eV cross-sections will be determined '
+             'using a parametrisation from tabulated data. '
+             'Alternatively, provide '
+             'path to a JSON file with cross-section data.')
     parser.add_argument(
         '--units',
         '--x_units',

@@ -162,7 +162,7 @@ in this file.
 Let's turn this into a useful XPS plot. The flag ``--weightings`` can
 be used to pass a data file with cross-section data; for some cases
 data is build into Galore. Here we will use the data for Al k-α
-radiation which is denoted ``xps`` is built into Galore.  We also flip
+radiation which is denoted ``alka`` is built into Galore.  We also flip
 the x-axis with ``--flipx`` to match the usual presentation of XPS
 data as positive ionisation or binding energies rather than the
 negative energy of the stable electron states. Finally the
@@ -171,7 +171,7 @@ data is written to a CSV file with the ``--csv`` option.
 .. code-block:: bash
 
     galore test/MgO/MgO_Mg_dos.dat test/MgO/MgO_O_dos.dat \
-      --plot mgo_xps.png --pdos -g 0.2 -l 0.2 --weighting xps \
+      --plot mgo_xps.png --pdos -g 0.2 -l 0.2 --weighting alka \
       --units ev --xmin -1 --xmax 8 --ylabel Intensity \
       --csv mgo_xps.csv --flipx
 
@@ -211,7 +211,7 @@ We have digitised the experimental data plotted in Fig.3 of
 in order to aid a direct comparison::
 
   galore test/SnO2/vasprun.xml.gz --plot -g 0.5 -l 0.4 \
-    --pdos --w XPS --flipx --xmin -2 --xmax 10 \
+    --pdos --w alka --flipx --xmin -2 --xmax 10 \
     --overlay test/SnO2/xps_data.csv  --overlay_offset -4 \
     --overlay_scale 3.5 --units ev --ylabel Intensity
 
@@ -243,7 +243,7 @@ zero suggests the presence of some phenomenon in the bandgap which was
 not captured by the *ab initio* calculation::
 
   galore test/SnO2/vasprun.xml.gz --plot -g 0.5 -l 0.9 \
-    --pdos --w ups --flipx --xmin -2 --xmax 10 \
+    --pdos --w he2 --flipx --xmin -2 --xmax 10 \
     --overlay test/SnO2/ups_data.csv --overlay_offset 0.44 \
     --units ev --ylabel Intensity --overlay_style x    
 
@@ -264,17 +264,18 @@ HAXPES
 
 A HAXPES spectrum was obtained by digitizing Fig. 1 of `Nagata et
 al. (2011) <https://doi.org/10.1063/1.3596449>`__. These experiments
-were performed with 5.95 keV x-rays, while the weighting parameters
-from Yeh and Lindau are for 8.05 keV so an exact match is unlikely::
+were performed with 5.95 keV x-rays; we set ``--w 5.95`` to estimate
+corresponding cross-sections by fitting to
+`Scofield (1973) <https://doi.org/10.2172/4545040>`__::
 
    galore test/SnO2/vasprun.xml.gz --plot -g 0.3 -l 0.5 --pdos \
-     --w haxpes --flipx --xmin -2 --xmax 10 \
+     --w 5.95 --flipx --xmin -2 --xmax 10 \
      --overlay test/SnO2/haxpes_data.csv --overlay_offset -3.7 \
      --ylabel Intensity --overlay_style -
 
 We see that the weighting goes some way to rebalancing the peak
 intensities but once again the Sn-d states are over-represented.
-Surface states above the valence band are also seen again.
+Surface states above the valence band are seen in the experimental data.
 
 
 Python API

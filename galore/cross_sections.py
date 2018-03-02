@@ -1,6 +1,7 @@
 import os.path
 from pkg_resources import resource_filename
 from json import load as json_load
+from collections import Iterable
 
 import sqlite3
 from scipy import polyval
@@ -52,8 +53,13 @@ def get_cross_sections(weighting, elements=None):
 
     except ValueError:
         if isinstance(weighting, str):
-            if weighting in ('xps', 'ups', 'haxpes'):
+            if weighting.lower() in ('alka', 'he2', 'yeh_haxpes'):
                 return get_cross_sections_yeh(weighting)
+            elif weighting.lower() in ('xps', 'ups', 'haxpes'):
+                raise ValueError("Key '{0}' is no longer accepted for "
+                                 "weighting. Please use 'alka' for Al k-alpha,"
+                                 " 'he2' for He (II) or 'yeh_haxpes' for "
+                                 "8047.8 eV HAXPES".format(weighting))
             else:
                 return get_cross_sections_json(weighting)
 
@@ -61,6 +67,38 @@ def get_cross_sections(weighting, elements=None):
     raise ValueError("Weighting not understood as string or float. ",
                      "Please use a keyword, path to JSON file or an "
                      "energy value in eV")
+
+
+def cross_sections_info(cross_sections, logging=None):
+    """Log basic info from cross-sections dict.
+
+    Args:
+        cross_sections (dict): The keys 'energy', 'citation',
+            'link' and 'warning' are checked for relevant information
+
+        logging (module): Active logging module from Python standard
+            library. If None, logging will be set up.
+
+    Returns:
+        module:
+            Active logging module from Python standard library
+
+    """
+
+    if logging is None:
+        import logging
+        logging.basicConfig(filename='galore.log', level=logging.INFO)
+        console = logging.StreamHandler()
+        logging.getLogger().addHandler(console)
+
+    if 'energy' in cross_sections:
+        logging.info("  Photon energy: {0}".format(cross_sections['energy']))
+    if 'citation' in cross_sections:
+        logging.info("  Citation: {0}".format(cross_sections['citation']))
+    if 'link' in cross_sections:
+        logging.info("  Link: {0}".format(cross_sections['link']))
+
+    return logging
 
 
 def get_cross_sections_json(path):
@@ -122,7 +160,9 @@ def get_cross_sections_yeh(source):
 
     Args:
         source (str): Label corresponding to radiation source. Accepted values
-            'xps' (1486.6 eV), 'ups' (40.8 eV), 'haxpes' (8047.8).
+            'alka' (1486.6 eV), 'he2' (40.8 eV), 'yeh_haxpes' (8047.8).
+            These keys are not case-sensitive and correspond to Al k-alpha,
+            He(II) and hard x-ray sources.
 
     Returns:
         dict:
@@ -134,11 +174,11 @@ def get_cross_sections_yeh(source):
 
     """
 
-    weighting_files = {'xps': resource_filename(
+    weighting_files = {'alka': resource_filename(
                        __name__, "data/cross_sections.json"),
-                       'ups': resource_filename(
+                       'he2': resource_filename(
                            __name__, "data/cross_sections_ups.json"),
-                       'haxpes': resource_filename(
+                       'yeh_haxpes': resource_filename(
                            __name__, "data/cross_sections_haxpes.json")}
 
     if source.lower() in weighting_files:
@@ -176,14 +216,32 @@ def get_cross_sections_scofield(energy, elements=None):
                 {el1: {'s': c11, 'p': c12, ... },
                  el2: {'s': c21, 'p': c22, ... }, ... }
 
+    Raises:
+        ValueError: Energy values must lie within interpolation range
+            1--1500keV
+
     """
 
-    if energy < 1.:
+    min_energy, max_energy = 1., 1500.
+
+    def _low_value(energy):
         raise ValueError("Scofield data not available below 1 keV: refusing"
                          " to extrapolate to {0} keV".format(energy))
-    elif energy > 1500.:
+
+    def _high_value(energy):
         raise ValueError("Scofield data not available above 1500 keV: refusing"
                          " to extrapolate to {0} keV".format(energy))
+
+    if isinstance(energy, Iterable):
+        if min(energy) < min_energy:
+            _low_value(energy)
+        elif max(energy) > max_energy:
+            _high_value(energy)
+    else:
+        if energy < min_energy:
+            _low_value(energy)
+        elif energy > max_energy:
+            _high_value(energy)
 
     db_file = resource_filename(__name__, "data/scofield_data.db")
 
@@ -212,7 +270,7 @@ def get_cross_sections_scofield(energy, elements=None):
                                      "polynomial (A. J. Jackson 2018)",
                          'link': "https://doi.org/10.2172/4545040"}
 
-    with sqlite3.connect('galore/data/scofield_data.db') as con:
+    with sqlite3.connect(db_file) as con:
         for element in elements:
             cur = con.cursor()
             cur.execute('SELECT orbital, coeffs_np FROM fits WHERE Element=?;',

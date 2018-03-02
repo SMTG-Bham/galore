@@ -49,13 +49,14 @@ if __name__ == "__main__":
         keywords='spectroscopy spectra chemistry physics raman xps',
         include_package_data=True,
         packages=find_packages(exclude=['docs', 'test']),
-        install_requires=['numpy', 'matplotlib', 'six'],
+        install_requires=['numpy', 'scipy', 'matplotlib', 'six'],
         extras_require={'docs': ["sphinx",
-                                 #"sphinx_rtd_theme",
+                                 "sphinx_rtd_theme",
                                  "sphinx-argparse"]},
         entry_points={
             'console_scripts': [
-                'galore=galore.cli:main',
+                'galore=galore.cli.galore:main',
+                'galore-get-cs=galore.cli.galore_get_cs:main'
                 ]
             },
         test_suite='setup.unit_tests'
