@@ -1,6 +1,9 @@
 from __future__ import division, absolute_import
 import unittest
-import unittest.mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 from pkg_resources import resource_filename
 
 from galore.cross_sections import get_cross_sections
@@ -22,7 +25,7 @@ def mock_get_cross_sections_scofield(energy, elements):
 
 
 class test_cross_sections_dispatch(unittest.TestCase):
-    @unittest.mock.patch(
+    @mock.patch(
         'galore.cross_sections.get_cross_sections_json',
         side_effect=mock_get_cross_sections_json)
     def test_json_dispatch(self, mock_func):
@@ -34,14 +37,14 @@ class test_cross_sections_dispatch(unittest.TestCase):
                                             elements=['Na']),
                          (json_file, 'JSON'))
 
-    @unittest.mock.patch('galore.cross_sections.get_cross_sections_yeh',
+    @mock.patch('galore.cross_sections.get_cross_sections_yeh',
                          side_effect=mock_get_cross_sections_yeh)
     def test_yeh_dispatch(self, mock_func):
         """Check tabulated weightings are dispatched correctly"""
         self.assertEqual(get_cross_sections('alka'),
                          ('alka', 'YEH'))
 
-    @unittest.mock.patch('galore.cross_sections.get_cross_sections_scofield',
+    @mock.patch('galore.cross_sections.get_cross_sections_scofield',
                          side_effect=mock_get_cross_sections_scofield)
     def test_scofield_dispatch(self, mock_func):
         """Check parametrised weightings are dispatched correctly"""
