@@ -3,11 +3,14 @@ title: 'Galore: Broadening and weighting for simulation of photoelectron spectro
 tags:
   - ab initio
   - density of states
+  - density-functional theory
+  - DFT
   - photoemission
   - raman spectroscopy
   - ir spectroscopy
   - chemistry
   - physics
+
 authors:
   - name: Adam J Jackson
     orcid: 0000-0001-5272-6530
@@ -113,9 +116,9 @@ selection of Gamma-point movements.
 
 It is possible to predict the frequencies and intensities of these
 vibrational modes by performing _ab initio_ lattice dynamics
-calculations. Usually these will be performed within density-functional theory
-(DFT), either using variations of density-functional perturbation theory
-(DFPT) (based on the work of @Gonze1997)
+calculations. Usually these will be performed within density-functional theory,
+either using variations of density-functional perturbation theory
+(based on the work of @Gonze1997)
 or the frozen-phonon ("direct") method  [see @Parlinski1997; @Togo2008].
 When the underlying set of vibrational frequencies and mode
 intensities has been calculated it is typical to broaden the data by
@@ -154,8 +157,7 @@ to yield a smooth output, in the form of a plot or data file.
 Numpy functions are used for data manipulation and convolution on a
 finite grid and Matplotlib is used for plotting [@Numpy2011; @Hunter2007].
 As well as simple tabular data files, the electronic DOS or PDOS may
-be imported directly from the output of the Vienna Ab Initio
-Simulations Package (VASP).
+be imported directly from the output of the VASP or GPAW codes.
 
 The Gaussian and Lorentzian functions employed have the forms:
 $$
@@ -193,7 +195,9 @@ transparent conducting materials, led by David O. Scanlon and funded
 by EPSRC (project code EP/N01572X/1).  Work by AMG was supported by a
 studentship co-sponsored by the Diamond Light Source at the EPSRC
 Centre for Doctoral Training in Molecular Modelling and Materials
-Science (EP/L01582/1). AR acknowledges the support from Imperial College London for her Imperial College Research Fellowship. 
+Science (EP/L01582/1).
+AR acknowledges the support from Imperial
+College London for her Imperial College Research Fellowship.
 
 We acknowledge useful discussions with Alexey Sokol (who proposed that
 a code such as this would be useful), Katie Inzani and

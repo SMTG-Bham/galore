@@ -106,10 +106,10 @@ at a different frequency to the IR plot. This is not a shift; the peak
 at 280 cm\ `-1`:sup: is still present but has zero activity, while the
 peak calculated at 345 cm\ `-1`:sup: has zero IR activity.
 
-Simulated Photoionization Spectroscopy
---------------------------------------
+Simulated Photoelectron Spectroscopy
+------------------------------------
 
-Photoionization measurements allow valence band states to be probed
+Photoelectron measurements allow valence band states to be probed
 fairly directly; energy is absorbed by an incident photon as it ejects
 an electron from the sample, and the shift in energy is measured
 relative to a monochromatic photon source. Ultraviolet photoelectron
@@ -198,6 +198,9 @@ file directly. This requires the Pymatgen library to be installed::
 
   pip3 install --user pymatgen
 
+If the GPAW Python library is available, it is also possible to import
+this data from `.gpw` output files.
+
 XPS
 ^^^
 
@@ -245,7 +248,7 @@ not captured by the *ab initio* calculation::
   galore test/SnO2/vasprun.xml.gz --plot -g 0.5 -l 0.9 \
     --pdos --w he2 --flipx --xmin -2 --xmax 10 \
     --overlay test/SnO2/ups_data.csv --overlay_offset 0.44 \
-    --units ev --ylabel Intensity --overlay_style x    
+    --units ev --ylabel Intensity --overlay_style x
 
 The authors noted this in their own comparison to a DOS from
 tight-binding calculations:

@@ -182,7 +182,9 @@ def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'input', type=str, default='vasprun.xml', nargs='+',
-        help='Input data file')
+        help='Input data file. The supported formats are vasprun.xml (VASP '
+             'output), *.gpw (GPAW output), *.csv (comma-delimited text) '
+             'and *.txt (space-delimited text).')
     parser.add_argument(
         '-l',
         '--lorentzian',

@@ -57,23 +57,28 @@ will provide the additional data needed.
 Other file formats are supported, including IR and Raman intensity
 simulation output. See the Tutorials for usage examples.
 
-Photoionization spectra
-^^^^^^^^^^^^^^^^^^^^^^^
+Photoelectron spectra
+^^^^^^^^^^^^^^^^^^^^^
 
 UPS, XPS or HAXPES spectra can be simulated using Galore. This requires
 several inputs:
 
-- Orbital-projected density of states data. 
+- Orbital-projected density of states data.
+  - This may be provided as an output file from the VASP or GPAW codes.
+  - Formatted text files may also be used.
 - Instrumental broadening parameters. The Lorentzian and Gaussian
   broadening widths are input by the user as before.
 - Photoionization cross section data, which is used to weight the
-  contributions of different orbitals. Galore includes data for
-  valance band orbitals at Al k-α (XPS) and He II (UPS) energies,
-  drawn from a more extensive table computed by
-  `Yeh and Lindau (1985) <https://doi.org/10.1016/0092-640X(85)90016-6>`__.
-  An alternative dataset may be provided as a JSON file; it is only
-  necessary to include the elements and orbitals used in the DOS input
-  files.
+  contributions of different orbitals.
+  - Galore includes data for
+    valance band orbitals at Al k-α (XPS) and He II (UPS) energies,
+    drawn from a more extensive table computed by
+    `Yeh and Lindau (1985) <https://doi.org/10.1016/0092-640X(85)90016-6>`__.
+    An alternative dataset may be provided as a JSON file; it is only
+    necessary to include the elements and orbitals used in the DOS input
+    files.
+  - Cross-sections for high-energy (1-1500 keV) photons have been
+    fitted from tabulated data computed by `Scofield (1973) <https://doi.org/10.1039/C6TA03376H>`__.
 
 See the `Tutorials <http://galore.readthedocs.io/en/latest/tutorials.html>`__ for a walkthrough using sample data.
 
@@ -155,15 +160,18 @@ Galore is made available under the GNU Public License, version 3.
 Acknowledgements
 ----------------
 
-Development work by AJJ took place in the course of research into new
-transparent conducting materials, led by David O. Scanlon and funded
-by EPSRC (project code EP/N01572X/1).  Work by AMG was supported by a
-studentship co-sponsored by the Diamond Light Source at the EPSRC
-Centre for Doctoral Training in Molecular Modelling and Materials
-Science (EP/L01582/1).
+Development work by Adam J. Jackson took place in the course of
+research into new transparent conducting materials, led by
+David O. Scanlon and funded by EPSRC (project code EP/N01572X/1).
+Work by Alex M. Ganose was supported by a studentship co-sponsored by
+the Diamond Light Source at the EPSRC Centre for Doctoral Training in
+Molecular Modelling and Materials Science (EP/L01582/1).  Anna Ragoutz
+was our expert advisor on all things PES, guiding the feature-set and
+correcting the implementation of weighting, and was supported by an
+Imperial College Research Fellowship.
 
-We acknowledge useful discussions with Alexei Sokol (who proposed that
-a code such as this would be useful), Katie Inzani, Anna Regoutz and
+We acknowledge useful discussions with Alexey Sokol (who proposed that
+a code such as this would be useful), Katie Inzani, and
 Tim Veal. Feature requests and user testing came from Benjamin
 Williamsion, Christopher Savory and Winnie L. Leung.
 
