@@ -30,6 +30,7 @@ def is_gpw(filename):
     """Determine whether file is GPAW calculation by checking extension"""
     return filename.split('.')[-1] == 'gpw'
 
+
 def is_doscar(filename):
     """Determine whether file is a DOSCAR by checking fourth line"""
 
@@ -365,7 +366,7 @@ def read_gpaw_totaldos(filename, npts=50001, width=1e-3, ref='vbm'):
     elif ref.lower() == 'efermi':
         ref_energy = calc.get_fermi_level()
 
-    energies, dos = calc.get_dos()
+    energies, dos = calc.get_dos(npts=npts, width=width)
     return np.array(list(zip(energies - ref_energy, dos)))
 
 
