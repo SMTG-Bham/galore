@@ -90,11 +90,21 @@ class test_array_functions(unittest.TestCase):
     def test_delta(self):
         self.assertEqual(galore.delta(1, 1.5, w=1), 1)
 
-    def test_xy_to_1d(self):
+    def test_xy_to_1d_spikes(self):
+        """Check resampling of distinct values as spikes"""
         assert_array_equal(
             galore.xy_to_1d(
-                np.array([[2.1, 0.6], [4.3, 0.2], [5.1, 0.3]]), range(6)),
+                np.array([[2.1, 0.6], [4.3, 0.2], [5.1, 0.3]]), range(6),
+                         spikes=True),
             np.array([0., 0., 0.6, 0., 0.2, 0.3]))
+    def test_xy_to_1d_linear(self):
+        """Check resampling with linear interpolation"""
+        assert_array_equal(
+            galore.xy_to_1d(
+                np.array([[1., 0.5], [3., 1.5]]), range(6),
+                         spikes=False),
+            np.array([0., 0.5, 1.0, 1.5, 0., 0.0]))
+
 
     def test_gaussian(self):
         self.assertAlmostEqual(galore.gaussian(3., f0=1, fwhm=(3 * 2.35482)),
