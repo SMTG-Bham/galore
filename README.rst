@@ -70,6 +70,7 @@ several inputs:
   broadening widths are input by the user as before.
 - Photoionization cross section data, which is used to weight the
   contributions of different orbitals.
+
   - Galore includes data for
     valance band orbitals at Al k-α (XPS) and He II (UPS) energies,
     drawn from a more extensive table computed by
