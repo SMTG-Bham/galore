@@ -43,8 +43,37 @@ def stdout_redirect():
 
 
 class test_dos_functions(unittest.TestCase):
-    def test_simple_dos(self):
-        """Test total DOS / spectrum plotter from CSV data"""
+    def test_simple_dos_spikes(self):
+        """Test total DOS / spectrum plotter from CSV data, spike sampling"""
+        ylabel = 'some label'
+        xmin = -3
+        xmax = 220
+        sampling = 1e-1
+        plt = simple_dos_from_files(input=path_join(test_dir,
+                                                    'test_xy_data.csv'),
+                                    return_plt=True, xmax=xmax, xmin=xmin,
+                                    sampling=sampling,
+                                    spikes=True,
+                                    lorentzian=2.3, gaussian=3.2,
+                                    csv=False, txt=False, plot=None,
+                                    units='cm-1', ymax=None, ymin=None,
+                                    ylabel=ylabel,
+                                    flipx=False)
+        fig = plt.gcf()
+        ax = fig.axes[0]
+        self.assertEqual(ax.get_ylabel(), ylabel)
+        self.assertEqual(ax.get_xlabel(), r'cm$^{-1}$')
+        self.assertAlmostEqual(ax.get_xlim()[0], xmin, places=2)
+        self.assertLess(ax.get_xlim()[1], xmax)
+        self.assertGreater(ax.get_xlim()[1], (xmax * 0.99))
+        self.assertEqual(len(ax.lines), 1)
+        xvals, yvals = ax.lines[0].get_xydata().T
+        self.assertAlmostEqual(xvals[5], (xmin + 5 * sampling))
+        self.assertAlmostEqual(yvals[5], 0.0, places=3)
+        self.assertAlmostEqual(yvals[2000], 0.65245445, places=4)
+
+    def test_simple_dos_linear(self):
+        """Test total DOS / spectrum plotter from CSV data, linear sampling"""
         ylabel = 'some label'
         xmin = -3
         xmax = 220
@@ -69,7 +98,7 @@ class test_dos_functions(unittest.TestCase):
         xvals, yvals = ax.lines[0].get_xydata().T
         self.assertAlmostEqual(xvals[5], (xmin + 5 * sampling))
         self.assertAlmostEqual(yvals[5], 0.0, places=3)
-        self.assertAlmostEqual(yvals[2000], 0.65245445, places=4)
+        self.assertAlmostEqual(yvals[2000], 98.64411, places=4)
 
     def test_overlay(self):
         import matplotlib.pyplot as plt
