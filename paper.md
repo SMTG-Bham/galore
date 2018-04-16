@@ -200,6 +200,10 @@ Science (EP/L01582/1).
 AR acknowledges the support from Imperial
 College London for her Imperial College Research Fellowship.
 
+We are grateful to Francesco Borgatti for his work transcribing the
+HAXPES cross-section data. The polynomial fits were derived from these
+tables.
+
 We acknowledge useful discussions with Alexey Sokol (who proposed that
 a code such as this would be useful), Katie Inzani and
 Tim Veal. Feature requests and user testing came from Benjamin
