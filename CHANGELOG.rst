@@ -8,6 +8,7 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 `Unreleased <https://github.com/smtg-ucl/galore/compare/0.3.0...HEAD>`__
 -------------------------------------------------------------------------
 - Import (P)DOS from ``.gpw`` files generated with GPAW. This requires GPAW to be available.
+- Resample with interpolation by default; use "spikes" only when requested
 
 `[0.3.0] <https://github.com/smtg-ucl/galore/compare/0.2.0...0.3.0>`__ - 2018-02-19
 -----------------------------------------------------------------------------------

@@ -28,6 +28,7 @@ import logging
 
 from math import sqrt, log
 import numpy as np
+from scipy.interpolate import interp1d
 
 import galore.formats
 from galore.cross_sections import get_cross_sections, cross_sections_info
@@ -54,6 +55,7 @@ def process_1d_data(input=['vasprun.xml'],
                     gaussian=None, lorentzian=None,
                     sampling=1e-2,
                     xmin=None, xmax=None,
+                    spikes=False,
                     **kwargs):
     """Read 1D data series from files, process for output
 
@@ -107,7 +109,7 @@ def process_1d_data(input=['vasprun.xml'],
 
     d = sampling
     x_values = np.arange(xmin, xmax, d)
-    data_1d = galore.xy_to_1d(xy_data, x_values)
+    data_1d = galore.xy_to_1d(xy_data, x_values, spikes=spikes)
 
     broadened_data = data_1d.copy()
     if lorentzian:
@@ -247,21 +249,27 @@ def process_pdos(input=['vasprun.xml'],
     return pdos_plotting_data
 
 
-def xy_to_1d(xy, x_values):
+def xy_to_1d(xy, x_values, spikes=False):
     """Convert a set of x,y coordinates to 1D array
 
-    A set of "spikes" results, with y-values placed on the nearest
+    Data is resampled to a given sequence of regularly-spaced x-values. By
+    default linear interpolation is used between neighbouring points, which is
+    suitable for resampling distribution data.
+
+    Where the data consists of a set of discrete energy levels, it should be
+    resampled to a series of "spikes". y-values are placed on the nearest
     x-value by subtracting d/2 and rounding up. d is determined by examining
     the first two elements of x_values.
 
     Args:
         xy: (ndarray) 2D numpy array of x, y values
         x_values: (iterable) An evenly-spaced x-value mesh
-"""
+    Returns:
+        (np.array): re-sampled y values corresponding to x_values
+    """
 
     x_values = np.array(x_values)
     n_x_values = x_values.size
-    spikes = np.zeros(n_x_values)
     d = x_values[1] - x_values[0]
 
     # Structured arrays are allowed, in which case first field is x,
@@ -271,15 +279,23 @@ def xy_to_1d(xy, x_values):
     else:
         x_field, y_field = xy.dtype.names
 
-    spike_locations = x_values.searchsorted(xy[x_field] - (0.5 * d))
+    if spikes:
+        spikes = np.zeros(n_x_values)
+        spike_locations = x_values.searchsorted(xy[x_field] - (0.5 * d))
 
-    for location, value in zip(spike_locations, xy[y_field]):
-        if location == 0 or location == n_x_values:
-            pass
-        else:
-            spikes[location] += value
+        for location, value in zip(spike_locations, xy[y_field]):
+            if location == 0 or location == n_x_values:
+                pass
+            else:
+                spikes[location] += value
 
-    return spikes
+        return spikes
+
+    else:
+        y_func = interp1d(xy[x_field], xy[y_field],
+                          assume_sorted=False,
+                          bounds_error=False, fill_value=0)
+        return y_func(x_values)
 
 
 def delta(f1, f2, w=1):

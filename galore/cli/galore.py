@@ -257,6 +257,16 @@ def get_parser():
              'default value is based on units. If units are not specified, '
              'default value is 1e-2.')
     parser.add_argument(
+        '-k',
+        '--spikes',
+        '--spike',
+        action='store_true',
+        help='Resample data as "spikes" on a zero baseline. The default is to '
+             'interpolate linearly between y-values, which is reasonable for '
+             'distributions such as DOS. If the input data set only contains '
+             'active energies/frequencies (e.g. IR modes) then you should use '
+             '--spike mode. See tutorials for examples.')
+    parser.add_argument(
         '--pdos', action="store_true", help='Use orbital-projected data')
     parser.add_argument(
         '--flipx', '--xflip', action="store_true",
