@@ -28,7 +28,7 @@ for g in widths:
     line.set_label("{0:2.2f}".format(g))
     line.set_color(cmap(g / max(widths)))
 
-ax.set_ylim(0, 1000)
+ax.set_ylim(0, 1800)
 legend = ax.legend(loc='best')
 legend.set_title('Gaussian $\gamma$')
 plt.show()
