@@ -50,7 +50,8 @@ Photoelectron spectroscopy (PES) is a family of methods used to
 characterise the chemical nature and electronic structure of
 materials.
 XPS is based on the photoelectric effect, which was discovered by
-Hertz in 1887, and later refined by Rutherford in 1914 as
+Hertz [-@Hertz1887], and later refined by Rutherford [-@Rutherford1914]
+leading to the modern expression
 $$E_\text{k} = h\nu - E_\text{B}.$$
 Photons with energies $h\nu$ ranging from 5 eV up to 12 keV eject
 electrons (referred to as "photoelectrons") from the occupied
