@@ -9,6 +9,12 @@ python:
 os:
   - linux
 # command to install dependencies
+addons:
+  apt:
+    packages:
+      - libopenblas-dev
+      - liblapack-dev
+      - libxc-dev
 install:
   - pip install gpaw
   - pip install .
