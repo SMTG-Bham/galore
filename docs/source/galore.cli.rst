@@ -13,6 +13,7 @@ Submodules
 
    galore.cli.galore
    galore.cli.galore_get_cs
+   galore.cli.galore_plot_cs
 
 Module contents
 ---------------
