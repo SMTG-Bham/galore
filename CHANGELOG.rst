@@ -5,10 +5,14 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-ucl/galore/compare/0.3.0...HEAD>`__
+`Unreleased <https://github.com/smtg-ucl/galore/compare/0.4.0...HEAD>`__
 -------------------------------------------------------------------------
-- Import (P)DOS from ``.gpw`` files generated with GPAW. This requires GPAW to be available.
 - Resample with interpolation by default; use "spikes" only when requested
+
+`[0.4.0] <https://github.com/smtg-ucl/galore/compare/0.3.0...0.4.0>`__ - 2018-04-17
+-----------------------------------------------------------------------------------
+- Import (P)DOS from ``.gpw`` files generated with GPAW. This requires GPAW to be available.
+- galore-plot-sc tool for convenient plotting of cross-section data
 
 `[0.3.0] <https://github.com/smtg-ucl/galore/compare/0.2.0...0.3.0>`__ - 2018-02-19
 -----------------------------------------------------------------------------------
