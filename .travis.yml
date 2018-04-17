@@ -16,7 +16,7 @@ addons:
       - liblapack-dev
       - libxc-dev
 install:
-  - pip install --no-binary gpaw
+  - pip install --no-binary gpaw gpaw
   - pip install pymatgen
   - pip install .
 # command to run tests
