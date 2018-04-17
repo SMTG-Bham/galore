@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     setup(
         name='galore',
-        version='0.1.0',
+        version='0.4.0',
         description='Broadening of simulated spectra',
         long_description="""
     Apply Gaussian and Lorentzian broadening to data from *ab initio*
