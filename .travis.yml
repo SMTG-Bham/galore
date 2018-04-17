@@ -3,8 +3,8 @@ cache: pip
 notifications:
   email: false
 python:
-  - "2.7"
-  - "3.4"
+  # - "2.7"
+  # - "3.4"
   - "3.6"
 os:
   - linux
@@ -12,7 +12,7 @@ os:
 addons:
   apt:
     packages:
-      - libopenblas-dev
+      - libblas-dev
       - liblapack-dev
       - libxc-dev
 install:
