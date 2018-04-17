@@ -16,6 +16,7 @@ addons:
       - liblapack-dev
       - libxc-dev
 install:
+  - pip install ase
   - pip install --no-binary gpaw gpaw
   - pip install pymatgen
   - pip install .
