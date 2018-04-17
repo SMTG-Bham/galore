@@ -56,7 +56,8 @@ if __name__ == "__main__":
         entry_points={
             'console_scripts': [
                 'galore=galore.cli.galore:main',
-                'galore-get-cs=galore.cli.galore_get_cs:main'
+                'galore-get-cs=galore.cli.galore_get_cs:main',
+                'galore-plot-cs=galore.cli.galore_plot_cs:main'
                 ]
             },
         test_suite='setup.unit_tests'
