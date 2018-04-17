@@ -1,6 +1,9 @@
 README
 ======
 
+.. image:: https://zenodo.org/badge/63942513.svg
+   :target: https://zenodo.org/badge/latestdoi/63942513
+
 Introduction
 ------------
 

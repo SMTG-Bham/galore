@@ -1,0 +1,19 @@
+cff-version: 1.0.3
+message: If you use this software, please cite it as below.
+authors:
+  - family-names: Jackson
+    given-names: Adam J.
+  - family-names: Ganose
+    given-names: Alex M.
+  - family-names: Regoutz
+    given-names: Anna
+  - family-names: Scanlon
+    given-names: David O.
+doi: 10.5281/zenodo.1219663
+repository-code: https://github.com/smtg-ucl/galore
+title: Galore
+version: 0.4.1
+date-released: 2018-04-17
+programming-languages:
+  - python
+license: GPL-3.0-or-later
