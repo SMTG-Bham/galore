@@ -16,7 +16,9 @@ addons:
       - liblapack-dev
       - libxc-dev
 install:
+  - pip install ase
   - pip install gpaw
+  - pip install pymatgen
   - pip install .
 # command to run tests
 script:
