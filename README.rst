@@ -3,6 +3,9 @@ README
 
 .. image:: https://zenodo.org/badge/63942513.svg
    :target: https://zenodo.org/badge/latestdoi/63942513
+.. image:: https://travis-ci.org/SMTG-UCL/galore.svg?branch=master
+    :target: https://travis-ci.org/SMTG-UCL/galore
+
 
 Introduction
 ------------
