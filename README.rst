@@ -3,9 +3,13 @@ README
 
 .. image:: https://zenodo.org/badge/63942513.svg
    :target: https://zenodo.org/badge/latestdoi/63942513
+   :alt: Zenodo latest DOI
 .. image:: https://travis-ci.org/SMTG-UCL/galore.svg?branch=master
-    :target: https://travis-ci.org/SMTG-UCL/galore
-
+   :target: https://travis-ci.org/SMTG-UCL/galore
+   :alt: Travis CI Status
+.. image:: https://readthedocs.org/projects/galore/badge/?version=latest
+   :target: http://galore.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
 Introduction
 ------------
