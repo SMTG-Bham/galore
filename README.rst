@@ -1,6 +1,9 @@
 README
 ======
 
+.. image:: https://zenodo.org/badge/63942513.svg
+   :target: https://zenodo.org/badge/latestdoi/63942513
+
 Introduction
 ------------
 
@@ -91,6 +94,15 @@ will print a set of valence orbital weightings for Sn and O
 corresponding to a 4 keV hard x-ray source.
 These values have been converted from atomic orbital data
 to *per electron* cross-sections.
+
+The ``galore-plot-cs`` program is provided for plotting over a range
+of energies using the high-energy fitted data::
+
+  galore-plot-cs Pb S --emin 2 --emax 10 -o PbS.pdf
+
+generates a publication-quality plot of cross-sections which may help
+in the selection of appropriate HAXPES energies for experiments with
+a given material.
 
 Requirements
 ------------

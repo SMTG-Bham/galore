@@ -23,3 +23,12 @@ galore-get-cs
    :module: galore.cli.galore_get_cs
    :func: get_parser
    :prog: galore-get-cs
+
+
+galore-plot-cs
+--------------
+
+.. argparse::
+   :module: galore.cli.galore_plot_cs
+   :func: get_parser
+   :prog: galore-plot-cs
