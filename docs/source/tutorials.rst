@@ -25,7 +25,7 @@ the spectrum to screen with some broadening then we can use:
 
 .. code-block:: bash
 
-  galore test/CaF2/ir_lda_700.txt -g 0.5 -l --plot
+  galore test/CaF2/ir_lda_700.txt -g 0.5 -l --spikes --plot
 
 Breaking down this command: First we provide the path to a data
 file. This can also appear elsewhere in the argument string, but as
@@ -35,7 +35,11 @@ first. ``-g`` applies Gaussian broadening; here we specify a width of
 `-1`:sup:. ``-l`` applies Lorentzian broadening; as no width is
 specified, the default 2 cm\ `-1`:sup: will be used. This is generally
 a sensible value for optical measurements, but some tuning may be
-needed.  Finally ``--plot`` will cause Galore to print to the screen
+needed.
+``--spikes`` prevents interpolation when the data is resampled;
+this is required for datasets where the values between
+data points should be set to zero before broadening.
+Finally ``--plot`` will cause Galore to print to the screen
 using Matplotlib. (The abbreviation ``-p`` can also be used.)
 
 To see the full list of command-line arguments you can use ``galore
@@ -53,7 +57,7 @@ axis range, add axis labels and write to a file.
 
 .. code-block:: bash
 
-  galore test/CaF2/ir_lda_700.txt -g 1.2 -l \
+  galore test/CaF2/ir_lda_700.txt -g 1.2 -l  --spikes \
     --plot ir_lda_700_better.png \
     --xmin 200 --xmax 350 --units cm-1 --ylabel Intensity
 
@@ -68,14 +72,15 @@ file by simply replacing ``--plot`` with ``--csv``:
 
 .. code-block:: bash
 
-  galore test/CaF2/ir_lda_700.txt -g 1.2 -l --csv --xmin 200 --xmax 350
+  galore test/CaF2/ir_lda_700.txt -g 1.2 -l -k --csv --xmin 200 --xmax 350
 
+(Here we have also replaced ``--spikes`` with its short form ``-k``.)
 This will write a csv file to the standard output as no filename was
 given. We can also write space-separated text data, so for example
 
 .. code-block:: bash
 
-    galore test/CaF2/ir_lda_700.txt -g 1.2 -l --txt ir_CaF2_broadened.txt
+    galore test/CaF2/ir_lda_700.txt -g 1.2 -l -k --txt ir_CaF2_broadened.txt
 
 generates a file with two columns (i.e. energy and broadened intensity).
 
@@ -94,7 +99,7 @@ same way as before:
 
 .. code-block:: bash
 
-    galore test/CaF2/raman_lda_500.dat -g -l --plot --units cm-1 --ylabel Intensity
+    galore test/CaF2/raman_lda_500.dat -g -l -k --plot --units cm-1 --ylabel Intensity
 
 .. image:: figures/raman_lda_500.png
            :alt: Simulated Raman plot for CaF2
@@ -216,7 +221,7 @@ in order to aid a direct comparison::
   galore test/SnO2/vasprun.xml.gz --plot -g 0.5 -l 0.4 \
     --pdos --w alka --flipx --xmin -2 --xmax 10 \
     --overlay test/SnO2/xps_data.csv  --overlay_offset -4 \
-    --overlay_scale 3.5 --units ev --ylabel Intensity
+    --overlay_scale 5 --units ev --ylabel Intensity
 
 (Note that here the shorter alias ``-w`` is used for the XPS
 weighting.) The general character and peak positions match well, but

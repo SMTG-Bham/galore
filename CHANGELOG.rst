@@ -7,6 +7,7 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 
 `Unreleased <https://github.com/smtg-ucl/galore/compare/0.4.0...HEAD>`__
 -------------------------------------------------------------------------
+- Resample with interpolation by default; use "spikes" only when requested
 
 `[0.4.0] <https://github.com/smtg-ucl/galore/compare/0.3.0...0.4.0>`__ - 2018-04-17
 -----------------------------------------------------------------------------------

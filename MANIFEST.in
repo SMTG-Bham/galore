@@ -1,4 +1,9 @@
+include README.rst CHANGELOG.rst LICENSE CITATION.cff 
 include test/test*.py
 recursive-include galore/data cross_sections.json cross_sections_ups.json cross_sections_haxpes.json scofield_data.db
 include test/DOSCAR.1 test/test_xy_data.csv test/json_test.json
-recursive-include test/MgO MgO_Mg_dos.dat MgO_O_dos.dat
+recursive-include test/CaF2 ir_lda_700.txt raman_lda_500.dat
+recursive-include test/CdTe CdTe.gpw
+recursive-include test/CsCl vasprun.xml.gz
+recursive-include test/MgO MgO_Mg_dos.dat MgO_O_dos.dat vasprun.xml.gz
+recursive-include test/SnO2 haxpes_data.csv ups_data.csv vasprun.xml.gz xps_data.csv
