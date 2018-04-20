@@ -21,6 +21,8 @@ authors:
   - name: Anna Regoutz
     orcid: 0000-0002-3747-3763
     affiliation: 3
+  - name: Russell G. Egdell
+    affiliation: 4
   - name: David O Scanlon
     orcid: 0000-0001-9174-8601
     affiliation: 1,2
@@ -30,9 +32,12 @@ affiliations:
   - name: Diamond Light Source Ltd., Diamond House, Harwell Science and Innovation Campus, Didcot, Oxfordshire OX11 0DE, UK
     index: 2
   - name: Dept of Materials, Imperial College London, London SW7 2AZ, UK
-  - index: 3
-date: March 2018
+    index: 3
+  - name: Dept of Chemistry, University of Oxford, South Parks Road, Oxford OX1 3QR, UK
+    index: 4
+date: April 2018
 bibliography: paper.bib
+# citation-style: https://www.zotero.org/styles/royal-society-of-chemistry-with-titles
 ---
 
 Galore simplifies and automates the process of simulating
@@ -40,7 +45,7 @@ photoelectron spectra from _ab initio_ calculations.
 This replaces the tedious process of extracting and interpolating
 cross-sectional weights from reference data and generates tabulated
 data or publication-ready plots as needed.
-The broadening tools may also be used to obtain realistic diffuse
+The broadening tools may also be used to obtain realistic simulated
 spectra from a theoretical set of discrete lines (e.g. infrared or
 Raman spectroscopy).
 
@@ -49,9 +54,14 @@ Raman spectroscopy).
 Photoelectron spectroscopy (PES) is a family of methods used to
 characterise the chemical nature and electronic structure of
 materials.
-XPS is based on the photoelectric effect, which was discovered by
-Hertz [-@Hertz1887], and later refined by Rutherford [-@Rutherford1914]
-leading to the modern expression
+PES is based on the photoelectric effect, which was discovered by
+Hertz [-@Hertz1887]. 
+It was explored extensively by Rutherford and colleagues
+[-@Rutherford1914]
+and within a few years researchers including de Broglie [-@deBroglie1921] 
+and Robinson [-@Robinson1923]
+were using the technique to measure electron binding energies through
+the relationship
 $$E_\text{k} = h\nu - E_\text{B}.$$
 Photons with energies $h\nu$ ranging from 5 eV up to 12 keV eject
 electrons (referred to as "photoelectrons") from the occupied
@@ -75,9 +85,12 @@ values to account for different references.
 This approach is taken in, e.g. @Veal2015 and @Savory2016.
 Broadening is generally applied by convolution with a Gaussian
 and/or Lorentzian function: intrinsic lifetime broadening causes a
-Lorentzian energy distribution of the photoelectrons, whilst instrumental
+Lorentzian energy distribution of the photoelectrons, while instrumental
 factors, including the width of the X-ray source and analyser resolution,
 give rise to a Gaussian line shape.
+Franck--Condon phonon broadening is caused by the variation in binding
+energies as a structure vibrates and gives around
+0.8 eV of Gaussian broadening in oxide materials. (@Cox1983, @Nelin2011, @Regoutz2015)
 
 Photoemission spectra for the same material will vary depending on the
 radiation source used.
@@ -92,16 +105,42 @@ routinely in analysis of _ab initio_ calculations.
 It is then assumed that the contributions of these orbital-projected
 states to the total photoelectron spectrum will be proportional to
 the photoionisation cross-sections of corresponding orbitals in free atoms.
-These cross-sections have been computed by several methods and are
+(This is the Gelius model [-@Gelius1972].)
+The free atom cross-sections have been computed by several methods and are
 available as reference data (e.g. @Yeh1985).
 Implemented with ad-hoc scripts and spreadsheets, this method has
 already been used in a number of academic studies
-(e.g. @Farahani2014, @Sathasivam2017).
+(e.g. @Dou1998, @Morris2000, @Glans2005, @Farahani2014, @Sathasivam2017).
 
 ![Procedure (left to right) for simulated photoelectron spectrum from _ab initio_ DOS](docs/source/figures/pe_schematic.pdf)
 
+#### Known limitations and improvements
+The Gelius model is based on photoelectrons with small wavelengths
+such that behaviour is dominated by wavefunction fluctuations close to
+the atomic nuclei. [@Gelius1972, @Gelius1972a, @Gelius1974]
+This model is expected to break down at longer wavelengths, and in the
+case of low-energy UPS it is likely that significant scattering
+effects would be neglected.
+
+Asymmetry corrections may be applied to the photoionisation
+cross-sections to account for the polarisation of sources and angular
+acceptance range of electron detectors. 
+This is especially relevant for HAXPES measurements.
+Currently this data is not included in Galore, but users are able to
+include corrected cross-sections from a JSON-formatted data file if
+available.
+
+At high photon energies, it has been observed that intensity changes
+in oxides do not correlate with photon energy as predicted by the
+available tabulated data; in particular the intensity of O-2p states
+in CdO, PbO2 and In2O3 seem to vary more linearly than predicted. ([@Mudd2014])
+
+#### Further reading
+
 For further information about PES there are some helpful reviews in the
 academic literature, including @Huefner2005, @Fadley2009 and @Fadley2010.
+
+
 
 ### Vibrational spectroscopy (IR and Raman)
 
@@ -112,8 +151,7 @@ selection rules limit the absorption activity to a small
 number of possible excitations with zero crystal momentum
 ("Gamma-point phonons"). In Raman spectroscopy another optical method
 is used to observe lattice vibrations and different selection rules
-apply; again, the resulting spectrum corresponds to a limited
-selection of Gamma-point movements.
+apply; again, the resulting spectrum corresponds to a limited selection of Gamma-point movements.
 
 It is possible to predict the frequencies and intensities of these
 vibrational modes by performing _ab initio_ lattice dynamics
@@ -130,24 +168,6 @@ with low intensities combine to form a large peak in the broadened
 spectrum.
 
 ![Schematic example of misleading peak intensities due to overlap](docs/source/figures/ir_schematic.pdf)
-
-<!-- It is possible to predict the frequencies and intensities of these -->
-<!-- vibrational modes by performing *ab initio* lattice dynamics -->
-<!-- calculations. Usually these will be performed within the -->
-<!-- generalised-gradient approximation within density-functional theory -->
-<!-- (DFT), using variations of density-functional perturbation theory -->
-<!-- (DFPT) or the frozen-phonon ("direct") method [@Gonze1997; @Parlinski1997; @Togo2008]. -->
-<!-- The Phonopy package is a popular open-source tool for managing -->
-<!-- frozen-phonon calculations with a range of DFT codes [@Togo2015]. -->
-<!-- Scripts are available for intensity -->
-<!-- calculation: -->
-<!-- David Karhanek's IR intensity script [-@karhanek] does -->
-<!-- not have a Free Software license at this point in time; Fonari and -->
-<!-- Stauffer have published a program under the MIT license for -->
-<!-- calculating Raman intensities [@vasp_raman_py]. Theoretical Raman -->
-<!-- linewidths can be computed using higher-order phonon calculations, but -->
-<!-- in practice it is helpful to apply additional Lorentzian -->
-<!-- broadening [@Skelton2014, @Togo2015a, @Skelton2015]. -->
 
 ## Galore
 
