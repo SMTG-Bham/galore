@@ -49,15 +49,15 @@ The broadening tools may also be used to obtain realistic simulated
 spectra from a theoretical set of discrete lines (e.g. infrared or
 Raman spectroscopy).
 
-### Photoelectron spectroscopy
+## Photoelectron spectroscopy
 
 Photoelectron spectroscopy (PES) is a family of methods used to
 characterise the chemical nature and electronic structure of
 materials.
 PES is based on the photoelectric effect, which was discovered by
-Hertz [-@Hertz1887]. 
+Hertz.[@Hertz1887]
 It was explored extensively by Rutherford and colleagues
-[-@Rutherford1914]
+[@Rutherford1914]
 and within a few years researchers including de Broglie [-@deBroglie1921] 
 and Robinson [-@Robinson1923]
 were using the technique to measure electron binding energies through
@@ -109,12 +109,12 @@ the photoionisation cross-sections of corresponding orbitals in free atoms.
 The free atom cross-sections have been computed by several methods and are
 available as reference data (e.g. @Yeh1985).
 Implemented with ad-hoc scripts and spreadsheets, this method has
-already been used in a number of academic studies.[@Dou1998; @Morris2000; @Glans2005; @Farahani2014; @Sathasivam2017]
+already been used in many academic studies.[@Dou1998; @Morris2000; @Glans2005; @Farahani2014; @Sathasivam2017]
 
 ![Procedure (left to right) for simulated photoelectron spectrum from _ab initio_ DOS](docs/source/figures/pe_schematic.pdf)
 
-#### Known limitations and improvements
-The Gelius model is based on photoelectrons with small wavelengths
+### Known limitations and improvements
+The Gelius model is based on photoelectrons with short wavelengths,
 such that behaviour is dominated by wavefunction fluctuations close to
 the atomic nuclei. [@Gelius1972; @Gelius1972a; @Gelius1974]
 This model is expected to break down at longer wavelengths, and in the
@@ -123,8 +123,12 @@ effects would be neglected.
 
 Asymmetry corrections may be applied to the photoionisation
 cross-sections to account for the polarisation of sources and angular
-acceptance range of electron detectors. 
-This is especially relevant for HAXPES measurements.
+acceptance range of electron detectors.
+This is especially relevant for HAXPES measurements where the
+experimental geometry may be deliberately changed in order to
+manipulate the spectrum and expose different contributions.[@Regoutz2016]
+A best-practice approach is to integrate the relevant equations
+over a range of angles depending on the equipment geometry.[@Mudd2014]
 Currently this data is not included in Galore, but users are able to
 include corrected cross-sections from a JSON-formatted data file if
 available.
@@ -134,14 +138,14 @@ in oxides do not correlate with photon energy as predicted by the
 available tabulated data; in particular the intensity of O-2p states
 in CdO, PbO$_2$ and In$_2$O$_3$ seem to vary more linearly than predicted.[@Mudd2014]
 
-#### Further reading
+### Further reading
 
 For further information about PES there are some helpful reviews in the
 academic literature, including Refs @Huefner2005, @Fadley2009 and @Fadley2010.
 
 
 
-### Vibrational spectroscopy (IR and Raman)
+## Vibrational spectroscopy (IR and Raman)
 
 In infrared (IR) spectroscopy, low-energy photons are absorbed
 corresponding to the energies of lattice vibrations and an absorption
@@ -168,7 +172,7 @@ spectrum.
 
 ![Schematic example of misleading peak intensities due to overlap](docs/source/figures/ir_schematic.pdf)
 
-## Galore
+# Galore
 
 Galore provides a command-line tool and Python API to import data and
 resample it to a dense, regular X-Y series.
