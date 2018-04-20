@@ -176,7 +176,7 @@ spectrum.
 
 Galore provides a command-line tool and Python API to import data and
 resample it to a dense, regular X-Y series.
-This mesh can then be convoluted with Gaussian and Lorentzian functions
+This mesh can then be convolved with Gaussian and Lorentzian functions
 to yield a smooth output, in the form of a plot or data file.
 Numpy functions are used for data manipulation and convolution on a
 finite grid and Matplotlib is used for plotting.[@Numpy2011; @Hunter2007]
