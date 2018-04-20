@@ -52,7 +52,8 @@ if __name__ == "__main__":
         install_requires=['numpy', 'scipy', 'matplotlib', 'six'],
         extras_require={'docs': ["sphinx",
                                  "sphinx_rtd_theme",
-                                 "sphinx-argparse"]},
+                                 "sphinx-argparse",
+                                 "sphinxcontrib-bibtex"]},
         entry_points={
             'console_scripts': [
                 'galore=galore.cli.galore:main',
