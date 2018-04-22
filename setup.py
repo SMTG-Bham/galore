@@ -17,16 +17,18 @@ if __name__ == "__main__":
 
     setup(
         name='galore',
-        version='0.4.1',
-        description='Broadening of simulated spectra',
+        version='0.5.0',
+        description='Broadening and weighting for simulated spectra',
         long_description="""
-    Apply Gaussian and Lorentzian broadening to data from *ab initio*
+    Apply Gaussian and Lorentzian broadening to data from ab initio
     calculations. The two main intended applications are
 
-    1. Application of Lorentzian instrumental broadening to simulated
+    1. Broadening of electronic density-of-states to simulate photoemission 
+       spectroscopy (PES) data. Orbital contributions may also be weighted to
+       account for the frequency-dependent photoionisation cross-section.
+
+    2. Application of Lorentzian instrumental broadening to simulated
        Raman spectra from DFPT calculations.
-    2. Gaussian broadening of electronic density-of-states to simulate XPS
-       data, followed by Lorentzian instrumental broadening.
     """,
         url="https://github.com/SMTG-UCL/galore",
         author="Scanlon Materials Theory Group",
