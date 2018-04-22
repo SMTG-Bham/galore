@@ -42,7 +42,6 @@ if __name__ == "__main__":
             'Natural Language :: English',
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.3',
             'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
@@ -57,7 +56,7 @@ if __name__ == "__main__":
         extras_require={'docs': ["sphinx",
                                  "sphinx_rtd_theme",
                                  "sphinx-argparse"]},
-        python_requires='>2.6, !=3.0.*, !=3.1.*, !=3.2.*, <4',
+        python_requires='>2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4',
         entry_points={
             'console_scripts': [
                 'galore=galore.cli.galore:main',
