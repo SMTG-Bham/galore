@@ -17,16 +17,18 @@ if __name__ == "__main__":
 
     setup(
         name='galore',
-        version='0.4.1',
-        description='Broadening of simulated spectra',
+        version='0.5.0',
+        description='Broadening and weighting for simulated spectra',
         long_description="""
-    Apply Gaussian and Lorentzian broadening to data from *ab initio*
+    Apply Gaussian and Lorentzian broadening to data from ab initio
     calculations. The two main intended applications are
 
-    1. Application of Lorentzian instrumental broadening to simulated
+    1. Broadening of electronic density-of-states to simulate photoemission 
+       spectroscopy (PES) data. Orbital contributions may also be weighted to
+       account for the frequency-dependent photoionisation cross-section.
+
+    2. Application of Lorentzian instrumental broadening to simulated
        Raman spectra from DFPT calculations.
-    2. Gaussian broadening of electronic density-of-states to simulate XPS
-       data, followed by Lorentzian instrumental broadening.
     """,
         url="https://github.com/SMTG-UCL/galore",
         author="Scanlon Materials Theory Group",
@@ -34,19 +36,20 @@ if __name__ == "__main__":
         license='GPL v3',
 
         classifiers=[
-            'Development Status :: 3 - Alpha',
+            'Development Status :: 4 - Beta',
             'Intended Audience :: Science/Research',
             'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
             'Natural Language :: English',
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.3',
             'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
+            'Programming Language :: Python :: 3.6',
             'Topic :: Scientific/Engineering :: Chemistry',
             'Topic :: Scientific/Engineering :: Physics'
             ],
-        keywords='spectroscopy spectra chemistry physics raman xps',
+        keywords=('spectroscopy spectra chemistry physics raman xps haxpes pes'
+                  ' photoelectron dos pdos gaussian lorentzian broadening'),
         include_package_data=True,
         packages=find_packages(exclude=['docs', 'test']),
         install_requires=['numpy', 'scipy', 'matplotlib', 'six'],
@@ -54,6 +57,7 @@ if __name__ == "__main__":
                                  "sphinx_rtd_theme",
                                  "sphinx-argparse",
                                  "sphinxcontrib-bibtex"]},
+        python_requires='>2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4',
         entry_points={
             'console_scripts': [
                 'galore=galore.cli.galore:main',
