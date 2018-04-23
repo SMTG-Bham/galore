@@ -88,9 +88,10 @@ and/or Lorentzian function: intrinsic lifetime broadening causes a
 Lorentzian energy distribution of the photoelectrons, while instrumental
 factors, including the width of the X-ray source and analyser resolution,
 give rise to a Gaussian line shape.
-Franck--Condon phonon broadening is caused by the variation in binding
-energies as a structure vibrates and gives around
-0.8 eV of Gaussian broadening in oxide materials.[@Cox1983; @Nelin2011; @Regoutz2015]
+Franck--Condon phonon broadening is caused by relaxation of atomic positions
+in response to creation of a photohole, as well as thermal population of vibrationally
+excited states before photoionisation, and gives around 0.8 eV Gaussian broadening
+in metal oxides.[@Cox1983; @Nelin2011; @Regoutz2015]
 
 Photoemission spectra for the same material will vary depending on the
 radiation source used.
@@ -115,8 +116,8 @@ already been used in many academic studies.[@Dou1998; @Morris2000; @Glans2005; @
 
 ### Known limitations and improvements
 The Gelius model is based on photoelectrons with short wavelengths,
-such that behaviour is dominated by wavefunction fluctuations close to
-the atomic nuclei. [@Gelius1972; @Gelius1972a; @Gelius1974]
+such that the photoinionisation matrix elements are dominated by regions
+of space close to the atomic nuclei.[@Gelius1972; @Gelius1972a; @Gelius1974]
 This model is expected to break down at longer wavelengths, and in the
 case of low-energy UPS it is likely that significant scattering
 effects would be neglected.
