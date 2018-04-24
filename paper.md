@@ -17,7 +17,7 @@ authors:
     affiliation: 1
   - name: Alex M Ganose
     orcid: 0000-0002-4486-3321
-    affiliation: 1,2
+    affiliation: "1, 2"
   - name: Anna Regoutz
     orcid: 0000-0002-3747-3763
     affiliation: 3
@@ -25,7 +25,7 @@ authors:
     affiliation: 4
   - name: David O Scanlon
     orcid: 0000-0001-9174-8601
-    affiliation: 1,2
+    affiliation: "1, 2"
 affiliations:
   - name: Dept of Chemistry, University College London, 20 Gordon Street, London WC1H 0AJ, UK
     index: 1
@@ -35,7 +35,7 @@ affiliations:
     index: 3
   - name: Dept of Chemistry, University of Oxford, South Parks Road, Oxford OX1 3QR, UK
     index: 4
-date: April 2018
+date: 24 April 2018
 bibliography: paper.bib
 citation-style: https://www.zotero.org/styles/royal-society-of-chemistry-with-titles
 ---
