@@ -14,30 +14,32 @@ tags:
 authors:
   - name: Adam J Jackson
     orcid: 0000-0001-5272-6530
-    affiliation: 1
+    affiliation: "1, 2"
   - name: Alex M Ganose
     orcid: 0000-0002-4486-3321
-    affiliation: "1, 2"
+    affiliation: "1, 2, 3"
   - name: Anna Regoutz
     orcid: 0000-0002-3747-3763
-    affiliation: 3
-  - name: Russell G. Egdell
     affiliation: 4
+  - name: Russell G. Egdell
+    affiliation: 5
   - name: David O Scanlon
     orcid: 0000-0001-9174-8601
-    affiliation: "1, 2"
+    affiliation: "1, 2, 3"
 affiliations:
   - name: Dept of Chemistry, University College London, 20 Gordon Street, London WC1H 0AJ, UK
     index: 1
-  - name: Diamond Light Source Ltd., Diamond House, Harwell Science and Innovation Campus, Didcot, Oxfordshire OX11 0DE, UK
+  - name: Thomas Young Centre, University College London, Gower Street, London WC1E 6BT, UK
     index: 2
-  - name: Dept of Materials, Imperial College London, London SW7 2AZ, UK
+  - name: Diamond Light Source Ltd., Diamond House, Harwell Science and Innovation Campus, Didcot, Oxfordshire OX11 0DE, UK
     index: 3
-  - name: Dept of Chemistry, University of Oxford, South Parks Road, Oxford OX1 3QR, UK
+  - name: Dept of Materials, Imperial College London, London SW7 2AZ, UK
     index: 4
+  - name: Dept of Chemistry, University of Oxford, South Parks Road, Oxford OX1 3QR, UK
+    index: 5
 date: 24 April 2018
 bibliography: paper.bib
-citation-style: https://www.zotero.org/styles/royal-society-of-chemistry-with-titles
+citation-style: https://www.zotero.org/styles/american-chemical-society
 ---
 
 Galore simplifies and automates the process of simulating
@@ -215,11 +217,13 @@ avoid over-fitting (Figure 3).
 # Acknowledgements
 
 Development work by AJJ took place in the course of research into new
-transparent conducting materials, led by David O. Scanlon and funded
-by EPSRC (project code EP/N01572X/1).  Work by AMG was supported by a
-studentship co-sponsored by the Diamond Light Source at the EPSRC
-Centre for Doctoral Training in Molecular Modelling and Materials
-Science (EP/L01582/1).
+transparent conducting materials, led by DOS and funded
+by EPSRC (project code EP/N01572X/1).
+DOS acknowledges support from the European Research Council, ERC (grant no.
+758345).
+Work by AMG was supported by a studentship co-sponsored by the Diamond
+Light Source at the EPSRC Centre for Doctoral Training in Molecular
+Modelling and Materials Science (EP/L01582/1).
 AR acknowledges the support from Imperial
 College London for her Imperial College Research Fellowship.
 
