@@ -24,11 +24,13 @@ from __future__ import print_function, absolute_import, division
 from argparse import ArgumentParser
 from itertools import cycle
 
+import logging
 import numpy as np
 from matplotlib import pyplot as plt
 plt.style.use('seaborn-colorblind')
 
 from galore.cross_sections import get_cross_sections_scofield
+
 
 def main():
     parser = get_parser()
@@ -36,12 +38,15 @@ def main():
     args = vars(args)
     run(**args)
 
+
 def get_parser():
     parser = ArgumentParser()
     parser.add_argument('--emin', type=float, default=1,
                         help="Minimum energy in keV")
     parser.add_argument('--emax', type=float, default=20,
                         help="Maximum energy in keV")
+    parser.add_argument('--megabarn', action='store_true',
+                        help="Set y-axis unit to megabarn/electron")
     parser.add_argument('--size', type=float, nargs=2, default=None,
                         help="Figure dimensions in cm")
     parser.add_argument('--output', '-o', type=str, default=None,
@@ -53,7 +58,9 @@ def get_parser():
 
     return parser
 
-def run(elements, emin=1, emax=10, size=None, output=None, fontsize=10):
+
+def run(elements, emin=1, emax=10, megabarn=False, size=None, output=None,
+        fontsize=10):
     energies = np.linspace(emin, emax, 200)
     cross_sections = get_cross_sections_scofield(energies, elements)
 
@@ -68,6 +75,13 @@ def run(elements, emin=1, emax=10, size=None, output=None, fontsize=10):
     colors = cycle(('C0', 'C1', 'C2', 'C3', 'C4'))
     markers = cycle(('o', '^', 'D', 'x', '*'))
 
+    if megabarn:
+        unit = "Mb"
+        conversion = 1E6
+    else:
+        unit = "barn"
+        conversion = 1
+
     for element in elements:
         color, marker = next(colors), next(markers)
         linestyles = cycle((['-', '--', ':', '-.']))
@@ -78,8 +92,9 @@ def run(elements, emin=1, emax=10, size=None, output=None, fontsize=10):
 
         for orbital in 'spdf':
             if (orbital in cross_sections[element] and
-                cross_sections[element][orbital] is not None):
-                ax.plot(energies, cross_sections[element][orbital],
+                    cross_sections[element][orbital] is not None):
+                ax.plot(energies,
+                        cross_sections[element][orbital] / conversion,
                         color=color, linestyle=next(linestyles),
                         marker=marker, markevery=40,
                         label='{0}-{1}'.format(element, orbital),
@@ -87,8 +102,9 @@ def run(elements, emin=1, emax=10, size=None, output=None, fontsize=10):
 
     ax.tick_params(labelsize=(fontsize - 2))
     ax.set_xlabel('Photon energy / keV', fontsize=fontsize)
-    ax.set_ylabel(r'Photoionization cross-section / barns electron$^{-1}$',
-                  fontsize=fontsize)
+    ylabel = ('Photoionization cross-section /'
+              ' {} electron$^{{-1}}$'.format(unit))
+    ax.set_ylabel(ylabel, fontsize=fontsize)
     ax.set_yscale('log')
     ax.legend(loc='lower right', fontsize=fontsize)
     fig.subplots_adjust(right=0.98, top=0.98)
@@ -96,7 +112,8 @@ def run(elements, emin=1, emax=10, size=None, output=None, fontsize=10):
     if output is None:
         plt.show()
     else:
-        fig.savefig(output)
+        fig.savefig(output, bbox_inches='tight')
+
 
 if __name__ == '__main__':
     main()

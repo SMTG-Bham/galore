@@ -5,8 +5,12 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-ucl/galore/compare/0.5.0...HEAD>`__
+`Unreleased <https://github.com/smtg-ucl/galore/compare/0.5.1...HEAD>`__
 -------------------------------------------------------------------------
+
+`[0.5.1] <https://github.com/smtg-ucl/galore/compare/0.5.0...0.5.1>`__ - 2018-05-03
+-----------------------------------------------------------------------------------
+- galore-plot-sc can optionally show values in Megabarn/electron
 
 `[0.5.0] <https://github.com/smtg-ucl/galore/compare/0.4.0...0.5.0>`__ - 2018-04-22
 -----------------------------------------------------------------------------------
