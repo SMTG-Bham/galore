@@ -79,7 +79,7 @@ def run(elements, emin=1, emax=10, megabarn=False, size=None, output=None,
         unit = "Mb"
         conversion = 1E6
     else:
-        unit = "barns"
+        unit = "barn"
         conversion = 1
 
     for element in elements:
@@ -102,7 +102,8 @@ def run(elements, emin=1, emax=10, megabarn=False, size=None, output=None,
 
     ax.tick_params(labelsize=(fontsize - 2))
     ax.set_xlabel('Photon energy / keV', fontsize=fontsize)
-    ylabel = 'Photoionization cross-section / {} electron$^{{-1}}$'.format(unit)
+    ylabel = ('Photoionization cross-section /'
+              ' {} electron$^{{-1}}$'.format(unit))
     ax.set_ylabel(ylabel, fontsize=fontsize)
     ax.set_yscale('log')
     ax.legend(loc='lower right', fontsize=fontsize)
