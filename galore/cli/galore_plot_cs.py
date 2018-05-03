@@ -76,7 +76,7 @@ def run(elements, emin=1, emax=10, megabarnes=False, size=None, output=None,
     markers = cycle(('o', '^', 'D', 'x', '*'))
 
     if megabarnes:
-        unit = "megabarnes"
+        unit = "Mb"
         conversion = 1E6
     else:
         unit = "barns"
