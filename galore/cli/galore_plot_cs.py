@@ -45,8 +45,8 @@ def get_parser():
                         help="Minimum energy in keV")
     parser.add_argument('--emax', type=float, default=20,
                         help="Maximum energy in keV")
-    parser.add_argument('--megabarnes', action='store_true',
-                        help="Set y-axis unit to megabarnes/electron")
+    parser.add_argument('--megabarn', action='store_true',
+                        help="Set y-axis unit to megabarn/electron")
     parser.add_argument('--size', type=float, nargs=2, default=None,
                         help="Figure dimensions in cm")
     parser.add_argument('--output', '-o', type=str, default=None,
