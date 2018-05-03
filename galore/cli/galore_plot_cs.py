@@ -59,7 +59,7 @@ def get_parser():
     return parser
 
 
-def run(elements, emin=1, emax=10, megabarnes=False, size=None, output=None,
+def run(elements, emin=1, emax=10, megabarn=False, size=None, output=None,
         fontsize=10):
     energies = np.linspace(emin, emax, 200)
     cross_sections = get_cross_sections_scofield(energies, elements)
@@ -75,7 +75,7 @@ def run(elements, emin=1, emax=10, megabarnes=False, size=None, output=None,
     colors = cycle(('C0', 'C1', 'C2', 'C3', 'C4'))
     markers = cycle(('o', '^', 'D', 'x', '*'))
 
-    if megabarnes:
+    if megabarn:
         unit = "Mb"
         conversion = 1E6
     else:
