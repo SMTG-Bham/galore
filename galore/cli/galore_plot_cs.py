@@ -94,7 +94,7 @@ def run(elements, emin=1, emax=10, megabarnes=False, size=None, output=None,
             if (orbital in cross_sections[element] and
                     cross_sections[element][orbital] is not None):
                 ax.plot(energies,
-                        cross_sections[element][orbital] * conversion,
+                        cross_sections[element][orbital] / conversion,
                         color=color, linestyle=next(linestyles),
                         marker=marker, markevery=40,
                         label='{0}-{1}'.format(element, orbital),
@@ -111,7 +111,7 @@ def run(elements, emin=1, emax=10, megabarnes=False, size=None, output=None,
     if output is None:
         plt.show()
     else:
-        fig.savefig(output)
+        fig.savefig(output, bbox_inches='tight')
 
 
 if __name__ == '__main__':
