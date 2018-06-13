@@ -62,7 +62,7 @@ and to plot to a file with more generous 10 cm\ :sup:`-1` broadening::
 
     galore MY_DATA.csv -l 10 -p MY_PLOT.png
 
-will provide the additional data needed. 
+will provide the additional data needed.
 
 Other file formats are supported, including IR and Raman intensity
 simulation output. See the Tutorials for usage examples.
@@ -164,12 +164,21 @@ extensions::
 
    pip3 install --upgrade .[docs]
 
+Support
+-------
+
+If you're having trouble with Galore or think you've found a bug, please
+report it using the
+`Github issue tracker <https://github.com/SMTG-UCL/galore/issues>`__.
+Issues can also be used for questions and discussion about the Galore
+methodology/implementation.
+
 Development
 -----------
 
 This code is developed by the Scanlon Materials Theory Group based at
 University College London. Suggestions and contributions are welcome;
-please use the Github issue tracker.
+please read the CONTRIBUTING guidelines and use the Github issue tracker.
 
 License
 -------

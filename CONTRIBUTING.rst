@@ -34,3 +34,21 @@ Further reading
 
 - `A helpful unofficial guide to forking and pull requests on GitHub <https://gist.github.com/Chaser324/ce0505fbed06b947d962>`__
 - `Another unofficial tutorial <https://www.thinkful.com/learn/github-pull-request-tutorial/>`__
+
+Coding guidelines
+-----------------
+
+- Please follow `PEP8 <https://www.python.org/dev/peps/pep-0008/>`__
+  including the 79-character line width limit. You can run a style
+  checker on your code when you are done; a decent one called ``pep8``
+  can be obtained with ``pip install pep8``.
+- It is helpful to start commit messages with a short code indicating
+  the type of change made; this makes it easier to scan the list of
+  commits looking for e.g. documentation changes. The codes are loosely
+  borrowed from
+  `this scheme <https://wiki.fysik.dtu.dk/ase/development/contribute.html#writing-the-commit-message>`__
+  used by the ASE project, but no strict scheme is enforced.
+- Please ensure your changes pass the test suite (``python3 setup.py
+  test``) and consider adding tests for any new behaviour. It can be
+  helpful to write the test before you finish implementing the
+  feature.
