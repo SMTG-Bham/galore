@@ -15,9 +15,8 @@ Welcome to Galore's documentation!
    theory
    cli
    Python API <modules>             
+   contributing
    changelog
-
-
 
 Indices and tables
 ==================
