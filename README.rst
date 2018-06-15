@@ -35,9 +35,9 @@ is available online at `readthedocs.io <http://galore.readthedocs.io/en/latest/>
 You can build a local version using Sphinx with ``make html`` from
 the *docs* directory of this project.
 
-The academic paper can be compiled to a PDF file with pandoc and LaTeX::
-
-  pandoc --filter pandoc-citeproc --bibliography=paper.bib -V geometry:margin=2cm -V fontsize:12pt -s paper.md -o paper.pdf
+An brief formal overview of the background and purpose of this code has been
+`published <http://joss.theoj.org/papers/10.21105/joss.00773>`__
+in *The Journal of Open Source Software*.
 
 Usage
 -----
