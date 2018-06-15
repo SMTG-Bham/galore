@@ -10,6 +10,9 @@ README
 .. image:: https://readthedocs.org/projects/galore/badge/?version=latest
    :target: http://galore.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
+.. image:: http://joss.theoj.org/papers/10.21105/joss.00773/status.svg
+   :target: https://doi.org/10.21105/joss.00773
+   :alt: Paper in Journal of Open Source Software
 
 Introduction
 ------------
