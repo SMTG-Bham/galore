@@ -7,6 +7,11 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 
 `Unreleased <https://github.com/smtg-ucl/galore/compare/0.5.1...HEAD>`__
 -------------------------------------------------------------------------
+- Matplotlib styling is exposed to the user: ``--style`` option selects CLI style
+  while Python API does not overrule existing style.
+- The default TDOS line colour is now the first colour from the
+  selected style, which is usually blue. The previous default was a
+  bright red.
 
 `[0.5.1] <https://github.com/smtg-ucl/galore/compare/0.5.0...0.5.1>`__ - 2018-05-03
 -----------------------------------------------------------------------------------

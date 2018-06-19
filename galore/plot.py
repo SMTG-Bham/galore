@@ -129,7 +129,6 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
     max_y = 0
 
     if ax is None:
-        plt.style.use("seaborn-colorblind")
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
 
@@ -205,8 +204,6 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
     # Any unset kwargs will be seen as None
     kwargs = defaultdict((lambda: None), **kwargs)
 
-    plt.style.use("seaborn-colorblind")
-
     if ax:
         pass
     else:
@@ -216,7 +213,7 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
     if kwargs['flipx']:
         xdata = -xdata
 
-    ax.plot(xdata, ydata, 'r-')
+    ax.plot(xdata, ydata, 'C0-')
     ax.set_xlim([min(xdata), max(xdata)])
 
     xlabel = guess_xlabel(units=kwargs['units'], flipx=kwargs['flipx'])

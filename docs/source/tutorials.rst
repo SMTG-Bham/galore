@@ -99,13 +99,16 @@ same way as before:
 
 .. code-block:: bash
 
-    galore test/CaF2/raman_lda_500.dat -g -l -k --plot --units cm-1 --ylabel Intensity
+    galore test/CaF2/raman_lda_500.dat -g -l -k --plot --units cm-1 --ylabel Intensity --style Solarized_Light2
 
 .. image:: figures/raman_lda_500.png
            :alt: Simulated Raman plot for CaF2
            :align: center
            :scale: 50%
 
+This time we set an alternative appearance style with ``--style Solarized_Light2``.
+Galore uses Matplotlib styles, and you can use inbuilt styles or create custom stylesheets.
+The ``dark_background`` style may be useful for slide presentations.
 Note that for the same material we are seeing a single peak again, but
 at a different frequency to the IR plot. This is not a shift; the peak
 at 280 cm\ `-1`:sup: is still present but has zero activity, while the

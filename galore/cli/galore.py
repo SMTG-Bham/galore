@@ -88,6 +88,9 @@ def pdos_from_files(return_plt=False, **kwargs):
     # For plotting and writing, "None" means "write to screen"
     # while False means "do nothing"
     if kwargs['plot'] or kwargs['plot'] is None:
+        if 'style' in kwargs and kwargs['style'] is not None:
+            import matplotlib.pyplot
+            matplotlib.pyplot.style.use(kwargs['style'])
         plt = galore.plot.plot_pdos(pdos_plotting_data,
                                     **kwargs)  # flipx is included in kwargs
 
@@ -154,6 +157,9 @@ def simple_dos_from_files(return_plt=False, **kwargs):
         if not has_matplotlib:
             print("Can't plot, no Matplotlib")
         else:
+            if 'style' in kwargs and kwargs['style'] is not None:
+                import matplotlib.pyplot
+                matplotlib.pyplot.style.use(kwargs['style'])
             plt = galore.plot.plot_tdos(x_values, broadened_data, **kwargs)
             if kwargs['ylabel'] is not None:
                 plt.ylabel(kwargs['ylabel'])
@@ -280,6 +286,11 @@ def get_parser():
         '--ymin', type=float, default=0, help='Minimum y axis value')
     parser.add_argument(
         '--ymax', type=float, default=None, help='Maximum y axis value')
+    parser.add_argument(
+        '--style', type=str, nargs='+', default=['seaborn-colorblind'],
+        help='Plotting style: a sequence of matplotlib styles and paths to '
+             'style files. The default palette is called "seaborn-colorblind".'
+        )
     parser.add_argument(
         '--overlay', type=str, default=None, help='Data file for overlay')
     parser.add_argument(

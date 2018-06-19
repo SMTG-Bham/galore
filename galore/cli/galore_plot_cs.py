@@ -53,6 +53,11 @@ def get_parser():
                         help="Output filename. If not given, plot to screen.")
     parser.add_argument('--fontsize', type=int, default=12,
                         help="Font size in pt")
+    parser.add_argument(
+        '--style', type=str, nargs='+', default=['seaborn-colorblind'],
+        help='Plotting style: a sequence of matplotlib styles and paths to '
+             'style files. The default palette is called "seaborn-colorblind".'
+        )
     parser.add_argument('elements', type=str, nargs='+', help="""
         Space-separated symbols for elements in material.""")
 
@@ -60,9 +65,12 @@ def get_parser():
 
 
 def run(elements, emin=1, emax=10, megabarn=False, size=None, output=None,
-        fontsize=10):
+        fontsize=10, style=None):
     energies = np.linspace(emin, emax, 200)
     cross_sections = get_cross_sections_scofield(energies, elements)
+
+    if style is not None:
+        plt.style.use(style)
 
     if size is None:
         fig = plt.figure()
