@@ -6,13 +6,13 @@ from pkg_resources import resource_filename
 from galore.formats import read_gpaw_totaldos, read_gpaw_pdos
 from contextlib import contextmanager
 
-# try:
-#     from gpaw import GPAW
-#     import ase.build
-#     has_gpaw = True
-# except ImportError:
-#     has_gpaw = False
-from gpaw import GPAW
+try:
+    from gpaw import GPAW
+    import ase.build
+    has_gpaw = True
+except ImportError:
+    has_gpaw = False
+
 import ase.build
 
 @contextmanager
@@ -29,7 +29,7 @@ def stdout_redirect():
         output.close()
 
 
-# @unittest.skipIf(not has_gpaw, "GPAW not available")
+@unittest.skipIf(not has_gpaw, "GPAW not available")
 class TestGPAW(unittest.TestCase):
     gpaw_file = resource_filename(__name__, path_join('CdTe', 'CdTe.gpw'))
 
