@@ -7,6 +7,8 @@ README
 .. image:: https://travis-ci.org/SMTG-UCL/galore.svg?branch=master
    :target: https://travis-ci.org/SMTG-UCL/galore
    :alt: Travis CI Status
+.. image:: https://coveralls.io/repos/github/SMTG-UCL/galore/badge.svg?branch=master
+   :target: https://coveralls.io/github/SMTG-UCL/galore?branch=master
 .. image:: https://readthedocs.org/projects/galore/badge/?version=latest
    :target: http://galore.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
