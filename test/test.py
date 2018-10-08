@@ -234,6 +234,23 @@ class test_io_functions(unittest.TestCase):
         self.assertEqual(pdos['Mg']['s'][150], 0.053)
         self.assertEqual(pdos['O']['p'][189], 0.004)
 
+    @unittest.skipUnless(has_pymatgen, "requires pymatgen")
+    def test_identify_complete_dos(self):
+        from monty.serialization import loadfn
+        dos = loadfn(path_join(test_dir, 'MgO', 'CompleteDos.yaml.gz'))
+        self.assertTrue(galore.formats.is_complete_dos(dos))
+
+        raman_path = path_join(test_dir, 'CaF2', 'raman_lda_500.dat')
+        self.assertFalse(galore.formats.is_complete_dos(raman_path))
+
+    @unittest.skipUnless(has_pymatgen, "requires pymatgen")
+    def test_read_complete_dos(self):
+        from monty.serialization import loadfn
+        dos = loadfn(path_join(test_dir, 'MgO', 'CompleteDos.yaml.gz'))
+        pdos = galore.formats.read_vasprun_pdos(dos)
+        self.assertEqual(pdos['Mg']['s'][150], 0.053)
+        self.assertEqual(pdos['O']['p'][189], 0.004)
+
 
 txt_test_string = """# Frequency  Value
 0.000000e+00 0.000000e+00
