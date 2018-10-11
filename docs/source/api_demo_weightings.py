@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.cm import viridis as cmap

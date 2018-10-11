@@ -51,7 +51,7 @@ if __name__ == "__main__":
                   ' photoelectron dos pdos gaussian lorentzian broadening'),
         include_package_data=True,
         packages=find_packages(exclude=['docs', 'test']),
-        install_requires=['numpy', 'scipy', 'matplotlib', 'six'],
+        install_requires=['numpy', 'scipy', 'matplotlib'],
         extras_require={'docs': ["sphinx",
                                  "sphinx_rtd_theme",
                                  "sphinx-argparse",

@@ -1,10 +1,7 @@
 """Plotting routines with Matplotlib"""
-from __future__ import division
-
 from collections import defaultdict
 from os.path import basename as path_basename
 from itertools import cycle
-from six import itervalues
 import logging
 
 import numpy as np
@@ -132,7 +129,7 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
 
-    tdos = np.zeros(len(next(itervalues(pdos_data))['energy']))
+    tdos = np.zeros(len(next(pdos_data.values())['energy']))
 
     for element, el_data in pdos_data.items():
         # Field 'energy' must be present, other fields are orbitals

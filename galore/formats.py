@@ -17,8 +17,6 @@
 # If not, see <http://www.gnu.org/licenses/>.                                 #
 #                                                                             #
 ###############################################################################
-
-from __future__ import print_function
 import os
 import csv
 import sys

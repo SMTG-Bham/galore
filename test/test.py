@@ -1,5 +1,3 @@
-from __future__ import division, absolute_import
-
 import os
 from os.path import join as path_join
 import sys
