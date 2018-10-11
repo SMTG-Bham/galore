@@ -30,3 +30,6 @@ docs/build/
 
 # Rope project settings
 .ropeproject
+
+# Pycharm settings
+.idea

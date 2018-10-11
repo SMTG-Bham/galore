@@ -40,7 +40,6 @@ if __name__ == "__main__":
             'Intended Audience :: Science/Research',
             'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
             'Natural Language :: English',
-            'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
             'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
@@ -57,7 +56,7 @@ if __name__ == "__main__":
                                  "sphinx_rtd_theme",
                                  "sphinx-argparse",
                                  "sphinxcontrib-bibtex"]},
-        python_requires='>2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4',
+        python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4',
         entry_points={
             'console_scripts': [
                 'galore=galore.cli.galore:main',

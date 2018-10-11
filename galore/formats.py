@@ -66,6 +66,12 @@ def is_xml(filename):
         return filename.split('.')[-1] == 'xml'
 
 
+def is_complete_dos(pdos):
+    """Determine whether the object is a pymatgen CompleteDos object"""
+    densities_fn = getattr(pdos, "get_densities", None)
+    return callable(densities_fn)
+
+
 def write_txt(x_values, y_values, filename="galore_output.txt", header=None):
     """Write output to a simple space-delimited file
 
@@ -461,13 +467,17 @@ def read_vasprun_pdos(filename='vasprun.xml'):
     Pymatgen must be present on the system to use this method
 
     Args:
-        filename (str): Path to vasprun.xml file
+        filename (str): Path to vasprun.xml file or pymatgen CompleteDos object.
 
     Returns:
         pdos_data (np.ndarray): PDOS data formatted as nestled OrderedDict of:
             {element: {'energy': energies, 's': densities, 'p' ... }
     """
-    dos = read_vasprun(filename)
+    if isinstance(filename, str):
+        dos = read_vasprun(filename)
+    else:
+        # filename is actually a pre-loaded CompleteDos
+        dos = filename
 
     from pymatgen.electronic_structure.core import Spin, OrbitalType
 
@@ -485,6 +495,7 @@ def read_vasprun_pdos(filename='vasprun.xml'):
             pdos_data[element][orbital.name] = densities
 
     return pdos_data
+
 
 def read_vasp_raman(filename="vasp_raman.dat"):
     """Read output file from Vasp raman simulation

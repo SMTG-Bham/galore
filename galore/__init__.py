@@ -133,7 +133,8 @@ def process_pdos(input=['vasprun.xml'],
         input (list or str):
             Files for processing. Vasp output or space-separated files with
                 XXX_EL_YYY.EXT filename pattern where EL is the element label.
-                We recommend SYSTEM_EL_dos.dat
+                We recommend SYSTEM_EL_dos.dat. Alternatively, a
+                `pymatgen.electronic_structure.dos.CompleteDos` can be provided.
         **kwargs:
             See main command reference
 
@@ -153,7 +154,8 @@ def process_pdos(input=['vasprun.xml'],
     energy_label = None
     pdos_data = OrderedDict()
     for pdos_file in input:
-        if galore.formats.is_xml(pdos_file):
+        if (galore.formats.is_xml(pdos_file) or
+                galore.formats.is_complete_dos(pdos_file)):
             pdos_data = galore.formats.read_vasprun_pdos(pdos_file)
             kwargs['units'] = 'eV'
             break
