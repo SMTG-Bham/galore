@@ -136,7 +136,7 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
 
-    tdos = np.zeros(len(next(pdos_data.values())['energy']))
+    tdos = np.zeros(len(list(pdos_data.values())[1]['energy']))
 
     for element, el_data in pdos_data.items():
         # Field 'energy' must be present, other fields are orbitals
@@ -172,12 +172,11 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
                           energy_label=None)
     ax.set_xlabel(xlabel)
 
-    if kwargs['ymax'] is None or kwargs['ymin'] is None:
-        # Add 10% to data range if not specified
-        if kwargs['ymax'] is None:
-            kwargs['ymax'] = max_y * 1.1
-        if kwargs['ymin'] is None:
-            kwargs['ymin'] = 0
+    # Set axis range as data range + 10% if not specified
+    if kwargs['ymax'] is None:
+        kwargs['ymax'] = max_y * 1.1
+    if kwargs['ymin'] is None:
+        kwargs['ymin'] = 0
     ax.set_ylim([kwargs['ymin'], kwargs['ymax']])
     ax.set_yticklabels([''])
     ax.legend(loc='best')
@@ -185,7 +184,7 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
     return plt
 
 
-def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
+def plot_tdos(xdata, ydata, ax=None, **kwargs):
     """Plot a total DOS (i.e. 1D dataset)
 
 
@@ -193,7 +192,6 @@ def plot_tdos(xdata, ydata, filename=None, ax=None, **kwargs):
         xdata (iterable): x-values (energy, frequency etc.)
         ydata (iterable): Corresponding y-values (DOS or measurement intensity)
         show (bool): Display plot
-        filename (str): If provided, write plot to this path/filename.
         ax (matplotlib.Axes): If provided, plot onto existing Axes object. If
             None, a new Figure will be created and the pyplot instance will be
             returned.
