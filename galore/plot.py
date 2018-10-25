@@ -20,7 +20,7 @@ _energy_units = ('ev', 'ry', 'ha')
 _frequency_units = ('cm', 'cm-1', 'thz')
 
 
-def guess_xlabel(units=None, flipx=None, energy_label=None):
+def guess_xlabel(units=None, flipx=False, energy_label=None):
     """Infer a decent x-xaxis label from available information
 
     Args:
@@ -28,23 +28,30 @@ def guess_xlabel(units=None, flipx=None, energy_label=None):
         flipx (bool): Is energy scale negated to form binding energy
         energy_label (str): Header from .dat file if used"""
 
-    if units and units.lower() in _unit_labels:
+    if (units is not None) and units.lower() in _unit_labels:
         unit_label = _unit_labels[units.lower()]
     else:
         unit_label = units
 
-    if flipx and units.lower() in _energy_units:
-        xlabel = "Binding energy / " + unit_label
-    elif flipx and units:
-        xlabel = "-" + energy_label + " / " + unit_label
-    elif flipx:
-        xlabel = "Binding energy"
-    elif units and energy_label is not None:
-        xlabel = energy_label + " / " + unit_label
-    elif units:
-        xlabel = unit_label
+    if flipx:
+        if (units is not None) and units.lower() in _energy_units:
+            xlabel = 'Binding energy / ' + unit_label
+        elif (energy_label is not None) and (units is not None):
+            xlabel = '-' + energy_label + ' / ' + unit_label
+        elif (energy_label is not None):
+            xlabel = '-' + energy_label
+        else:
+            xlabel = 'Binding energy'
+
     else:
-        xlabel = ''
+        if (units is not None) and (energy_label is not None):
+            xlabel = energy_label + ' / ' + unit_label
+        elif (units is not None):
+            xlabel = unit_label
+        elif (energy_label is not None):
+            xlabel = energy_label
+        else:
+            xlabel = ''
 
     return xlabel
 
