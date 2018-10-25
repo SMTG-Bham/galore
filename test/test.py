@@ -98,20 +98,6 @@ class test_dos_functions(unittest.TestCase):
         self.assertAlmostEqual(yvals[5], 0.0, places=3)
         self.assertAlmostEqual(yvals[2000], 98.64411, places=4)
 
-    def test_overlay(self):
-        import matplotlib.pyplot as plt
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1)
-        galore.plot.add_overlay(plt, path_join(test_dir, 'test_xy_data.csv'),
-                                overlay_scale=2, overlay_offset=1,
-                                overlay_style="x:", overlay_label="foo")
-        ax = plt.gca()
-        line = ax.lines[0]
-        xy = line.get_xydata()
-        self.assertEqual(xy[3, 0], 201)
-        self.assertEqual(xy[3, 1], 0.6)
-        self.assertEqual(xy.shape, (8, 2))
-
 
 class test_array_functions(unittest.TestCase):
     def test_delta(self):
@@ -122,16 +108,16 @@ class test_array_functions(unittest.TestCase):
         assert_array_equal(
             galore.xy_to_1d(
                 np.array([[2.1, 0.6], [4.3, 0.2], [5.1, 0.3]]), range(6),
-                         spikes=True),
+                spikes=True),
             np.array([0., 0., 0.6, 0., 0.2, 0.3]))
+
     def test_xy_to_1d_linear(self):
         """Check resampling with linear interpolation"""
         assert_array_equal(
             galore.xy_to_1d(
                 np.array([[1., 0.5], [3., 1.5]]), range(6),
-                         spikes=False),
+                spikes=False),
             np.array([0., 0.5, 1.0, 1.5, 0., 0.0]))
-
 
     def test_gaussian(self):
         self.assertAlmostEqual(galore.gaussian(3., f0=1, fwhm=(3 * 2.35482)),

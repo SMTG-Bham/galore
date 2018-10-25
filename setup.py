@@ -8,6 +8,7 @@ import unittest
 
 project_dir = abspath(dirname(__file__))
 
+
 def unit_tests():
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover('test', pattern='test*.py')
@@ -23,7 +24,7 @@ if __name__ == "__main__":
     Apply Gaussian and Lorentzian broadening to data from ab initio
     calculations. The two main intended applications are
 
-    1. Broadening of electronic density-of-states to simulate photoemission 
+    1. Broadening of electronic density-of-states to simulate photoemission
        spectroscopy (PES) data. Orbital contributions may also be weighted to
        account for the frequency-dependent photoionisation cross-section.
 
