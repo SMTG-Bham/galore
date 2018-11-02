@@ -5,8 +5,11 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-ucl/galore/compare/0.5.1...HEAD>`__
+`Unreleased <https://github.com/smtg-ucl/galore/compare/0.6.0...HEAD>`__
 -------------------------------------------------------------------------
+
+`[0.6.0] <https://github.com/smtg-ucl/galore/compare/0.5.1...0.6.0>`__ - 2018-11-02
+-----------------------------------------------------------------------------------
 - Matplotlib styling is exposed to the user: ``--style`` option selects CLI style
   while Python API does not overrule existing style.
 - The default TDOS line colour is now the first colour from the
@@ -14,6 +17,8 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
   bright red.
 - Pymatgen CompleteDos objects can be processed directly.
 - Dropped Python 2.7 compatability.
+- Fixed PDOS bug introduced with Python3 cleanup
+  
 
 `[0.5.1] <https://github.com/smtg-ucl/galore/compare/0.5.0...0.5.1>`__ - 2018-05-03
 -----------------------------------------------------------------------------------
