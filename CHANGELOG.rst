@@ -5,8 +5,12 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-ucl/galore/compare/0.6.0...HEAD>`__
+`Unreleased <https://github.com/smtg-ucl/galore/compare/0.6.1...HEAD>`__
 -------------------------------------------------------------------------
+
+`[0.6.1] <https://github.com/smtg-ucl/galore/compare/0.6.0...0.6.1>`__ - 2018-11-19
+-----------------------------------------------------------------------------------
+- BUGFIX: PDOS plot was failing for elemental systems
 
 `[0.6.0] <https://github.com/smtg-ucl/galore/compare/0.5.1...0.6.0>`__ - 2018-11-02
 -----------------------------------------------------------------------------------
