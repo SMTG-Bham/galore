@@ -124,7 +124,6 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
             and axes.
 
         """
-
     # Any unset kwargs will be seen as None
     kwargs = defaultdict((lambda: None), **kwargs)
 
@@ -136,7 +135,7 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
 
-    tdos = np.zeros(len(list(pdos_data.values())[1]['energy']))
+    tdos = np.zeros(len(list(pdos_data.values())[0]['energy']))
 
     for element, el_data in pdos_data.items():
         # Field 'energy' must be present, other fields are orbitals
