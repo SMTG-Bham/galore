@@ -166,6 +166,9 @@ orbital-projected input files.  The element identity is read from
 these filenames, and is expected between two underscore
 characters. The orbital names are determined from the column headers
 in this file.
+It is possible to use spin-polarised data by using a header form such
+as 's(up)' and 's(down)' for spin-polarised s-orbitals, in which case
+the contributions of the spin channels will be summed together.
 
 Let's turn this into a useful XPS plot. The flag ``--weightings`` can
 be used to pass a data file with cross-section data; for some cases
