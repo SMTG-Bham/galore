@@ -135,6 +135,8 @@ def process_pdos(input=['vasprun.xml'],
                 XXX_EL_YYY.EXT filename pattern where EL is the element label.
                 We recommend SYSTEM_EL_dos.dat. Alternatively, a
                 `pymatgen.electronic_structure.dos.CompleteDos` can be provided.
+                Spin channels indicated by an (up) or (down) suffix in file
+                header will be combined for each orbital type.
         **kwargs:
             See main command reference
 

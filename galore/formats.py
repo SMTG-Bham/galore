@@ -19,6 +19,7 @@
 ###############################################################################
 import os
 import csv
+import re
 import sys
 from collections import OrderedDict
 import numpy as np
@@ -253,7 +254,8 @@ def read_pdos_txt(filename):
 
     The first row should be a header identifying the orbitals, e.g.
     "# Energy s p d f". The following rows contain the corresponding energy and
-    DOS values.
+    DOS values. Spin channels indicated by (up) or (down) suffixes will be
+    combined.
 
     Args:
         filename (str): Path to file for import
@@ -263,8 +265,33 @@ def read_pdos_txt(filename):
             corresponding to input data format.
     """
     data = np.genfromtxt(filename, names=True)
-    return data
 
+    # Get a list of orbitals that have 'up' and 'down' variants
+    spin_pairs = []
+    for col in data.dtype.names:
+        if re.match('.+up', col):
+            orbital = re.match('(.+)up', col).groups()[0]
+            if orbital + 'down' in data.dtype.names:
+                spin_pairs.append(orbital)
+
+    if len(spin_pairs) == 0:
+        return data
+
+    else:
+        # Sum up/down channel pairs into their respective up channels
+        for orbital in spin_pairs:
+            data[orbital + 'up'] += data[orbital + 'down']
+
+        # Rename spin-up channels
+        column_names = list(data.dtype.names)
+        for orbital in spin_pairs:
+            column_names[column_names.index(orbital + 'up')] = orbital
+        data.dtype.names = tuple(column_names)
+
+        # Exclude spin-down channels from returned data
+        spin_down_orbs = [orb + 'down' for orb in spin_pairs]
+        return data[[col for col in data.dtype.names
+                     if col not in spin_down_orbs]]
 
 def read_doscar(filename="DOSCAR"):
     """Read an x, y series of frequencies and DOS from a VASP DOSCAR file

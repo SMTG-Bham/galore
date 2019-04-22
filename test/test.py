@@ -204,6 +204,18 @@ class test_io_functions(unittest.TestCase):
         assert_array_equal(galore.formats.read_vasp_raman(raman_path),
                            raman_data)
 
+    def test_read_txt_pdos_spin(self):
+        sample_txt = path_join(test_dir, 'spin_samples', 'mixed.dat')
+        data = galore.formats.read_pdos_txt(sample_txt)
+        self.assertAlmostEqual(data['s'][0], 0.1)
+        self.assertAlmostEqual(data['s'][6], 1.1)
+        self.assertAlmostEqual(data['p'][0], 0.5)
+        self.assertAlmostEqual(data['p'][6], 2.5)
+        self.assertAlmostEqual(data['d'][1], 0.4)
+        self.assertIn('f', data.dtype.names)
+        self.assertNotIn('fup', data.dtype.names)
+        self.assertNotIn('f(down)', data.dtype.names)
+
     @unittest.skipUnless(has_pymatgen, "requires pymatgen")
     def test_read_vasprun_totaldos(self):
         vr_path = path_join(test_dir, 'MgO', 'vasprun.xml.gz')
