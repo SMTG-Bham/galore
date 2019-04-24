@@ -249,7 +249,7 @@ def read_txt(filename, delimiter=None):
                         "too many columns.".format(filename))
 
 
-def read_pdos_txt(filename):
+def read_pdos_txt(filename, abs_values=True):
     """Read a text file containing projected density-of-states (PDOS) data
 
     The first row should be a header identifying the orbitals, e.g.
@@ -259,12 +259,20 @@ def read_pdos_txt(filename):
 
     Args:
         filename (str): Path to file for import
+        abs_values (bool, optional):
+            Convert intensity values to absolute numbers. This is primarily for
+            compatibility with spin-polarised .dat files from Sumo. Set to
+            False if negative values in spectrum are resonable.
 
     Returns:
         data (np.ndarray): Numpy structured array with named columns
             corresponding to input data format.
     """
     data = np.genfromtxt(filename, names=True)
+
+    if abs_values:
+        for col in data.dtype.names[1:]:
+            data[col] = np.abs(data[col])
 
     # Get a list of orbitals that have 'up' and 'down' variants
     spin_pairs = []

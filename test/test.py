@@ -215,6 +215,7 @@ class test_io_functions(unittest.TestCase):
         self.assertIn('f', data.dtype.names)
         self.assertNotIn('fup', data.dtype.names)
         self.assertNotIn('f(down)', data.dtype.names)
+        self.assertAlmostEqual(data['f'][1], 1.1)
 
     @unittest.skipUnless(has_pymatgen, "requires pymatgen")
     def test_read_vasprun_totaldos(self):
