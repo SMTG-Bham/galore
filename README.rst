@@ -184,6 +184,20 @@ This code is developed by the Scanlon Materials Theory Group based at
 University College London. Suggestions and contributions are welcome;
 please read the CONTRIBUTING guidelines and use the Github issue tracker.
 
+How to cite Galore
+------------------
+
+If you use Galore in your research, please consider citing the following work:
+
+    Adam J. Jackson, Alex M. Ganose, Anna Regoutz, Russell G. Egdell, David O. Scanlon (2018). *Galore: Broadening and weighting for simulation of photoelectron spectroscopy.* Journal of Open Source Software, 3(26), 773, `doi: 10.21105/joss.007733 <https://doi.org/10.21105/joss.00773>`_
+
+Galore includes a machine-readable
+`citation file <https://github.com/SMTG-UCL/galore/blob/master/CITATION.cff>`__
+in an `emerging standard format <https://citation-file-format.github.io>`__
+with citation details for the actual code,
+but as conventions for software citation are still developing
+the JOSS paper is a more reliable method of giving credit.
+
 License
 -------
 
