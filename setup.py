@@ -37,14 +37,15 @@ if __name__ == "__main__":
         license='GPL v3',
 
         classifiers=[
-            'Development Status :: 4 - Beta',
+            'Development Status :: 5 - Production/Stable',
             'Intended Audience :: Science/Research',
             'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-            'Natural Language :: English',
+            'Natural Language :: English', 
             'Programming Language :: Python :: 3',
             'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.6',                     
             'Topic :: Scientific/Engineering :: Chemistry',
             'Topic :: Scientific/Engineering :: Physics'
             ],
@@ -56,7 +57,9 @@ if __name__ == "__main__":
         extras_require={'docs': ["sphinx",
                                  "sphinx_rtd_theme",
                                  "sphinx-argparse",
-                                 "sphinxcontrib-bibtex"]},
+                                 "sphinxcontrib-bibtex"],
+                        'vasp': ['pymatgen <= 2019.6.20;python_version<"3.6"',
+                                 'pymatgen;python_version >= "3.6"']},
         python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4',
         entry_points={
             'console_scripts': [
