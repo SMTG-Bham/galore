@@ -62,7 +62,8 @@ if __name__ == "__main__":
                                  'ruamel.yaml <= 0.15.94;python_version ~= "3.4"',
                                  'numpy ~= 1.16;python_version ~= "3.4"',
                                  'pymatgen <= 2019.6.20;python_version ~= "3.5"',
-                                 'pymatgen;python_version >= "3.6"']},
+                                 'pymatgen;python_version >= "3.6"',
+                                 'numpy >= 1.17;python_version >= "3.6"']},
         python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4',
         entry_points={
             'console_scripts': [
