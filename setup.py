@@ -59,7 +59,7 @@ if __name__ == "__main__":
                                  "sphinx-argparse",
                                  "sphinxcontrib-bibtex"],
                         'vasp': ['pymatgen == 2018.1.19;python_version ~= "3.4"',
-                                 'ruamel.yaml ~= 0.15;python_version ~= "3.4"',
+                                 'ruamel.yaml <= 0.15.94;python_version ~= "3.4"',
                                  'numpy ~= 1.16;python_version ~= "3.4"',
                                  'pymatgen <= 2019.6.20;python_version ~= "3.5"',
                                  'pymatgen;python_version >= "3.6"']},
