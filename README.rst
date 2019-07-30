@@ -159,6 +159,13 @@ the galore library should be available on your PYTHONPATH. These are
 links to the project source folder, which you can continue to edit and
 update using Git.
 
+To import data from VASP calculations you will need the Pymatgen
+library. If you don't have Pymatgen yet, the requirements can be added
+to the Galore installation with by adding ``[vasp]`` to the pip
+command e.g.::
+
+   pip3 install --user -e .[vasp]
+
 Installation for documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
