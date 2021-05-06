@@ -1,0 +1,1 @@
+pdf.fonttype = 42  # Use truetype; makes PDF files easier to modify

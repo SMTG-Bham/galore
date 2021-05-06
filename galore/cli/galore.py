@@ -19,7 +19,7 @@
 # If not, see <http://www.gnu.org/licenses/>.                                 #
 #                                                                             #
 ###############################################################################
-import os
+
 import argparse
 from collections import OrderedDict
 from json import load as json_load
@@ -38,7 +38,6 @@ try:
     has_matplotlib = True
 except ImportError:
     has_matplotlib = False
-
 
 def main():
     logging.basicConfig(filename='galore.log', level=logging.INFO)
@@ -86,9 +85,13 @@ def pdos_from_files(return_plt=False, **kwargs):
     # For plotting and writing, "None" means "write to screen"
     # while False means "do nothing"
     if kwargs['plot'] or kwargs['plot'] is None:
+        import matplotlib.pyplot
+        style_list = [galore.base_style]
+
         if 'style' in kwargs and kwargs['style'] is not None:
-            import matplotlib.pyplot
-            matplotlib.pyplot.style.use(kwargs['style'])
+            style_list += kwargs['style']
+        matplotlib.pyplot.style.use(style_list)
+
         plt = galore.plot.plot_pdos(pdos_plotting_data,
                                     **kwargs)  # flipx is included in kwargs
 
@@ -155,9 +158,12 @@ def simple_dos_from_files(return_plt=False, **kwargs):
         if not has_matplotlib:
             print("Can't plot, no Matplotlib")
         else:
+            import matplotlib.pyplot
+            style_list = [galore.base_style]
             if 'style' in kwargs and kwargs['style'] is not None:
-                import matplotlib.pyplot
-                matplotlib.pyplot.style.use(kwargs['style'])
+                style_list += kwargs['style']
+            matplotlib.pyplot.style.use(style_list)
+
             plt = galore.plot.plot_tdos(x_values, broadened_data, **kwargs)
             if kwargs['ylabel'] is not None:
                 plt.ylabel(kwargs['ylabel'])

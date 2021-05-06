@@ -25,7 +25,6 @@ from itertools import cycle
 import logging
 import numpy as np
 from matplotlib import pyplot as plt
-plt.style.use('seaborn-colorblind')
 
 from galore.cross_sections import get_cross_sections_scofield
 
@@ -67,8 +66,10 @@ def run(elements, emin=1, emax=10, megabarn=False, size=None, output=None,
     energies = np.linspace(emin, emax, 200)
     cross_sections = get_cross_sections_scofield(energies, elements)
 
+    style_list = [galore.base_style]
     if style is not None:
-        plt.style.use(style)
+        style_list += style
+    plt.style.use(style_list)
 
     if size is None:
         fig = plt.figure()

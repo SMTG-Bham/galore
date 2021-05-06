@@ -7,8 +7,11 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 
 `Unreleased <https://github.com/smtg-ucl/galore/compare/0.6.1...HEAD>`__
 -------------------------------------------------------------------------
+
 - Updated setup.py to add a [vasp] extra; this handles Pymatgen
   installation which can be tricky on older Python versions.
+- Update citation information, add to README
+- Use a default base stylesheet to make more compatible PDF files
 
 `[0.6.1] <https://github.com/smtg-ucl/galore/compare/0.6.0...0.6.1>`__ - 2018-11-19
 -----------------------------------------------------------------------------------
