@@ -9,6 +9,9 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 -------------------------------------------------------------------------
 - Updated setup.py to add a [vasp] extra; this handles Pymatgen
   installation which can be tricky on older Python versions.
+- Update the [vasp] extra to handle some compatibility breaks between
+  dependencies and different Python versions.
+- Fix some incorrect values in Al k-alpha XPS cross-sections
 
 `[0.6.1] <https://github.com/smtg-ucl/galore/compare/0.6.0...0.6.1>`__ - 2018-11-19
 -----------------------------------------------------------------------------------
