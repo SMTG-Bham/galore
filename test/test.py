@@ -248,7 +248,6 @@ class test_io_functions(unittest.TestCase):
         self.assertEqual(pdos['Mg']['s'][150], 0.053)
         self.assertEqual(pdos['O']['p'][189], 0.004)
 
-
 txt_test_string = """# Frequency  Value
 0.000000e+00 0.000000e+00
 1.000000e+00 5.000000e-03

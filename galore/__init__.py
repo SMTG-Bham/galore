@@ -24,6 +24,7 @@ from __future__ import print_function
 import os.path
 from itertools import repeat
 from collections import OrderedDict
+from collections.abc import Sequence
 import logging
 
 from math import sqrt, log
@@ -148,16 +149,15 @@ def process_pdos(input=['vasprun.xml'],
                  'el2': {'energy': values, 's': values, ...}, ...}
 
     """
-
-    if type(input) is str:
+    if isinstance(input, str) or not isinstance(input, Sequence):
         input = [input]
 
     # Read files into dict, check for consistency
     energy_label = None
     pdos_data = OrderedDict()
     for pdos_file in input:
-        if (galore.formats.is_xml(pdos_file) or
-                galore.formats.is_complete_dos(pdos_file)):
+        if (galore.formats.is_complete_dos(pdos_file)
+            or galore.formats.is_xml(pdos_file)):
             pdos_data = galore.formats.read_vasprun_pdos(pdos_file)
             kwargs['units'] = 'eV'
             break
