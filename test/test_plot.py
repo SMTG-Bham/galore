@@ -70,26 +70,29 @@ class test_pdos_plotting(unittest.TestCase):
                                       ('energy', np.array([1, 2, 3, 4, 5])),
                                       ('s', np.array([1, 1, 0, 0, 0])),
                                       ('p', np.array([0, 1, 2, 2, 1]))]))])
+        offset = 0.5
 
-        galore.plot.plot_pdos(pdos_data, ax=ax)
+
+        galore.plot.plot_pdos(pdos_data, ax=ax, offset=offset)
 
         line1 = ax.lines[0]
         xy1 = line1.get_xydata()
-        self.assertEqual(xy1[1, 0], 2)
+        self.assertEqual(xy1[1, 0], 2 + offset)
         self.assertEqual(xy1[1, 1], 0)
 
         line2 = ax.lines[1]
         xy2 = line2.get_xydata()
-        self.assertEqual(xy2[2, 0], 3)
+        self.assertEqual(xy2[2, 0], 3 + offset)
         self.assertEqual(xy2[2, 1], 4)
 
         line3 = ax.lines[2]
         xy3 = line3.get_xydata()
-        self.assertEqual(xy3[0, 0], 1)
+        self.assertEqual(xy3[0, 0], 1 + offset)
         self.assertEqual(xy2[0, 1], 1)
 
         tdos = ax.lines[4]
         xyt = tdos.get_xydata()
+        self.assertEqual(xyt[2, 0], 3 + offset)
         self.assertEqual(xyt[3, 1], 1 + 1 + 0 + 2)
 
 
@@ -99,11 +102,13 @@ class test_tdos_plotting(unittest.TestCase):
         ax = fig.add_subplot(1, 1, 1)
 
         xvals = np.linspace(-5, 5, 21)
-        galore.plot.plot_tdos(xvals, xvals**2, ax=ax)
+        offset = 0.8
+
+        galore.plot.plot_tdos(xvals, xvals**2, ax=ax, offset=offset)
 
         self.assertEqual(len(ax.lines), 1)
-        self.assertEqual(ax.lines[0].get_xydata()[11, 0], 0.5)
-        self.assertAlmostEqual(ax.lines[0].get_xydata()[18, 0], 4.0)
+        self.assertEqual(ax.lines[0].get_xydata()[11, 0], 0.5 + offset)
+        self.assertAlmostEqual(ax.lines[0].get_xydata()[18, 1], 4.0**2)
 
         self.assertAlmostEqual(ax.get_ylim()[0], 0)
         self.assertAlmostEqual(ax.get_ylim()[1], 1.1 * 5**2)

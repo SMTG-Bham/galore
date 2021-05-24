@@ -97,7 +97,7 @@ def add_overlay(plt, overlay, overlay_scale=None, overlay_offset=0.,
 
 
 def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
-              offset=0, flipx=False, **kwargs):
+              offset=0., flipx=False, **kwargs):
     """Plot a projected density of states (PDOS)
 
     Args:
@@ -141,9 +141,9 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
         # Field 'energy' must be present, other fields are orbitals
         assert 'energy' in el_data.keys()
         if flipx:
-            x_data = -el_data['energy']
+            x_data = -el_data['energy'] + offset
         else:
-            x_data = el_data['energy']
+            x_data = el_data['energy'] + offset
 
         orbitals = list(el_data.keys())
         orbitals.remove('energy')
@@ -183,7 +183,7 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
     return plt
 
 
-def plot_tdos(xdata, ydata, ax=None, **kwargs):
+def plot_tdos(xdata, ydata, ax=None, offset=0., **kwargs):
     """Plot a total DOS (i.e. 1D dataset)
 
 
@@ -191,6 +191,7 @@ def plot_tdos(xdata, ydata, ax=None, **kwargs):
         xdata (iterable): x-values (energy, frequency etc.)
         ydata (iterable): Corresponding y-values (DOS or measurement intensity)
         show (bool): Display plot
+        offset (float): Energy shift to x-axis
         ax (matplotlib.Axes): If provided, plot onto existing Axes object. If
             None, a new Figure will be created and the pyplot instance will be
             returned.
@@ -212,7 +213,9 @@ def plot_tdos(xdata, ydata, ax=None, **kwargs):
         ax = fig.add_subplot(1, 1, 1)
 
     if kwargs['flipx']:
-        xdata = -xdata
+        xdata = -xdata + offset
+    else:
+        xdata = xdata + offset
 
     ax.plot(xdata, ydata, 'C0-')
     ax.set_xlim([min(xdata), max(xdata)])
