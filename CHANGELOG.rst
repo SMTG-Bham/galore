@@ -5,8 +5,11 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-ucl/galore/compare/0.6.1...HEAD>`__
+`Unreleased <https://github.com/smtg-ucl/galore/compare/0.6.2...HEAD>`__
 -------------------------------------------------------------------------
+
+`[0.6.2] <https://github.com/smtg-ucl/galore/compare/0.6.1...0.6.2>`__ - 2021-05-24
+-----------------------------------------------------------------------------------
 - Updated setup.py to add a [vasp] extra; this handles Pymatgen
   installation which can be tricky on older Python versions.
 - Update the [vasp] extra to handle some compatibility breaks between
