@@ -301,6 +301,7 @@ def read_pdos_txt(filename, abs_values=True):
         return data[[col for col in data.dtype.names
                      if col not in spin_down_orbs]]
 
+
 def read_doscar(filename="DOSCAR"):
     """Read an x, y series of frequencies and DOS from a VASP DOSCAR file
 
@@ -351,7 +352,6 @@ def read_vasprun(filename='vasprun.xml'):
     """
     try:
         from pymatgen.io.vasp.outputs import Vasprun
-        from pymatgen.electronic_structure.core import Spin
     except ImportError as e:
         e.msg = "pymatgen package neccessary to load vasprun files"
         raise
@@ -471,6 +471,7 @@ def read_gpaw_pdos(filename, npts=50001, width=1e-3, ref='vbm'):
 
     return pdos_data
 
+
 def read_vasprun_totaldos(filename='vasprun.xml'):
     """Read an x, y series of energies and DOS from a VASP vasprun.xml file
 
@@ -500,7 +501,8 @@ def read_vasprun_pdos(filename='vasprun.xml'):
     Pymatgen must be present on the system to use this method
 
     Args:
-        filename (str): Path to vasprun.xml file or pymatgen CompleteDos object.
+        filename (str or CompleteDos):
+            Path to vasprun.xml file or pymatgen CompleteDos object.
 
     Returns:
         pdos_data (np.ndarray): PDOS data formatted as nestled OrderedDict of:

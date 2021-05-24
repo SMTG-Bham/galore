@@ -22,8 +22,8 @@
 from __future__ import print_function
 
 import os.path
-from itertools import repeat
 from collections import OrderedDict
+from collections.abc import Sequence
 import logging
 
 from math import sqrt, log
@@ -31,7 +31,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 import galore.formats
-from galore.cross_sections import get_cross_sections, cross_sections_info
+from galore.cross_sections import cross_sections_info
 
 
 def auto_limits(data_1d, padding=0.05):
@@ -134,9 +134,9 @@ def process_pdos(input=['vasprun.xml'],
             Files for processing. Vasp output or space-separated files with
                 XXX_EL_YYY.EXT filename pattern where EL is the element label.
                 We recommend SYSTEM_EL_dos.dat. Alternatively, a
-                `pymatgen.electronic_structure.dos.CompleteDos` can be provided.
-                Spin channels indicated by an (up) or (down) suffix in file
-                header will be combined for each orbital type.
+                `pymatgen.electronic_structure.dos.CompleteDos` can be
+                provided. Spin channels indicated by an (up) or (down) suffix
+                in file header will be combined for each orbital type.
         **kwargs:
             See main command reference
 
@@ -148,16 +148,15 @@ def process_pdos(input=['vasprun.xml'],
                  'el2': {'energy': values, 's': values, ...}, ...}
 
     """
-
-    if type(input) is str:
+    if isinstance(input, str) or not isinstance(input, Sequence):
         input = [input]
 
     # Read files into dict, check for consistency
     energy_label = None
     pdos_data = OrderedDict()
     for pdos_file in input:
-        if (galore.formats.is_xml(pdos_file) or
-                galore.formats.is_complete_dos(pdos_file)):
+        if (galore.formats.is_complete_dos(pdos_file)
+                or galore.formats.is_xml(pdos_file)):
             pdos_data = galore.formats.read_vasprun_pdos(pdos_file)
             kwargs['units'] = 'eV'
             break
@@ -427,7 +426,7 @@ def apply_orbital_weights(pdos_data, cross_sections):
             else:
                 try:
                     cs = cross_sections[el][orbital]
-                except KeyError as error:
+                except KeyError:
                     logging.warning("Could not find cross-section data for " +
                                     "element {0}, ".format(el) +
                                     "orbital {0}. ".format(orbital) +
