@@ -12,6 +12,9 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 - Update the [vasp] extra to handle some compatibility breaks between
   dependencies and different Python versions.
 - Fix some incorrect values in Al k-alpha XPS cross-sections
+- Implement previously ineffective "offset" option in
+  galore.plot.plot_pdos(), add a matching option to
+  galore.plot.plot_tdos()
 
 `[0.6.1] <https://github.com/smtg-ucl/galore/compare/0.6.0...0.6.1>`__ - 2018-11-19
 -----------------------------------------------------------------------------------
