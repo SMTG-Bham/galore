@@ -4,9 +4,9 @@ README
 .. image:: https://zenodo.org/badge/63942513.svg
    :target: https://zenodo.org/badge/latestdoi/63942513
    :alt: Zenodo latest DOI
-.. image:: https://travis-ci.org/SMTG-UCL/galore.svg?branch=master
-   :target: https://travis-ci.org/SMTG-UCL/galore
-   :alt: Travis CI Status
+.. image:: https://github.com/SMTG-UCL/galore/actions/workflows/run-tests/badge.svg
+   :target: https://github.com/SMTG-UCL/galore/actions/workflows/run-tests.yml
+   :alt: Github CI Status
 .. image:: https://coveralls.io/repos/github/SMTG-UCL/galore/badge.svg?branch=master
    :target: https://coveralls.io/github/SMTG-UCL/galore?branch=master
 .. image:: https://readthedocs.org/projects/galore/badge/?version=latest
