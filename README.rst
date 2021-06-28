@@ -9,6 +9,7 @@ README
    :alt: Github CI Status
 .. image:: https://coveralls.io/repos/github/SMTG-UCL/galore/badge.svg?branch=master
    :target: https://coveralls.io/github/SMTG-UCL/galore?branch=master
+   :alt: Coverage Status
 .. image:: https://readthedocs.org/projects/galore/badge/?version=latest
    :target: http://galore.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
