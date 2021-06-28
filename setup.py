@@ -54,7 +54,7 @@ if __name__ == "__main__":
         include_package_data=True,
         packages=find_packages(exclude=['docs', 'test']),
         install_requires=['numpy', 'scipy',
-                          'matplotlib > 3.4; python_version < "3.7"',
+                          'matplotlib < 3.4; python_version < "3.7"',
                           'matplotlib; python_version >= "3.7"'],
         extras_require={'docs': ["sphinx",
                                  "sphinx_rtd_theme",
