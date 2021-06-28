@@ -6,8 +6,6 @@ from pkg_resources import resource_filename
 from galore.formats import read_gpaw_totaldos, read_gpaw_pdos
 from contextlib import contextmanager
 
-from gpaw import GPAW
-
 try:
     from gpaw import GPAW
     import ase.build
