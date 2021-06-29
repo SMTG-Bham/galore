@@ -1,0 +1,120 @@
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 1486.6 eV
+INFO:root:  Citation: Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155
+INFO:root:  Link: https://doi.org/10.1016/0092-640X(85)90016-6
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   Mg s: 1.900e-04
+INFO:root:   Mg p: 7.667e-04
+INFO:root:   O s: 9.500e-04
+INFO:root:   O p: 6.000e-05
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 1486.6 eV
+INFO:root:  Citation: Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155
+INFO:root:  Link: https://doi.org/10.1016/0092-640X(85)90016-6
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   Mg s: 1.900e-04
+INFO:root:   Mg p: 7.667e-04
+INFO:root:   O s: 9.500e-04
+INFO:root:   O p: 6.000e-05
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 1486.6 eV
+INFO:root:  Citation: Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155
+INFO:root:  Link: https://doi.org/10.1016/0092-640X(85)90016-6
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   Mg s: 1.900e-04
+INFO:root:   Mg p: 7.667e-04
+INFO:root:   O s: 9.500e-04
+INFO:root:   O p: 6.000e-05
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 1486.6 eV
+INFO:root:  Citation: Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155
+INFO:root:  Link: https://doi.org/10.1016/0092-640X(85)90016-6
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   Mg s: 1.900e-04
+INFO:root:   Mg p: 7.667e-04
+INFO:root:   O s: 9.500e-04
+INFO:root:   O p: 6.000e-05
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 1486.6 eV
+INFO:root:  Citation: Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155
+INFO:root:  Link: https://doi.org/10.1016/0092-640X(85)90016-6
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   Mg s: 1.900e-04
+INFO:root:   Mg p: 7.667e-04
+INFO:root:   O s: 9.500e-04
+INFO:root:   O p: 6.000e-05
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 1486.6 eV
+INFO:root:  Citation: Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155
+INFO:root:  Link: https://doi.org/10.1016/0092-640X(85)90016-6
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   O s: 9.500e-04
+INFO:root:   O p: 6.000e-05
+INFO:root:   Sn s: 6.000e-04
+INFO:root:   Sn p: 3.850e-04
+INFO:root:   Sn d: 3.700e-03
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 40.8 eV
+INFO:root:  Citation: Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155
+INFO:root:  Link: https://doi.org/10.1016/0092-640X(85)90016-6
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   O s: 4.171e-01
+INFO:root:   O p: 1.704e+00
+INFO:root:   Sn s: 9.140e-02
+INFO:root:   Sn p: 7.160e-02
+INFO:root:   Sn d: 8.636e-01
+INFO:root:Scaling overlay intensity by 47177.68663440785
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 5.95 keV
+INFO:root:  Citation: J. H. Scofield (1973) Lawrence Livermore National Laboratory Report No. UCRL-51326, 
+Parametrised as log-log order 8 polynomial (A. J. Jackson 2018)
+INFO:root:  Link: https://doi.org/10.2172/4545040
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   O s: 1.879e+01
+INFO:root:   O p: 3.304e-01
+WARNING:root:Could not find cross-section data for element O, orbital d. Skipping this orbital.
+INFO:root:   Sn s: 4.510e+01
+INFO:root:   Sn p: 1.924e+01
+INFO:root:   Sn d: 5.067e+01
+INFO:root:Scaling overlay intensity by 95194.5691326041
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 5.95 keV
+INFO:root:  Citation: J. H. Scofield (1973) Lawrence Livermore National Laboratory Report No. UCRL-51326, 
+Parametrised as log-log order 8 polynomial (A. J. Jackson 2018)
+INFO:root:  Link: https://doi.org/10.2172/4545040
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   O s: 1.879e+01
+INFO:root:   O p: 3.304e-01
+WARNING:root:Could not find cross-section data for element O, orbital d. Skipping this orbital.
+INFO:root:   Sn s: 4.510e+01
+INFO:root:   Sn p: 1.924e+01
+INFO:root:   Sn d: 5.067e+01
+INFO:root:Scaling overlay intensity by 95194.5691326041
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 1486.6 eV
+INFO:root:  Citation: Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155
+INFO:root:  Link: https://doi.org/10.1016/0092-640X(85)90016-6
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   O s: 9.500e-04
+INFO:root:   O p: 6.000e-05
+INFO:root:   Sn s: 6.000e-04
+INFO:root:   Sn p: 3.850e-04
+INFO:root:   Sn d: 3.700e-03
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 1486.6 eV
+INFO:root:  Citation: Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155
+INFO:root:  Link: https://doi.org/10.1016/0092-640X(85)90016-6
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   Mg s: 1.900e-04
+INFO:root:   Mg p: 7.667e-04
+INFO:root:   O s: 9.500e-04
+INFO:root:   O p: 6.000e-05
+INFO:root:Applying cross-section weighting values to PDOS:
+INFO:root:  Photon energy: 1486.6 eV
+INFO:root:  Citation: Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155
+INFO:root:  Link: https://doi.org/10.1016/0092-640X(85)90016-6
+INFO:root:  Orbital cross-section weights per electron:
+INFO:root:   Mg s: 1.900e-04
+INFO:root:   Mg p: 7.667e-04
+INFO:root:   O s: 9.500e-04
+INFO:root:   O p: 6.000e-05
