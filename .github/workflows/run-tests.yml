@@ -1,0 +1,41 @@
+name: Run tests
+
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.5', '3.6', '3.7', '3.8']
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy
+          python -m pip install .[vasp]
+          python -m pip install -r requirements-tests.txt
+
+      - name: Build GPAW
+        run: |          
+          sudo apt-get install libblas-dev liblapack-dev libxc-dev
+          python -m pip install gpaw
+          gpaw install-data --register gpaw_setups
+
+      - name: Test with unittest / coverage
+        run: |
+          coverage run --source galore setup.py test
+
+      - name: Upload coverage data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          coveralls --service=github
