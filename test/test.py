@@ -41,6 +41,7 @@ def stdout_redirect():
 
 
 class test_dos_functions(unittest.TestCase):
+###不知道在测什么 但是好像测了这个函数test_simple_dos_spikes
     def test_simple_dos_spikes(self):
         """Test total DOS / spectrum plotter from CSV data, spike sampling"""
         ylabel = 'some label'
@@ -100,6 +101,7 @@ class test_dos_functions(unittest.TestCase):
 
 
 class test_array_functions(unittest.TestCase):
+###好像是用来测试delta函数，xy_to_1d函数，gaussian函数的
     def test_delta(self):
         self.assertEqual(galore.delta(1, 1.5, w=1), 1)
 
@@ -125,6 +127,7 @@ class test_array_functions(unittest.TestCase):
 
 
 class test_io_functions(unittest.TestCase):
+##  好像是用来测试formats这个包里的部分函数的
     def setUp(self):
         self.tempdir = tempfile.mkdtemp()
 
@@ -259,5 +262,3 @@ txt_test_string = """# Frequency  Value
 csv_test_string = os.linesep.join(
     ("Frequency,Value", "0,0.0", "1,0.005", "2,0.02", "3,0.045", "4,0.08", ""))
 
-if __name__ == '__main__':
-    unittest.main()
