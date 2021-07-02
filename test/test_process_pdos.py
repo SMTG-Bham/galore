@@ -33,13 +33,7 @@ class test_process_pdos(unittest.TestCase):
                                     xmin=xmin, xmax=xmax,
                                     weighting=weighting)
         self.assertEqual(plotting_data['O']['energy'][0], -10.0)
-        try:
-            plotting_data = galore.process_pdos(input=[vasprun],
-                                    gaussian=0.3, lorentzian=0.2,
-                                    xmin=xmin, xmax=xmax,
-                                    weighting='haxpes')            
-        except ValueError as e:
-            self.assertEqual(e, None)
+
 
         
 
