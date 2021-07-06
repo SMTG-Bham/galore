@@ -5,8 +5,18 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-ucl/galore/compare/0.6.2...HEAD>`__
--------------------------------------------------------------------------
+
+`[0.6.3] <https://github.com/smtg-ucl/galore/compare/0.6.2...0.6.3>`__ - 2021-07-06
+-----------------------------------------------------------------------------------
+This is the final release of Galore for Python 3.4. We are no longer
+able to support this platform as we have migrated to Github's testing
+infrastructure which does not provide a convenient test image for that
+version.
+
+This is a bugfix release intended only for Python 3.4 users. For
+Python 3.5 and above, the version history runs 0.6.2 -> 0.7.0.
+
+- BUGFIX: missing import affecting process_pdos
 
 `[0.6.2] <https://github.com/smtg-ucl/galore/compare/0.6.1...0.6.2>`__ - 2021-05-24
 -----------------------------------------------------------------------------------
