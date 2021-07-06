@@ -11,6 +11,7 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 - Minimum Python version has been increased to 3.5.
   - Python 3.4 was not available through Github actions. It is not wise to
     support a platform we cannot test.
+- BUGFIX: missing import affecting process_pdos
 
 `[0.6.2] <https://github.com/smtg-ucl/galore/compare/0.6.1...0.6.2>`__ - 2021-05-24
 -----------------------------------------------------------------------------------
