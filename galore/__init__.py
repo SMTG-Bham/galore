@@ -21,17 +21,17 @@
 
 from __future__ import print_function
 
-import os.path
 from collections import OrderedDict
 from collections.abc import Sequence
 import logging
-
 from math import sqrt, log
+import os.path
+
 import numpy as np
 from scipy.interpolate import interp1d
 
 import galore.formats
-from galore.cross_sections import cross_sections_info
+from galore.cross_sections import get_cross_sections, cross_sections_info
 
 
 def auto_limits(data_1d, padding=0.05):

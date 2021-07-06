@@ -5,7 +5,6 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-
 `[0.6.3] <https://github.com/smtg-ucl/galore/compare/0.6.2...0.6.3>`__ - 2021-07-06
 -----------------------------------------------------------------------------------
 This is the final release of Galore for Python 3.4. We are no longer
