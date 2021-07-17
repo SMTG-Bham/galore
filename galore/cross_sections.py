@@ -425,3 +425,225 @@ def get_cross_section_from_csv(elements,energy,reference):
         result[element] = cross_sections
         
     return result
+
+
+
+
+    import tarfile
+import numpy as np
+
+
+def read_csv_file(tar_file_name, file_path):
+    """
+    Args:
+        tar_file_name (str): path to tarfile of CSV data
+        file_path(str): path to individual CSV file within tarfile
+
+    Returns:
+        dict: containing 'headers', 'electron_counts' 
+        (lists of str and int respectively) and 'data_table', 
+        a 2-D nested list of floats. Missing data is represented as None.
+
+    """
+
+    # Open zipfile
+    with tarfile.open(tar_file_name) as tf:
+        with tf.extractfile(file_path) as hello:
+            # get data as string
+            data = hello.read().decode()
+    # string to list
+    data_string = data.split('\r\n')
+
+    # get number of colunm headers
+    colunm_headers = [i for i in data_string[0].split(',') if i != '']
+    lenth = len(colunm_headers)
+
+    # build main matrix
+    main_matrix = []
+    rows = range(len(data_string))
+    for row in rows:
+        data_each_row = data_string[row].split(',')[0:lenth]
+        main_matrix.append(data_each_row)
+
+    # build cross sections table
+    empty_value = main_matrix[-2]
+    # remove empty values
+    midterm = [i for i in main_matrix if i != empty_value]
+    new_main_matrix = midterm[0:-2]
+
+    # build result dict
+    result_dict = {}
+    result_dict['headers'] = colunm_headers
+    result_dict['electron_counts'] = [i for i in midterm[-2] if i != ''][1:]
+    result_dict['data_table'] = new_main_matrix[1:]
+
+    return result_dict
+
+
+def _cross_sections_from_csv_data(energy, data, reference):
+    """
+    Args:
+        energy(float): energy value  
+        data(dict): data from read_csv_file()
+        reference(str): 'Scofield' or 'Yeh'
+
+        Note: 1.'Scofield' for J. H. Scofield (1973)
+                Lawrence Livermore National Laboratory Report No. UCRL-51326              
+              2.'Yeh' for Yeh, J.J. and Lindau, I. (1985) 
+                Atomic Data and Nuclear Data Tables 32 pp 1-155   
+
+    Returns:
+        orbitals_cross_sections_dict: containing orbitals 's', 'p', 'd', 'f' and f
+                                      cross sections of each orbital. 
+                                      Missing data is represented as None.
+
+    """
+
+    # replace '' in data table with NaN
+    for row in range(len(data['data_table'])):
+        data['data_table'][row] = [
+            float('NaN') if x == '' else x for x in data['data_table'][row]]
+
+    # change the data_table and electron_counts to float arrays
+    data['data_table'] = np.array(data['data_table']).astype(float)
+    data['electron_counts'] = np.array(data['electron_counts']).astype(float)
+
+    ## Build a new_dic which keys are like '1s1/2', '2s1/2', '2p1/2', '2p3/2', '3s1/2', '3p1/2', '3p3/2'...
+    ## and values are connected cross sections and number of electrons of each orbital
+    ## This is for calculating the max cross sections of 's', 'p', 'd', 'f' orbitals
+    new_dic = {}
+    orbitals_number = len(data['electron_counts'])
+    # connect the number of electron_counts to each orbitals and cross sections
+    new_value = np.concatenate(
+        (data['data_table'].T[-orbitals_number:].T, [data['electron_counts']]), axis=0).T
+    for orbital in range(orbitals_number):
+        new_key = data['headers'][-orbitals_number:][orbital]
+        new_dic[new_key] = new_value[orbital]
+
+    # add energy array to new_dic
+    energy_array = np.array(data['data_table']).T[0]
+    new_dic['PhotonEnergy'] = energy_array
+
+    # match the import energy
+    index = np.where(new_dic['PhotonEnergy'] == energy)[0][0]
+
+    # build result dict
+    orbitals_cross_sections_dict = {}
+
+    # result for s orbital
+    s_cross_sections = np.array([new_dic[key]
+                                for key in new_dic if 's' in key]).T[index]
+    electrons_number = np.array([new_dic[key]
+                                for key in new_dic if 's' in key]).T[-1]
+    # get unit cross sections
+    unit_cross_sections = np.true_divide(s_cross_sections, electrons_number)
+    # get max cross section of obital s
+    max_cross_section = np.max(np.nan_to_num(unit_cross_sections))
+    orbitals_cross_sections_dict['s'] = max_cross_section
+
+    # result for 'p', 'd', 'f' orbitals
+    orbitals = ['p', 'd', 'f']
+    for orbital in orbitals:
+        interm_matrix = np.array([new_dic[key]
+                                 for key in new_dic if orbital in key])
+        if np.shape(interm_matrix) != (0,):
+            if reference == 'Scofield':
+                obital_cross_sections = interm_matrix.T[index]
+                electrons_number = interm_matrix.T[-1]
+                unit_cross_sections = np.true_divide(
+                    obital_cross_sections, electrons_number)
+
+                # for orbitals like '2p1/2', '2p3/2' we need to calculate electrons number weighted mean value as result cross_section
+                unit_cross_sections_array = np.array(
+                    [unit_cross_sections[i:i+2] for i in range(0, len(unit_cross_sections), 2)])
+                weight = np.array([np.true_divide(obital_cross_sections[i:i+2], obital_cross_sections[i:i+2].sum())
+                                  for i in range(0, len(obital_cross_sections), 2)])
+                result = np.array(
+                    list(map(sum, unit_cross_sections_array*weight)))
+                # get max cross section of this obital
+                max_cross_section = np.max(np.nan_to_num(result))
+                orbitals_cross_sections_dict[orbital] = max_cross_section
+
+            elif reference == 'Yeh':
+                obital_cross_sections = interm_matrix.T[index]
+                electrons_number = interm_matrix.T[-1]
+                unit_cross_sections = np.true_divide(
+                    obital_cross_sections, electrons_number)
+                # get max cross section of this obital
+                max_cross_section = np.max(np.nan_to_num(unit_cross_sections))
+                orbitals_cross_sections_dict[orbital] = max_cross_section
+
+    return orbitals_cross_sections_dict
+
+
+def get_metadata(energy, reference):
+    """
+    Args:
+        energy(float): energy value  
+        reference(str): 'Scofield' or 'Yeh'
+
+        Note: 1.'Scofield' for J. H. Scofield (1973)
+                Lawrence Livermore National Laboratory Report No. UCRL-51326              
+              2.'Yeh' for Yeh, J.J. and Lindau, I. (1985) 
+                Atomic Data and Nuclear Data Tables 32 pp 1-155   
+
+    Returns:
+        metadata_dict: containing the input energy value 
+                       and description of input reference
+
+    """
+
+    metadata_dict = {}
+    metadata_dict['energy'] = energy
+    if reference == 'Scofield':
+        metadata_dict['reference'] = 'J.H. Scofield, Theoretical photoionization cross sections from 1 to 1500 keV'
+        metadata_dict['link'] = 'https://doi.org/10.2172/4545040'
+    elif reference == 'Yeh':
+        metadata_dict['reference'] = 'Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155'
+        metadata_dict['link'] = 'https://doi.org/10.1016/0092-640X(85)90016-6'
+    else:
+        metadata_dict('Wrong reference')
+    return metadata_dict
+
+
+def get_cross_section_from_csv(elements, energy, reference):
+    """
+    Args:
+        elements(string list): element name list
+                               for Scofiled data such as ['Z__1_H_','Z_13_Al',....]
+                               for Yeh data such as ['1_H','13_Al',...]
+
+        energy(float): energy value  
+        reference(str): 'Scofield' or 'Yeh'
+
+        Note: 1.'Scofield' for J. H. Scofield (1973)
+                Lawrence Livermore National Laboratory Report No. UCRL-51326              
+              2.'Yeh' for Yeh, J.J. and Lindau, I. (1985) 
+                Atomic Data and Nuclear Data Tables 32 pp 1-155   
+
+    Returns:
+        result(dict): containing energy value, reference information, 
+                      and orbital cross sections dict of input elements
+
+    """
+
+    result = {}
+    metadata = get_metadata(energy, reference)
+    result.update(metadata)
+
+    for element in elements:
+
+        if reference == 'Scofield':
+            filename = 'Scofield_csv_database.tar.gz'
+            filepath = 'Scofield_csv_database/{element1}.csv'
+        else:
+            filename = 'Yeh_Lindau_1985_Xsection_CSV_Database.tar.gz'
+            filepath = 'Yeh_Lindau_1985_Xsection_CSV_Database/{element1}.csv'
+
+        filepath = filepath.format(element1=element)
+        data = read_csv_file(filename, filepath)
+
+        cross_sections = _cross_sections_from_csv_data(energy, data, reference)
+        result[element] = cross_sections
+
+    return result
