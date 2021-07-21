@@ -24,21 +24,13 @@ from __future__ import print_function
 from collections import OrderedDict
 from collections.abc import Sequence
 import logging
-<<<<<<< HEAD
-
-import galore.formats
-=======
->>>>>>> 222f3f05787d36b754356ceb13dba854939c2d16
 from math import sqrt, log
 import os.path
 
 import numpy as np
 from scipy.interpolate import interp1d
 
-<<<<<<< HEAD
-=======
 import galore.formats
->>>>>>> 222f3f05787d36b754356ceb13dba854939c2d16
 from galore.cross_sections import get_cross_sections, cross_sections_info
 
 
@@ -60,11 +52,9 @@ def auto_limits(data_1d, padding=0.05):
 
 
 def process_1d_data(input=['vasprun.xml'],
-                    gaussian=None,
-                    lorentzian=None,
+                    gaussian=None, lorentzian=None,
                     sampling=1e-2,
-                    xmin=None,
-                    xmax=None,
+                    xmin=None, xmax=None,
                     spikes=False,
                     **kwargs):
     """Read 1D data series from files, process for output
@@ -95,7 +85,8 @@ def process_1d_data(input=['vasprun.xml'],
         input = input[0]
 
     if not os.path.exists(input):
-        raise Exception("Input file {0} does not exist!".format(input))
+        raise Exception(
+            "Input file {0} does not exist!".format(input))
     if galore.formats.is_xml(input):
         xy_data = galore.formats.read_vasprun_totaldos(input)
     elif galore.formats.is_gpw(input):
@@ -122,29 +113,20 @@ def process_1d_data(input=['vasprun.xml'],
 
     broadened_data = data_1d.copy()
     if lorentzian:
-        broadened_data = galore.broaden(broadened_data,
-                                        d=d,
-                                        dist='lorentzian',
-                                        width=lorentzian)
+        broadened_data = galore.broaden(
+            broadened_data, d=d, dist='lorentzian', width=lorentzian)
 
     if gaussian:
-        broadened_data = galore.broaden(broadened_data,
-                                        d=d,
-                                        dist='gaussian',
-                                        width=gaussian)
+        broadened_data = galore.broaden(
+            broadened_data, d=d, dist='gaussian', width=gaussian)
 
     return (x_values, broadened_data)
 
 
 def process_pdos(input=['vasprun.xml'],
-                 gaussian=None,
-                 lorentzian=None,
-                 weighting=None,
-                 sampling=1e-2,
-                 xmin=None,
-                 xmax=None,
-                 flipx=False,
-                 **kwargs):
+                 gaussian=None, lorentzian=None,
+                 weighting=None, sampling=1e-2,
+                 xmin=None, xmax=None, flipx=False, **kwargs):
     """Read PDOS from files, process for output
 
     Args:
@@ -185,7 +167,8 @@ def process_pdos(input=['vasprun.xml'],
             break
 
         if not os.path.exists(pdos_file):
-            raise Exception("Input file {0} does not " "exist!".format(input))
+            raise Exception("Input file {0} does not "
+                            "exist!".format(input))
 
         basename = os.path.basename(pdos_file)
         try:
@@ -206,14 +189,13 @@ def process_pdos(input=['vasprun.xml'],
                 assert data.dtype.names[0] == energy_label
             except AssertionError as error:
                 error.args += ("Energy labels are not consistent "
-                               "between input files", )
+                               "between input files",)
                 raise
 
         orbital_labels = data.dtype.names[1:]
         pdos_data[element] = OrderedDict([('energy', data[energy_label])])
-        pdos_data[element].update(
-            OrderedDict(
-                (orbital, data[orbital]) for orbital in orbital_labels))
+        pdos_data[element].update(OrderedDict((orbital, data[orbital])
+                                  for orbital in orbital_labels))
 
     # Work out sampling details; 5% pad added to data if no limits specified
     # In x-flip mode, the user specifies these as binding energies so values
@@ -250,22 +232,20 @@ def process_pdos(input=['vasprun.xml'],
             broadened_data = pdos_resampled.copy()
 
             if lorentzian:
-                broadened_data = galore.broaden(broadened_data,
-                                                d=d,
+                broadened_data = galore.broaden(broadened_data, d=d,
                                                 dist='lorentzian',
                                                 width=lorentzian)
 
             if gaussian:
-                broadened_data = galore.broaden(broadened_data,
-                                                d=d,
+                broadened_data = galore.broaden(broadened_data, d=d,
                                                 dist='gaussian',
                                                 width=gaussian)
 
             pdos_plotting_data[element][orbital] = broadened_data
 
     if weighting:
-        cross_sections = get_cross_sections(weighting,
-                                            elements=pdos_data.keys())
+        cross_sections = galore.get_cross_sections(weighting,
+                                                   elements=pdos_data.keys())
         pdos_plotting_data = galore.apply_orbital_weights(
             pdos_plotting_data, cross_sections)
 
@@ -315,11 +295,9 @@ def xy_to_1d(xy, x_values, spikes=False):
         return spikes
 
     else:
-        y_func = interp1d(xy[x_field],
-                          xy[y_field],
+        y_func = interp1d(xy[x_field], xy[y_field],
                           assume_sorted=False,
-                          bounds_error=False,
-                          fill_value=0)
+                          bounds_error=False, fill_value=0)
         return y_func(x_values)
 
 
@@ -439,8 +417,8 @@ def apply_orbital_weights(pdos_data, cross_sections):
     weighted_pdos_data = OrderedDict()
     for el, orbitals in pdos_data.items():
         if 'warning' in cross_sections[el]:
-            logging.warning("  {0}: {1}".format(el,
-                                                cross_sections[el]['warning']))
+            logging.warning("  {0}: {1}".format(
+                el, cross_sections[el]['warning']))
         weighted_orbitals = OrderedDict()
         for orbital, data in orbitals.items():
             if orbital == 'energy':
