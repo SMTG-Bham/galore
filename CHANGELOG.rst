@@ -5,12 +5,18 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-ucl/galore/compare/0.6.2...HEAD>`__
+`Unreleased <https://github.com/smtg-ucl/galore/compare/0.7.0...HEAD>`__
 -------------------------------------------------------------------------
+
+`[0.7.0] <https://github.com/smtg-ucl/galore/compare/0.6.2...0.7.0>`__ - 2021-07-06
+-----------------------------------------------------------------------------------
 - Continuous integration has been migrated from Travis to Github Actions
 - Minimum Python version has been increased to 3.5.
+
   - Python 3.4 was not available through Github actions. It is not wise to
     support a platform we cannot test.
+
+- BUGFIX: missing import affecting process_pdos
 
 `[0.6.2] <https://github.com/smtg-ucl/galore/compare/0.6.1...0.6.2>`__ - 2021-05-24
 -----------------------------------------------------------------------------------

@@ -21,16 +21,24 @@
 
 from __future__ import print_function
 
-import os.path
 from collections import OrderedDict
 from collections.abc import Sequence
 import logging
+<<<<<<< HEAD
 
 import galore.formats
+=======
+>>>>>>> 222f3f05787d36b754356ceb13dba854939c2d16
 from math import sqrt, log
+import os.path
+
 import numpy as np
 from scipy.interpolate import interp1d
 
+<<<<<<< HEAD
+=======
+import galore.formats
+>>>>>>> 222f3f05787d36b754356ceb13dba854939c2d16
 from galore.cross_sections import get_cross_sections, cross_sections_info
 
 
