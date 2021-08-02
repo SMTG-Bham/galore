@@ -1,3 +1,5 @@
+import numpy as np
+import tarfile
 import os.path
 from pkg_resources import resource_filename
 from json import load as json_load
@@ -283,11 +285,6 @@ def get_cross_sections_scofield(energy, elements=None):
     return el_cross_sections
 
 
-
-import tarfile
-import numpy as np
-
-
 def read_csv_file(tar_file_name, file_path):
     """
     Generate data from csv archive without decompression
@@ -312,39 +309,40 @@ def read_csv_file(tar_file_name, file_path):
     data_string = data.split('\r\n')
 
     # get number of colunm headers
-    colunm_headers = [colunm_header for colunm_header in data_string[0].split(
-        ',') if colunm_header != '']
-    lenth = len(colunm_headers)
+    column_headers = [column_header for column_header in data_string[0].split(
+        ',') if column_header != '']
+    n_columns = len(column_headers)
 
     # build main matrix
-    main_matrix = []
-    rows = range(len(data_string))
-    for row in rows:
-        data_each_row = data_string[row].split(',')[0:lenth]
-        main_matrix.append(data_each_row)
+    main_matrix = [row.split(',')[0:n_columns] for row in data_string]
 
-    # build cross sections table
-    empty_value = main_matrix[-2]
     # remove empty values
-    midterm = [row for row in main_matrix if row != empty_value]
-    data_table = midterm[1:-2]
-    electron_counts_list = midterm[-2]
-    electron_counts = [i for i in electron_counts_list if i != ''][1:]
+    midterm = [row for row in main_matrix if any(row) == True]
+    data_table = midterm[1:-1]
+    electron_counts_list = [
+        occupancy for occupancy in midterm[-1] if occupancy != ''][1:]
+
+    # replace '' in data table with NaN and change string list into float array
+    data_table = np.array([[float('NaN') if cross_section == '' else float(cross_section) for cross_section in row]
+                           for row in data_table])
+    electron_counts = np.array([float(occupancy)
+                               for occupancy in electron_counts_list])
+
     # build result dict
     result_dict = {}
-    result_dict['headers'] = colunm_headers
+    result_dict['headers'] = column_headers
     result_dict['electron_counts'] = electron_counts
     result_dict['data_table'] = data_table
 
     return result_dict
 
 
-def get_avg_orbital_cross_sections(subshells_cross_sections, electrons_number):
+def _get_avg_orbital_cross_sections(subshells_cross_sections, electrons_number):
     """
     Obtain average cross sections of subshell of each obital when process Scofield data.
 
     Args:
-        subshell_cross_sections(np.array): subshells cross sections of a certain obital 
+        subshell_cross_sections(np.array): expecting pairs of subshells cross sections of a certain obital except s-obital 
             correspond to a given input energy.                    
         electrons_number(np.array): corresponding electrons number of subshells
 
@@ -397,78 +395,65 @@ def _cross_sections_from_csv_data(energy, data, reference):
 
     """
 
-    # replace '' in data table with NaN
-    for row in range(len(data['data_table'])):
-        data['data_table'][row] = [
-            float('NaN') if x == '' else x for x in data['data_table'][row]]
+    n_subshells = len(data['electron_counts'])
+    subshells_headers = data['headers'][-n_subshells:]
+    cross_sections_by_subshells = data['data_table'].T[-n_subshells:]
 
-    # change the data_table and electron_counts to float arrays
-    data['data_table'] = np.array(data['data_table']).astype(float).T
-    data['electron_counts'] = np.array(data['electron_counts']).astype(float)
-
-    # Build a dict_for_calculation which keys are 'PhotonEnergy' and orbitals like '1s1/2', '2s1/2', '2p1/2', '2p3/2', '3s1/2', '3p1/2', '3p3/2'...
-    # and values are connected cross sections and number of electrons of each orbital
-    # This is for calculating the max cross sections of 's', 'p', 'd', 'f' orbitals
-    new_lenth = len(data['electron_counts'])
-    cross_sections_by_orbitals = data['data_table'][-new_lenth:]
-    orbital_headers = data['headers'][-new_lenth:]
-
-    cross_sections_and_electron_numbers = np.concatenate(
-        (cross_sections_by_orbitals.T, [data['electron_counts']]), axis=0).T
-    dict_for_calculation = dict(
-        zip(orbital_headers, cross_sections_and_electron_numbers))
-    energy_array = data['data_table'][0]
-    dict_for_calculation['PhotonEnergy'] = energy_array
+    # build dicts for easy calculation.
+    electron_counts_by_subshells = dict(
+        zip(subshells_headers, data['electron_counts']))
+    cross_sections_by_subshells = dict(
+        zip(subshells_headers, data['data_table'].T[-n_subshells:]))
 
     # match the import energy
-    index = np.where(dict_for_calculation['PhotonEnergy'] == energy)[0]
+    energy_index = np.abs(data['data_table'].T[0] - energy).argmin()
 
     # build result dict
     orbitals_cross_sections_dict = {}
 
     # result for s orbital
-    s_cross_sections = np.array([dict_for_calculation[key]
-                                for key in dict_for_calculation if 's' in key]).T[index]
-    electrons_number = np.array([dict_for_calculation[key]
-                                for key in dict_for_calculation if 's' in key]).T[-1]
-    # get unit cross sections
-    unit_cross_sections = np.true_divide(s_cross_sections, electrons_number)
-    # get max cross section of obital s
-    max_cross_section = np.max(np.nan_to_num(unit_cross_sections))
-    orbitals_cross_sections_dict['s'] = max_cross_section
+    s_cross_sections = np.array(
+        [value[energy_index] for key, value in cross_sections_by_subshells.items() if 's' in key])
+    electrons_number = np.array(
+        [value for key, value in electron_counts_by_subshells.items() if 's' in key])
+    # get unit cross sections of s orbital
+    unit_cross_sections = s_cross_sections/electrons_number
+    # get highest cross section of obital s
+    highest_obital_cross_section = np.max(np.nan_to_num(unit_cross_sections))
+    orbitals_cross_sections_dict['s'] = highest_obital_cross_section
 
     # result for 'p', 'd', 'f' orbitals
     orbitals = ['p', 'd', 'f']
+
     for orbital in orbitals:
-        interm_matrix = np.array([dict_for_calculation[key]
-                                 for key in dict_for_calculation if orbital in key]).T
+        interm_matrix = np.array(
+            [value for key, value in cross_sections_by_subshells.items() if orbital in key]).T
+        electrons_number = np.array(
+            [value for key, value in electron_counts_by_subshells.items() if orbital in key])
 
         if np.shape(interm_matrix) != (0,):
             if reference == 'Scofield':
-                subshells_cross_sections = interm_matrix[index][0]
-
-                electrons_number = interm_matrix[-1]
-
-                result = get_avg_orbital_cross_sections(
+                subshells_cross_sections = interm_matrix[energy_index]
+                result = _get_avg_orbital_cross_sections(
                     subshells_cross_sections, electrons_number)
 
-                # get max cross section of this obital
-                max_cross_section = np.max(np.nan_to_num(result))
-                orbitals_cross_sections_dict[orbital] = max_cross_section
+                # get highest cross section of this obital
+                highest_obital_cross_section = np.max(np.nan_to_num(result))
+                orbitals_cross_sections_dict[orbital] = highest_obital_cross_section
 
             elif reference == 'Yeh':
-                obital_cross_sections = interm_matrix[index][0]
-                electrons_number = interm_matrix[-1]
-                unit_cross_sections = np.true_divide(
-                    obital_cross_sections, electrons_number)
-                # get max cross section of this obital
-                max_cross_section = np.max(np.nan_to_num(unit_cross_sections))
-                orbitals_cross_sections_dict[orbital] = max_cross_section
+                obital_cross_sections = interm_matrix[energy_index]
+                # get unit cross sections of this orbital
+                unit_cross_sections = obital_cross_sections/electrons_number
+                # get highest cross section of this obital
+                highest_obital_cross_section = np.max(
+                    np.nan_to_num(unit_cross_sections))
+                orbitals_cross_sections_dict[orbital] = highest_obital_cross_section
 
     return orbitals_cross_sections_dict
 
 
-def get_metadata(energy, reference):
+def _get_metadata(energy, reference):
     """
     Args:
         energy(float): energy value  
@@ -494,7 +479,8 @@ def get_metadata(energy, reference):
         metadata_dict['reference'] = 'Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155'
         metadata_dict['link'] = 'https://doi.org/10.1016/0092-640X(85)90016-6'
     else:
-        metadata_dict('Wrong reference')
+        metadata_dict(
+            'Reference error: you can enter reference as "Scofield" or "Yeh" ')
     return metadata_dict
 
 
@@ -520,22 +506,26 @@ def get_cross_section_from_csv(elements, energy, reference):
     """
 
     result = {}
-    metadata = get_metadata(energy, reference)
+    metadata = _get_metadata(energy, reference)
     result.update(metadata)
 
-    for element in elements:
-
-        if reference == 'Scofield':
+    if reference == 'Scofield':
+        for element in elements:
             filename = 'Scofield_csv_database.tar.gz'
             filepath = 'Scofield_csv_database/{element1}.csv'
-        else:
+            data = read_csv_file(filename, filepath.format(element1=element))
+
+            cross_sections = _cross_sections_from_csv_data(
+                energy, data, reference)
+            result[element] = cross_sections
+    else:
+        for element in elements:
             filename = 'Yeh_Lindau_1985_Xsection_CSV_Database.tar.gz'
             filepath = 'Yeh_Lindau_1985_Xsection_CSV_Database/{element1}.csv'
+            data = read_csv_file(filename, filepath.format(element1=element))
 
-        filepath = filepath.format(element1=element)
-        data = read_csv_file(filename, filepath)
-
-        cross_sections = _cross_sections_from_csv_data(energy, data, reference)
-        result[element] = cross_sections
+            cross_sections = _cross_sections_from_csv_data(
+                energy, data, reference)
+            result[element] = cross_sections
 
     return result
