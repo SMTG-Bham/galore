@@ -22,25 +22,35 @@
 from argparse import ArgumentParser
 import galore.cross_sections
 
+
 def main():
     parser = get_parser()
     args = parser.parse_args()
     args = vars(args)
     run(**args)
 
+
 def get_parser():
     parser = ArgumentParser()
-    parser.add_argument('energy', type=str,
-                        help="""
-        Photon energy, expressed as source type: "he2" for He (II), "alka" for
-        Al k-alpha, (values from Yeh/Lindau (1985)) or as energy in keV (values
-        from polynomial fit to Scofield (1973)).""")
-    parser.add_argument('elements', type=str, nargs='+', help="""
-        Space-separated symbols for elements in material.""")
+    #parser.add_argument('energy', type=str,
+    #                   help="""
+    #   Photon energy, expressed as source type: "he2" for He (II), "alka" for
+    #    Al k-alpha, (values from Yeh/Lindau (1985)) or as energy in keV (values
+    #    from polynomial fit to Scofield (1973)).""")
+    #parser.add_argument('elements', type=str, nargs='+', help="""
+    #    Space-separated symbols for elements in material.""")
+
+    
+    
+    parser.add_argument('energy', type=str)
+    parser.add_argument('elements',  nargs= '*')
+
+    parser.add_argument('--reference', type=str, help = 'You can enter "Scofield" or "Yeh"')
 
     return parser
 
-def run(energy, elements):
+
+def old_function(elements,energy):
     cross_sections = galore.get_cross_sections(energy, elements)
     logging = galore.cross_sections.cross_sections_info(cross_sections)
     logging.info("Photoionisation cross sections per electron:")
@@ -60,3 +70,13 @@ def run(energy, elements):
                 else:
                     logging.info("   {0} {1}: {2:.3e}".format(element,
                                                               orbital, value))
+
+
+
+def run(energy,elements,reference):
+    if reference == None:
+        result = old_function(elements,energy) 
+    else:
+        result = galore.cross_sections.get_cross_section_from_csv(elements, energy, reference)
+        if result !=None:
+            print(result)

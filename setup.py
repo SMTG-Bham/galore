@@ -71,7 +71,8 @@ if __name__ == "__main__":
             'console_scripts': [
                 'galore=galore.cli.galore:main',
                 'galore-get-cs=galore.cli.galore_get_cs:main',
-                'galore-plot-cs=galore.cli.galore_plot_cs:main'
+                'galore-plot-cs=galore.cli.galore_plot_cs:main',
+                'galore-install-data=galore.cli.galore_install_data:main'
                 ]
             },
         test_suite='setup.unit_tests'
