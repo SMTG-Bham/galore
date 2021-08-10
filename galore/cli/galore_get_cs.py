@@ -45,13 +45,13 @@ def get_parser():
     parser.add_argument('energy', type=str)
     parser.add_argument('elements',  nargs= '*')
 
-    parser.add_argument('--reference', type=str, help = 'You can enter "Scofield" or "Yeh"')
+    parser.add_argument('--dataset', type=str, help = 'You can enter "Scofield" or "Yeh"')
 
     return parser
 
 
-def old_function(elements,energy):
-    cross_sections = galore.get_cross_sections(energy, elements)
+def run(energy, elements,dataset):
+    cross_sections = galore.get_cross_sections(energy, elements,dataset)
     logging = galore.cross_sections.cross_sections_info(cross_sections)
     logging.info("Photoionisation cross sections per electron:")
 
@@ -70,13 +70,4 @@ def old_function(elements,energy):
                 else:
                     logging.info("   {0} {1}: {2:.3e}".format(element,
                                                               orbital, value))
-
-
-
-def run(energy,elements,reference):
-    if reference == None:
-        result = old_function(elements,energy) 
-    else:
-        result = galore.cross_sections.get_cross_section_from_csv(elements, energy, reference)
-        if result !=None:
-            print(result)
+     

@@ -11,7 +11,7 @@ from numpy import fromstring as np_fromstr
 from numpy import exp, log
 
 
-def get_cross_sections(weighting, elements=None):
+def get_cross_sections(weighting, elements=None,dataset=None):
     """Get photoionization cross-section weighting data.
 
     For known sources, data is based on tabulation of Yeh/Lindau (1985).[1]
@@ -48,27 +48,47 @@ def get_cross_sections(weighting, elements=None):
             may be used to store metadata.
 
     """
+    if dataset==None:
+        try:
+            energy = float(weighting)
+            return get_cross_sections_scofield(energy, elements=elements)
 
-    try:
-        energy = float(weighting)
-        return get_cross_sections_scofield(energy, elements=elements)
-
-    except ValueError:
-        if isinstance(weighting, str):
-            if weighting.lower() in ('alka', 'he2', 'yeh_haxpes'):
-                return get_cross_sections_yeh(weighting)
-            elif weighting.lower() in ('xps', 'ups', 'haxpes'):
-                raise ValueError("Key '{0}' is no longer accepted for "
+        except ValueError:
+            if isinstance(weighting, str):
+                if weighting.lower() in ('alka', 'he2', 'yeh_haxpes'):
+                    return get_cross_sections_yeh(weighting)
+                elif weighting.lower() in ('xps', 'ups', 'haxpes'):
+                    raise ValueError("Key '{0}' is no longer accepted for "
                                  "weighting. Please use 'alka' for Al k-alpha,"
                                  " 'he2' for He (II) or 'yeh_haxpes' for "
                                  "8047.8 eV HAXPES".format(weighting))
-            else:
-                return get_cross_sections_json(weighting)
+                else:
+                    return get_cross_sections_json(weighting)
 
-    # A string or a number would have hit a return statement by now
-    raise ValueError("Weighting not understood as string or float. ",
+        # A string or a number would have hit a return statement by now
+        raise ValueError("Weighting not understood as string or float. ",
                      "Please use a keyword, path to JSON file or an "
                      "energy value in eV")
+    else:
+        cross_sections_dict = {}
+        energy = weighting
+        metadata = _get_metadata(energy,dataset)
+        cross_sections_dict.update(metadata)
+  
+   
+        _,_,data_file_path = get_csv_file_path(dataset)
+        if os.path.isfile(data_file_path)== True:
+            for element in elements:
+
+                file_name = '{element1}.csv'
+                data = read_csv_file(data_file_path,file_name.format(element1 = element))
+                elemental_cross_sections = _cross_sections_from_csv_data(energy,data,dataset)
+                cross_sections_dict[element] = elemental_cross_sections
+        else:
+            print("Do you want to install data? \n You can enter \n galore-install-data {dataset}".format(dataset = dataset))
+    
+        return cross_sections_dict
+
 
 
 def cross_sections_info(cross_sections, logging=None):
@@ -373,7 +393,7 @@ def _get_avg_orbital_cross_sections(subshells_cross_sections,electrons_number):
         
     return avg_orbital_cross_sections
 
-def _cross_sections_from_csv_data(energy,data,reference):
+def _cross_sections_from_csv_data(energy,data,dataset):
     """
     Get cross sections from data dict 
     For known sources, data is based on tabulation of Yeh/Lindau (1985).[1]
@@ -431,7 +451,7 @@ def _cross_sections_from_csv_data(energy,data,reference):
         electrons_number  = np.array([value for key, value in electron_counts_by_subshells.items() if orbital in key])
  
         if np.shape(interm_matrix) != (0,):
-            if reference == 'Scofield':
+            if dataset == 'Scofield':
                 subshells_cross_sections = interm_matrix[energy_index]
                 result = _get_avg_orbital_cross_sections(subshells_cross_sections,electrons_number)
          
@@ -439,7 +459,7 @@ def _cross_sections_from_csv_data(energy,data,reference):
                 highest_obital_cross_section = np.max(np.nan_to_num(result))
                 orbitals_cross_sections_dict[orbital] = highest_obital_cross_section
                 
-            elif reference == 'Yeh':
+            elif dataset == 'Yeh':
                 obital_cross_sections = interm_matrix[energy_index]
                 ## get unit cross sections of this orbital
                 unit_cross_sections = obital_cross_sections/electrons_number
@@ -450,11 +470,11 @@ def _cross_sections_from_csv_data(energy,data,reference):
                 
     return orbitals_cross_sections_dict
 
-def _get_metadata(energy,reference):
+def _get_metadata(energy,dataset):
     """
     Args:
         energy(float): energy value  
-        reference(str): 'Scofield' or 'Yeh'
+        dataset(str): 'Scofield' or 'Yeh'
         
         Note: 1.'Scofield' for J. H. Scofield (1973)
                 Lawrence Livermore National Laboratory Report No. UCRL-51326              
@@ -469,57 +489,19 @@ def _get_metadata(energy,reference):
     
     metadata_dict = {}
     metadata_dict['energy'] = energy
-    if reference == 'Scofield':
-        metadata_dict['reference'] = 'J.H. Scofield, Theoretical photoionization cross sections from 1 to 1500 keV'
+    if dataset == 'Scofield':
+        metadata_dict['citation'] = 'J.H. Scofield, Theoretical photoionization cross sections from 1 to 1500 keV'
         metadata_dict['link'] = 'https://doi.org/10.2172/4545040' 
-    elif reference == 'Yeh':
-        metadata_dict['reference'] = 'Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155'
+    elif dataset == 'Yeh':
+        metadata_dict['citation'] = 'Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155'
         metadata_dict['link'] = 'https://doi.org/10.1016/0092-640X(85)90016-6'
     else:
-        metadata_dict('Reference error: you can enter reference as "Scofield" or "Yeh" ' )
+        metadata_dict('dataset error: you can enter reference as "Scofield" or "Yeh" ' )
     return metadata_dict
 
-def get_cross_section_from_csv(elements,energy,reference):
-    
-    """
-    Args:
-        elements(string list): element name list
-                               for Scofiled data such as ['Z__1_H_','Z_13_Al',....]
-                               for Yeh data such as ['1_H','13_Al',...]
-        
-        energy(float): energy value  
-        reference(str): 'Scofield' or 'Yeh'
-        
-        Note: 1.'Scofield' for J. H. Scofield (1973)
-                Lawrence Livermore National Laboratory Report No. UCRL-51326              
-              2.'Yeh' for Yeh, J.J. and Lindau, I. (1985) 
-                Atomic Data and Nuclear Data Tables 32 pp 1-155   
-                
-    Returns:
-        result(dict): containing energy value, reference information, 
-                      and orbital cross sections dict of input elements
-  
-    """   
-    
-    result = {}
-    metadata = _get_metadata(energy,reference)
-    result.update(metadata)
-  
-   
-    _,_,data_file_path = get_csv_file_path(reference)
-    if os.path.isfile(data_file_path)== True:
-        for element in elements:
 
-            file_name = '{element1}.csv'
-            data = read_csv_file(data_file_path,file_name.format(element1 = element))
-            cross_sections = _cross_sections_from_csv_data(energy,data,reference)
-            result[element] = cross_sections
-    else:
-        result = print("Do you want to install data? \n You can enter \n galore-install-data {reference}".format(reference = reference))
-    
-    return result
 
-def galore_install_data(url,data_file_dir,data_file_path):
+def galore_install_data(DOI,data_file_dir,data_file_path):
     
     
     if os.path.isfile(data_file_path)== True:
@@ -527,31 +509,36 @@ def galore_install_data(url,data_file_dir,data_file_path):
         
     else:
         print("Downloading file...")
+        
+        
         try:
             os.mkdir(data_file_dir)
         except:
             pass
         
-        urllib.request.urlretrieve(url,data_file_path)
+        urllib.request.urlretrieve(DOI,data_file_path)
+        
+    
         if os.path.isfile(data_file_path) == True:
             print("Done")
             
 
-def get_csv_file_path(reference):
-
+def get_csv_file_path(dataset):
+    
     if platform.system()== "Windows":
         
         data_file_dir = os.path.join(os.getenv('LOCALAPPDATA'),'galore_data')
     else:
         data_file_dir = os.path.join(os.path.expanduser('~'),'.galore_data')
         
-    if reference == 'Scofield':
+    if dataset == 'Scofield':
         data_file_path = os.path.join(data_file_dir,'Scofield_csv_database.zip')
-        url = 'https://ndownloader.figshare.com/articles/15081888/versions/1'
-    elif reference == 'Yeh':
+        DOI = 'https://ndownloader.figshare.com/articles/15081888/versions/1'
+        
+    elif dataset == 'Yeh':
         data_file_path = os.path.join(data_file_dir,'Yeh_Lindau_1985_Xsection_CSV_Database.zip')
-        url = 'https://ndownloader.figshare.com/articles/15090012/versions/1'
+        DOI = 'https://ndownloader.figshare.com/articles/15090012/versions/1'
     
-    return url,data_file_dir,data_file_path
+    return DOI,data_file_dir,data_file_path
 
     
