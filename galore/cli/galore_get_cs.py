@@ -32,26 +32,35 @@ def main():
 
 def get_parser():
     parser = ArgumentParser()
-    #parser.add_argument('energy', type=str,
+    # parser.add_argument('energy', type=str,
     #                   help="""
     #   Photon energy, expressed as source type: "he2" for He (II), "alka" for
     #    Al k-alpha, (values from Yeh/Lindau (1985)) or as energy in keV (values
     #    from polynomial fit to Scofield (1973)).""")
-    #parser.add_argument('elements', type=str, nargs='+', help="""
+    # parser.add_argument('elements', type=str, nargs='+', help="""
     #    Space-separated symbols for elements in material.""")
 
-    
-    
-    parser.add_argument('energy', type=str)
-    parser.add_argument('elements',  nargs= '*')
+    parser.add_argument('energy', type=str,
+                        help="""
+        If you don't input dataset:
+        Photon energy, expressed as source type: "he2" for He (II), "alka" for
+        Al k-alpha, (values from Yeh/Lindau (1985)) or as energy in keV (values
+        from polynomial fit to Scofield (1973)).
+        if you input dataset:
+        Photon energy, 1 to 1500keV for Scofield dataset, 10.2 to 8047.8 eV for Yeh dataset""")
 
-    parser.add_argument('--dataset', type=str, help = 'You can enter "Scofield" or "Yeh"')
+    parser.add_argument('elements',  nargs='+',
+                        help="""
+        Space-separated symbols for elements in material.""")
+
+    parser.add_argument('--dataset', type=str,
+                        help='You can enter "Scofield" or "Yeh"')
 
     return parser
 
 
-def run(energy, elements,dataset):
-    cross_sections = galore.get_cross_sections(energy, elements,dataset)
+def run(energy, elements, dataset=None):
+    cross_sections = galore.get_cross_sections(energy, elements, dataset)
     logging = galore.cross_sections.cross_sections_info(cross_sections)
     logging.info("Photoionisation cross sections per electron:")
 
@@ -70,4 +79,3 @@ def run(energy, elements,dataset):
                 else:
                     logging.info("   {0} {1}: {2:.3e}".format(element,
                                                               orbital, value))
-     

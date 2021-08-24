@@ -1,4 +1,9 @@
+import urllib.request
+import os
+import platform
+import zipfile
 import numpy as np
+from difflib import SequenceMatcher
 
 import os.path
 from pkg_resources import resource_filename
@@ -11,7 +16,7 @@ from numpy import fromstring as np_fromstr
 from numpy import exp, log
 
 
-def get_cross_sections(weighting, elements=None,dataset=None):
+def get_cross_sections(weighting, elements=None, dataset=None):
     """Get photoionization cross-section weighting data.
 
     For known sources, data is based on tabulation of Yeh/Lindau (1985).[1]
@@ -25,8 +30,9 @@ def get_cross_sections(weighting, elements=None,dataset=None):
          Report No. UCRL-51326
 
     Args:
-        weighting (str or float): Data source for photoionization
-            cross-sections. If the string is a known keyword then data will
+        weighting (str or float): If float and for dataset is None, data source
+            for photoionization cross-sections, for dataset is str, connected
+            Photon energy. If the string is a known keyword then data will
             be drawn from files included with Galore. Otherwise, the string
             will be interpreted as a path to a JSON file containing data
             arranged in the same way as the output of this function.
@@ -35,6 +41,9 @@ def get_cross_sections(weighting, elements=None,dataset=None):
             included. When using a JSON dataset (including the inbuilt
             Yeh/Lindau) this parameter will be ignored as the entire dataset
             has already been loaded into memory.
+        datase (str or None): If None the weighting and elements are as discribed
+            above. If string, the string will be 'Scofield' or 'Yeh'. And the 
+            weighting would be the connected Photon energy.
 
     Returns:
         dict:
@@ -48,7 +57,7 @@ def get_cross_sections(weighting, elements=None,dataset=None):
             may be used to store metadata.
 
     """
-    if dataset==None:
+    if dataset is None:
         try:
             energy = float(weighting)
             return get_cross_sections_scofield(energy, elements=elements)
@@ -59,36 +68,41 @@ def get_cross_sections(weighting, elements=None,dataset=None):
                     return get_cross_sections_yeh(weighting)
                 elif weighting.lower() in ('xps', 'ups', 'haxpes'):
                     raise ValueError("Key '{0}' is no longer accepted for "
-                                 "weighting. Please use 'alka' for Al k-alpha,"
-                                 " 'he2' for He (II) or 'yeh_haxpes' for "
-                                 "8047.8 eV HAXPES".format(weighting))
+                                     "weighting. Please use 'alka' for Al k-alpha,"
+                                     " 'he2' for He (II) or 'yeh_haxpes' for "
+                                     "8047.8 eV HAXPES".format(weighting))
                 else:
                     return get_cross_sections_json(weighting)
 
         # A string or a number would have hit a return statement by now
         raise ValueError("Weighting not understood as string or float. ",
-                     "Please use a keyword, path to JSON file or an "
-                     "energy value in eV")
+                         "Please use a keyword, path to JSON file or an "
+                         "energy value in eV")
     else:
         cross_sections_dict = {}
         energy = weighting
-        metadata = _get_metadata(energy,dataset)
+        metadata = _get_metadata(energy, dataset)
         cross_sections_dict.update(metadata)
-  
-   
-        _,_,data_file_path = get_csv_file_path(dataset)
-        if os.path.isfile(data_file_path)== True:
+
+        _, _, data_file_path = get_csv_file_path(dataset)
+        if os.path.isfile(data_file_path) == True:
             for element in elements:
-
-                file_name = '{element1}.csv'
-                data = read_csv_file(data_file_path,file_name.format(element1 = element))
-                elemental_cross_sections = _cross_sections_from_csv_data(energy,data,dataset)
-                cross_sections_dict[element] = elemental_cross_sections
+                if len(element) == 1:
+                    if dataset.lower() == 'scofield':
+                        data = read_csv_file(data_file_path, element + '_')
+                    elif dataset.lower() == 'yeh':
+                        data = read_csv_file(data_file_path, '_' + element)
+                else:
+                    data = read_csv_file(data_file_path, element)
+                cross_sections, closest_energy = _cross_sections_from_csv_data(
+                    energy, data, dataset)
+                cross_sections_dict[element] = cross_sections
+            print('The closest energy of input is {energy} keV'.format(
+                energy=closest_energy))
+            return cross_sections_dict
         else:
-            print("Do you want to install data? \n You can enter \n galore-install-data {dataset}".format(dataset = dataset))
-    
-        return cross_sections_dict
-
+            print(
+                "Do you want to install data? \n You can enter \n galore-install-data {dataset}".format(dataset=dataset))
 
 
 def cross_sections_info(cross_sections, logging=None):
@@ -305,240 +319,233 @@ def get_cross_sections_scofield(energy, elements=None):
     return el_cross_sections
 
 
-import zipfile
-import numpy as np
-import platform
-import os
-import urllib.request
-
-def read_csv_file(data_file_path,file_name):
+def read_csv_file(data_file_path, element_name):
     """
     Generate data from csv archive without decompression
-    
+
     Args:
-        tar_file_name (str): path to tarfile of CSV data
-        file_path(str): path to individual CSV file within tarfile
-    
+        data_file_path: path to tarfile of CSV data
+        element_name: element name for connected CSV file
+
     Returns:
         dict: containing 'headers', 'electron_counts' 
         (lists of str and int respectively) and 'data_table', 
         a 2-D nested list of floats. Missing data is represented as None.
-  
+
     """
-    
-    ## Open zipfile
+
+    # Open zipfile and match the element_name to csv file name
     with zipfile.ZipFile(data_file_path) as data_zf:
-        data = data_zf.read(file_name).decode()       
-    
-    ## string to list
+        namelist = data_zf.namelist()
+        for filename in namelist:
+            if SequenceMatcher(None, element_name, filename[-6:-4]).ratio() > 0.99:
+                data = data_zf.read(filename).decode()
+
+    # string to list
     data_string = data.split('\r\n')
 
-    
-    
-    ## get number of colunm headers
-    column_headers = [column_header for column_header in data_string[0].split(',') if column_header !='']
+    # get number of colunm headers
+    column_headers = [column_header for column_header in data_string[0].split(
+        ',') if column_header != '']
     n_columns = len(column_headers)
-    
-    
-    ## build main matrix
+
+    # build main matrix
     main_matrix = [row.split(',')[0:n_columns] for row in data_string]
 
-    
-    ## remove empty values
-    midterm=[row for row in main_matrix if any(row)==True]
+    # remove empty values
+    midterm = [row for row in main_matrix if any(row) == True]
     data_table = midterm[1:-1]
-    electron_counts_list  = [occupancy for occupancy in midterm[-1] if occupancy !=''][1:]
-    
-    ## replace '' in data table with NaN and change string list into float array
-    data_table =  np.array([[float('NaN') if cross_section == '' else float(cross_section) for cross_section in row] 
-                            for row in data_table])
-    electron_counts = np.array([float(occupancy) for occupancy in electron_counts_list])
-  
+    electron_counts_list = [
+        occupancy for occupancy in midterm[-1] if occupancy != ''][1:]
 
-    ## build result dict
-    result_dict={}
+    # replace '' in data table with NaN and change string list into float array
+    data_table = np.array([[float('NaN') if cross_section == '' else float(cross_section) for cross_section in row]
+                           for row in data_table])
+    electron_counts = np.array([float(occupancy)
+                               for occupancy in electron_counts_list])
+
+    # build result dict
+    result_dict = {}
     result_dict['headers'] = column_headers
-    result_dict['electron_counts'] =  electron_counts
+    result_dict['electron_counts'] = electron_counts
     result_dict['data_table'] = data_table
-    
+
     return result_dict
 
-def _get_avg_orbital_cross_sections(subshells_cross_sections,electrons_number):
+
+def _get_avg_orbital_cross_sections(subshells_cross_sections, electrons_numbers):
     """
     Obtain average cross sections of subshell of each obital when process Scofield data.
-        
+
     Args:
-        subshell_cross_sections(np.array): expecting pairs of subshells cross sections of a certain obital except s-obital 
-            correspond to a given input energy.                    
-        electrons_number(np.array): corresponding electrons number of subshells
-        
-        Note: subshells are like ('2p1/2', '2p3/2', '3p1/2', '3p3/2',...) for obital p
-    
+        subshell_cross_sections(np.array): The subshells cross sections array of the highest orbital              
+        electrons_number(np.array): corresponding electrons number of these subshells
+
     Returns:
-        avg_orbital_cross_sections(np.array): average cross sections of obitals 
-        
-        Note: the above array are like ('2p', '3p',...) for obital p
+        avg_orbital_cross_sections(np.array): average cross sections of subshells
+
     """
-    
-    
-    subshells_cross_section_arrays =  np.array_split(subshells_cross_sections, 2)
-    electrons_numbers_arrays = np.array_split(electrons_number, 2)
-    
-    subshells_cross_sections_sum = np.array(list(map(sum,subshells_cross_section_arrays)))
-    
-    subshells_electrons_number_sum = np.array(list(map(sum,electrons_numbers_arrays)))
-    
-    avg_orbital_cross_sections = np.true_divide(subshells_cross_sections_sum,subshells_electrons_number_sum)
-    
-        
+
+    subshells_cross_sections_sum = sum(subshells_cross_sections)
+
+    subshells_electrons_numbers_sum = sum(electrons_numbers)
+
+    avg_orbital_cross_sections = subshells_cross_sections_sum / \
+        subshells_electrons_numbers_sum
+
     return avg_orbital_cross_sections
 
-def _cross_sections_from_csv_data(energy,data,dataset):
+
+def _cross_sections_from_csv_data(energy, data, dataset):
     """
     Get cross sections from data dict 
     For known sources, data is based on tabulation of Yeh/Lindau (1985).[1]
     Otherwise, energies in keV from 1-1500 are used with log-log polynomial
     parametrisation of data from Scofield.[2]
-    
+
     References:
       1. Yeh, J.J. and Lindau, I. (1985)
          Atomic Data and Nuclear Data Tables 32 pp 1-155
       2. J. H. Scofield (1973) Lawrence Livermore National Laboratory
          Report No. UCRL-51326
-    
+
     Args:
         energy(float): energy value  
         data(dict): data from read_csv_file()
         reference(str): 'Scofield' or 'Yeh'
-        
+
     Returns:
         orbitals_cross_sections_dict: containing orbitals 's', 'p', 'd', 'f' and 
-                                      maximum cross sections of each orbital. 
+                                      highest orbital cross sections of each orbital. 
                                       Missing data is represented as None.
-  
-    """   
+
+    """
 
     n_subshells = len(data['electron_counts'])
     subshells_headers = data['headers'][-n_subshells:]
-    cross_sections_by_subshells = data['data_table'].T[-n_subshells:]
-    
-    ##build dicts for easy calculation. 
-    electron_counts_by_subshells = dict(zip(subshells_headers,data['electron_counts']))
-    cross_sections_by_subshells = dict(zip(subshells_headers,data['data_table'].T[-n_subshells:]))
 
-    ## match the import energy
+    # build dicts for easy calculation.
+    electron_counts_by_subshells = dict(
+        zip(subshells_headers, data['electron_counts']))
+    cross_sections_by_subshells = dict(
+        zip(subshells_headers, data['data_table'].T[-n_subshells:]))
+
+    # match the import energy
+    if dataset.lower() == 'scofield' and float(energy) > 1500:
+        print('error: The maximum energy of Scofield is 1500 keV')
+
     energy_index = np.abs(data['data_table'].T[0] - float(energy)).argmin()
+    closest_energy = data['data_table'].T[0][energy_index]
 
-    ## build result dict
+    # build result dict
     orbitals_cross_sections_dict = {}
-    
-    ## result for s orbital
-    s_cross_sections = np.array([value[energy_index] for key, value in cross_sections_by_subshells.items() if 's' in key])
-    electrons_number = np.array([value for key, value in electron_counts_by_subshells.items() if 's' in key])
-    ## get unit cross sections of s orbital
-    unit_cross_sections = s_cross_sections/electrons_number
-    ## get highest cross section of obital s
-    highest_obital_cross_section = np.max(np.nan_to_num(unit_cross_sections))
-    orbitals_cross_sections_dict['s'] = highest_obital_cross_section
-    
-    
-    
-    ## result for 'p', 'd', 'f' orbitals
-    orbitals = ['p', 'd', 'f']
-    
-    for orbital in orbitals:
-        interm_matrix =  np.array([value for key, value in cross_sections_by_subshells.items() if orbital in key]).T
-        electrons_number  = np.array([value for key, value in electron_counts_by_subshells.items() if orbital in key])
- 
-        if np.shape(interm_matrix) != (0,):
-            if dataset == 'Scofield':
-                subshells_cross_sections = interm_matrix[energy_index]
-                result = _get_avg_orbital_cross_sections(subshells_cross_sections,electrons_number)
-         
-                ## get highest cross section of this obital
-                highest_obital_cross_section = np.max(np.nan_to_num(result))
-                orbitals_cross_sections_dict[orbital] = highest_obital_cross_section
-                
-            elif dataset == 'Yeh':
-                obital_cross_sections = interm_matrix[energy_index]
-                ## get unit cross sections of this orbital
-                unit_cross_sections = obital_cross_sections/electrons_number
-                ## get highest cross section of this obital
-                highest_obital_cross_section = np.max(np.nan_to_num(unit_cross_sections))
-                orbitals_cross_sections_dict[orbital] = highest_obital_cross_section
-            
-                
-    return orbitals_cross_sections_dict
 
-def _get_metadata(energy,dataset):
+    # result for s orbital
+    s_cross_sections = np.array(
+        [value[energy_index] for key, value in cross_sections_by_subshells.items() if 's' in key])
+    electrons_numbers = np.array(
+        [value for key, value in electron_counts_by_subshells.items() if 's' in key])
+    # get highest obital cross section of obital s
+    highest_obital_cross_section = s_cross_sections[-1]/electrons_numbers[-1]
+    orbitals_cross_sections_dict['s'] = highest_obital_cross_section
+
+    # result for 'p', 'd', 'f' orbitals
+    orbitals = ['p', 'd', 'f']
+
+    for orbital in orbitals:
+        interm_matrix = np.array(
+            [value for key, value in cross_sections_by_subshells.items() if orbital in key]).T
+        electrons_numbers = np.array(
+            [value for key, value in electron_counts_by_subshells.items() if orbital in key])
+
+        if np.shape(interm_matrix) != (0,):
+            if dataset.lower() == 'scofield':
+                subshells_cross_sections = interm_matrix[energy_index]
+                highest_obital_subshells_cross_sections = subshells_cross_sections[-2:]
+                highest_obital_subshells_electrons_numbers = electrons_numbers[-2:]
+                result = _get_avg_orbital_cross_sections(
+                    highest_obital_subshells_cross_sections, highest_obital_subshells_electrons_numbers)
+                # get highest cross section of this obital
+                highest_obital_cross_section = result
+                orbitals_cross_sections_dict[orbital] = highest_obital_cross_section
+
+            elif dataset.lower() == 'yeh':
+                obital_cross_sections = interm_matrix[energy_index]
+
+                # get highest cross section of this obital
+                highest_obital_cross_section = obital_cross_sections[-1] / \
+                    electrons_numbers[-1]
+                orbitals_cross_sections_dict[orbital] = highest_obital_cross_section
+
+    return orbitals_cross_sections_dict, closest_energy
+
+
+def _get_metadata(energy, dataset):
     """
     Args:
         energy(float): energy value  
         dataset(str): 'Scofield' or 'Yeh'
-        
+
         Note: 1.'Scofield' for J. H. Scofield (1973)
                 Lawrence Livermore National Laboratory Report No. UCRL-51326              
               2.'Yeh' for Yeh, J.J. and Lindau, I. (1985) 
                 Atomic Data and Nuclear Data Tables 32 pp 1-155   
-                
+
     Returns:
         metadata_dict: containing the input energy value 
                        and description of input reference
-  
-    """   
-    
+
+    """
+
     metadata_dict = {}
     metadata_dict['energy'] = energy
-    if dataset == 'Scofield':
+    if dataset.lower() == 'scofield':
         metadata_dict['citation'] = 'J.H. Scofield, Theoretical photoionization cross sections from 1 to 1500 keV'
-        metadata_dict['link'] = 'https://doi.org/10.2172/4545040' 
-    elif dataset == 'Yeh':
+        metadata_dict['link'] = 'https://doi.org/10.2172/4545040'
+    elif dataset.lower() == 'yeh':
         metadata_dict['citation'] = 'Yeh, J.J. and Lindau, I. (1985) Atomic Data and Nuclear Data Tables 32 pp 1-155'
         metadata_dict['link'] = 'https://doi.org/10.1016/0092-640X(85)90016-6'
     else:
-        metadata_dict('dataset error: you can enter reference as "Scofield" or "Yeh" ' )
+        metadata_dict(
+            'Reference error: you can enter reference as "Scofield" or "Yeh" ')
     return metadata_dict
 
 
+def galore_install_data(url, data_file_dir, data_file_path):
 
-def galore_install_data(DOI,data_file_dir,data_file_path):
-    
-    
-    if os.path.isfile(data_file_path)== True:
+    if os.path.isfile(data_file_path) == True:
         print("Data file exists.")
-        
+
     else:
         print("Downloading file...")
-        
-        
+
         try:
             os.mkdir(data_file_dir)
         except:
             pass
-        
-        urllib.request.urlretrieve(DOI,data_file_path)
-        
-    
+
+        urllib.request.urlretrieve(url, data_file_path)
+
         if os.path.isfile(data_file_path) == True:
             print("Done")
-            
+
 
 def get_csv_file_path(dataset):
-    
-    if platform.system()== "Windows":
-        
-        data_file_dir = os.path.join(os.getenv('LOCALAPPDATA'),'galore_data')
-    else:
-        data_file_dir = os.path.join(os.path.expanduser('~'),'.galore_data')
-        
-    if dataset == 'Scofield':
-        data_file_path = os.path.join(data_file_dir,'Scofield_csv_database.zip')
-        DOI = 'https://ndownloader.figshare.com/articles/15081888/versions/1'
-        
-    elif dataset == 'Yeh':
-        data_file_path = os.path.join(data_file_dir,'Yeh_Lindau_1985_Xsection_CSV_Database.zip')
-        DOI = 'https://ndownloader.figshare.com/articles/15090012/versions/1'
-    
-    return DOI,data_file_dir,data_file_path
 
-    
+    if platform.system() == "Windows":
+
+        data_file_dir = os.path.join(os.getenv('LOCALAPPDATA'), 'galore_data')
+    else:
+        data_file_dir = os.path.join(os.path.expanduser('~'), '.galore_data')
+
+    if dataset.lower() == 'scofield':
+        data_file_path = os.path.join(
+            data_file_dir, 'Scofield_csv_database.zip')
+        url = 'https://ndownloader.figshare.com/articles/15081888/versions/1'
+
+    elif dataset.lower() == 'yeh':
+        data_file_path = os.path.join(
+            data_file_dir, 'Yeh_Lindau_1985_Xsection_CSV_Database.zip')
+        url = 'https://ndownloader.figshare.com/articles/15090012/versions/1'
+
+    return url, data_file_dir, data_file_path
