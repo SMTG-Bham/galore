@@ -54,28 +54,33 @@ def get_parser():
         Space-separated symbols for elements in material.""")
 
     parser.add_argument('--dataset', type=str,
-                        help='You can enter "Scofield" or "Yeh"')
+                        help=
+        """You can enter 'Scofield' or 'Yeh' """)
 
     return parser
 
 
 def run(energy, elements, dataset=None):
     cross_sections = galore.get_cross_sections(energy, elements, dataset)
-    logging = galore.cross_sections.cross_sections_info(cross_sections)
-    logging.info("Photoionisation cross sections per electron:")
+    if cross_sections is None:
+        pass
+    else: 
+        logging = galore.cross_sections.cross_sections_info(cross_sections)
+        logging.info("Photoionisation cross sections per electron:")
 
-    for element in elements:
-        if 'warning' in cross_sections[element]:
-            logging.warning("  {0}: {1}".format(
-                element, cross_sections[element]['warning']))
-        else:
-            orbitals = cross_sections[element]
+        for element in elements:
+    
+            if 'warning' in cross_sections[element]:
+                logging.warning("  {0}: {1}".format(
+                    element, cross_sections[element]['warning']))
+            else:
+                orbitals = cross_sections[element]
 
-            for orbital, value in orbitals.items():
-                if orbital == 'energy':
-                    pass
-                if value is None:
-                    pass
-                else:
-                    logging.info("   {0} {1}: {2:.3e}".format(element,
+                for orbital, value in orbitals.items():
+                    if orbital == 'energy':
+                        pass
+                    if value is None:
+                        pass
+                    else:
+                        logging.info("   {0} {1}: {2:.3e}".format(element,
                                                               orbital, value))
