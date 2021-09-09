@@ -1,3 +1,4 @@
+import logging
 import urllib.request
 import os
 import platform
@@ -81,12 +82,14 @@ def get_cross_sections(weighting, elements=None, dataset=None):
     else:
         cross_sections_dict = {}
         energy = weighting
-        metadata = _get_metadata(energy, dataset)
+        metadata = _get_metadata(dataset)
         cross_sections_dict.update(metadata)
 
         _, _, data_file_path = get_csv_file_path(dataset)
+  
         if os.path.isfile(data_file_path) == True:
             for element in elements:
+                ### modification for elements to mathcing the file names
                 if len(element) == 1:
                     if dataset.lower() == 'scofield':
                         data = read_csv_file(data_file_path, element + '_')
@@ -94,11 +97,13 @@ def get_cross_sections(weighting, elements=None, dataset=None):
                         data = read_csv_file(data_file_path, '_' + element)
                 else:
                     data = read_csv_file(data_file_path, element)
+                ### obtain the cross sections data for each elements
+                ### and the closest energy for calculation process
                 cross_sections, closest_energy = _cross_sections_from_csv_data(
                     energy, data, dataset)
+                cross_sections_dict['energy'] = closest_energy
                 cross_sections_dict[element] = cross_sections
-            print('The closest energy of input is {energy} keV'.format(
-                energy=closest_energy))
+
             return cross_sections_dict
         else:
             print(
@@ -127,12 +132,17 @@ def cross_sections_info(cross_sections, logging=None):
         console = logging.StreamHandler()
         logging.getLogger().addHandler(console)
 
-    if 'energy' in cross_sections:
-        logging.info("  Photon energy: {0}".format(cross_sections['energy']))
-    if 'citation' in cross_sections:
-        logging.info("  Citation: {0}".format(cross_sections['citation']))
-    if 'link' in cross_sections:
-        logging.info("  Link: {0}".format(cross_sections['link']))
+    if cross_sections is None:
+        pass
+
+    else:
+        if 'energy' in cross_sections:
+            logging.info("  Photon energy: {0}".format(
+                cross_sections['energy']))
+        if 'citation' in cross_sections:
+            logging.info("  Citation: {0}".format(cross_sections['citation']))
+        if 'link' in cross_sections:
+            logging.info("  Link: {0}".format(cross_sections['link']))
 
     return logging
 
@@ -431,9 +441,6 @@ def _cross_sections_from_csv_data(energy, data, dataset):
         zip(subshells_headers, data['data_table'].T[-n_subshells:]))
 
     # match the import energy
-    if dataset.lower() == 'scofield' and float(energy) > 1500:
-        print('error: The maximum energy of Scofield is 1500 keV')
-
     energy_index = np.abs(data['data_table'].T[0] - float(energy)).argmin()
     closest_energy = data['data_table'].T[0][energy_index]
 
@@ -480,10 +487,9 @@ def _cross_sections_from_csv_data(energy, data, dataset):
     return orbitals_cross_sections_dict, closest_energy
 
 
-def _get_metadata(energy, dataset):
+def _get_metadata(dataset):
     """
     Args:
-        energy(float): energy value  
         dataset(str): 'Scofield' or 'Yeh'
 
         Note: 1.'Scofield' for J. H. Scofield (1973)
@@ -492,13 +498,12 @@ def _get_metadata(energy, dataset):
                 Atomic Data and Nuclear Data Tables 32 pp 1-155   
 
     Returns:
-        metadata_dict: containing the input energy value 
-                       and description of input reference
+        metadata_dict: containing the description of input reference
 
     """
 
     metadata_dict = {}
-    metadata_dict['energy'] = energy
+
     if dataset.lower() == 'scofield':
         metadata_dict['citation'] = 'J.H. Scofield, Theoretical photoionization cross sections from 1 to 1500 keV'
         metadata_dict['link'] = 'https://doi.org/10.2172/4545040'
@@ -512,9 +517,13 @@ def _get_metadata(energy, dataset):
 
 
 def galore_install_data(url, data_file_dir, data_file_path):
+    """This function is API for command galroe-install-data"""
 
+
+    # if users re-install the dataset inform them the file path
     if os.path.isfile(data_file_path) == True:
-        print("Data file exists.")
+        print("Data file exists. \n The file path is {data_file_path}".format(
+            data_file_path=data_file_path))
 
     else:
         print("Downloading file...")
@@ -526,11 +535,15 @@ def galore_install_data(url, data_file_dir, data_file_path):
 
         urllib.request.urlretrieve(url, data_file_path)
 
+        # inform user the required file is downloaded and print out the path
         if os.path.isfile(data_file_path) == True:
-            print("Done")
+            print("Done\nThe file path is {data_file_path}".format(
+                data_file_path=data_file_path))
 
 
 def get_csv_file_path(dataset):
+    """This function is used to obtain the url and create dataset file folder 
+    for different operating systems"""
 
     if platform.system() == "Windows":
 

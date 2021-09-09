@@ -23,6 +23,7 @@ from argparse import ArgumentParser
 import galore.cross_sections
 
 
+
 def main():
     parser = get_parser()
     args = parser.parse_args()
@@ -53,19 +54,28 @@ def get_parser():
                         help="""
         Space-separated symbols for elements in material.""")
 
-    parser.add_argument('--dataset', type=str,
+    parser.add_argument('--dataset', type=str.lower, choices=['scofield', 'yeh'],
                         help=
-        """You can enter 'Scofield' or 'Yeh' """)
+        """Accepted values are 'Scofield' and 'Yeh """)
 
     return parser
 
 
 def run(energy, elements, dataset=None):
     cross_sections = galore.get_cross_sections(energy, elements, dataset)
+    logging = galore.cross_sections.cross_sections_info(cross_sections)
+    
     if cross_sections is None:
         pass
+
+    if dataset.lower() == 'scofield' and float(energy) > 1500:
+        logging.warning('The maximum energy of Scofield is 1500 keV')
+
+    if dataset != None:
+        logging.warning('The closest energy of input is {energy}'.format(
+                energy=cross_sections['energy'] )) 
+
     else: 
-        logging = galore.cross_sections.cross_sections_info(cross_sections)
         logging.info("Photoionisation cross sections per electron:")
 
         for element in elements:
