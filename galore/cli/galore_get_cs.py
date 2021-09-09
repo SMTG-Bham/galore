@@ -23,7 +23,6 @@ from argparse import ArgumentParser
 import galore.cross_sections
 
 
-
 def main():
     parser = get_parser()
     args = parser.parse_args()
@@ -55,8 +54,7 @@ def get_parser():
         Space-separated symbols for elements in material.""")
 
     parser.add_argument('--dataset', type=str.lower, choices=['scofield', 'yeh'],
-                        help=
-        """Accepted values are 'Scofield' and 'Yeh """)
+                        help="""Accepted values are 'Scofield' and 'Yeh """)
 
     return parser
 
@@ -64,22 +62,25 @@ def get_parser():
 def run(energy, elements, dataset=None):
     cross_sections = galore.get_cross_sections(energy, elements, dataset)
     logging = galore.cross_sections.cross_sections_info(cross_sections)
-    
-    if cross_sections is None:
-        pass
 
+    ###some input will lead to None cross sections result 
+    if cross_sections is None:
+        logging.warning("The cross section is None, please check the input")
+
+    ## inform user if energy input is out of range 
     if dataset.lower() == 'scofield' and float(energy) > 1500:
         logging.warning('The maximum energy of Scofield is 1500 keV')
 
+    ## inform user the closest energy of input  
     if dataset != None:
         logging.warning('The closest energy of input is {energy}'.format(
-                energy=cross_sections['energy'] )) 
+            energy=cross_sections['energy']))
 
-    else: 
+    else:
         logging.info("Photoionisation cross sections per electron:")
 
         for element in elements:
-    
+
             if 'warning' in cross_sections[element]:
                 logging.warning("  {0}: {1}".format(
                     element, cross_sections[element]['warning']))
@@ -93,4 +94,4 @@ def run(energy, elements, dataset=None):
                         pass
                     else:
                         logging.info("   {0} {1}: {2:.3e}".format(element,
-                                                              orbital, value))
+                                                                  orbital, value))
