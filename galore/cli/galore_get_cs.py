@@ -63,35 +63,34 @@ def run(energy, elements, dataset=None):
     cross_sections = galore.get_cross_sections(energy, elements, dataset)
     logging = galore.cross_sections.cross_sections_info(cross_sections)
 
-    ###some input will lead to None cross sections result 
+    # some input will lead to None cross sections result
     if cross_sections is None:
         logging.warning("The cross section is None, please check the input")
 
-    ## inform user if energy input is out of range 
-    if dataset.lower() == 'scofield' and float(energy) > 1500:
-        logging.warning('The maximum energy of Scofield is 1500 keV')
-
-    ## inform user the closest energy of input  
+    # inform user the closest energy of input
     if dataset != None:
         logging.warning('The closest energy of input is {energy}'.format(
             energy=cross_sections['energy']))
 
-    else:
-        logging.info("Photoionisation cross sections per electron:")
+        # inform user if energy input is out of range
+        if dataset.lower() == 'scofield' and float(energy) > 1500:
+            logging.warning('The maximum energy of Scofield is 1500 keV')
 
-        for element in elements:
+    logging.info("Photoionisation cross sections per electron:")
 
-            if 'warning' in cross_sections[element]:
-                logging.warning("  {0}: {1}".format(
-                    element, cross_sections[element]['warning']))
-            else:
-                orbitals = cross_sections[element]
+    for element in elements:
 
-                for orbital, value in orbitals.items():
-                    if orbital == 'energy':
-                        pass
-                    if value is None:
-                        pass
-                    else:
-                        logging.info("   {0} {1}: {2:.3e}".format(element,
-                                                                  orbital, value))
+        if 'warning' in cross_sections[element]:
+            logging.warning("  {0}: {1}".format(
+                element, cross_sections[element]['warning']))
+        else:
+            orbitals = cross_sections[element]
+
+            for orbital, value in orbitals.items():
+                if orbital == 'energy':
+                    pass
+                if value is None:
+                    pass
+                else:
+                    logging.info("   {0} {1}: {2:.3e}".format(element,
+                                                              orbital, value))
