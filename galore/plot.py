@@ -96,8 +96,8 @@ def add_overlay(plt, overlay, overlay_scale=None, overlay_offset=0.,
     return plt
 
 
-def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
-              offset=0., flipx=False, **kwargs):
+def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True, offset=0., flipx=False,
+              fill=True, legend_cutoff=2, alpha=0.25, **kwargs):
     """Plot a projected density of states (PDOS)
 
     Args:
@@ -136,6 +136,12 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
         ax = fig.add_subplot(1, 1, 1)
 
     tdos = np.zeros(len(list(pdos_data.values())[0]['energy']))
+    for element, el_data in pdos_data.items(): # get highest peak in plot range
+        orbitals = list(el_data.keys())
+        orbitals.remove('energy')
+        for orbital in orbitals:
+            tdos += el_data[orbital]
+    tmax = max(tdos) # highest peak in plot range, as resampling has already occurred
 
     for element, el_data in pdos_data.items():
         # Field 'energy' must be present, other fields are orbitals
@@ -145,19 +151,20 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True,
         else:
             x_data = el_data['energy'] + offset
 
-        orbitals = list(el_data.keys())
-        orbitals.remove('energy')
-
-        for orbital in orbitals:
-            if total:
-                tdos += el_data[orbital]
-            else:
+        for orbital in orbitals: # orbitals defined above
+            if not total:
                 max_y = max(max_y, max(el_data[orbital]))
 
             if show_orbitals:
-                ax.plot(x_data, el_data[orbital],
-                        label="{0}: {1}".format(element, orbital),
+                color = next(ax._get_lines.prop_cycler)['color'] # get color to ensure
+                # matching fill
+                label = None if max(
+                    el_data[orbital]) < (legend_cutoff/100)*tmax else f"{element}: {orbital}"
+                ax.plot(x_data, el_data[orbital], color=color, label=label,
                         marker='', linestyle=next(linecycler))
+
+                if fill:
+                    ax.fill_between(x_data, el_data[orbital], color=color, alpha=alpha)
 
     if total:
         max_y = max(tdos)
