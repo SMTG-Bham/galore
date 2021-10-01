@@ -313,8 +313,8 @@ def get_parser():
     )
     parser.add_argument(
         '--legend-cutoff', type=float, default=2, dest="legend_cutoff",
-        help='Cutoff in % of max y-value in the plot range that determines if a line is given a '
-             'legend label')
+        help='Cutoff in %% of max y-value in the plot range that determines if a line is given a '
+             'legend label (default: 2)')
     parser.add_argument(
         "--no-fill",
         action="store_false",
