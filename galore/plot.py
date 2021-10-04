@@ -151,7 +151,9 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True, offset=0., fli
         else:
             x_data = el_data['energy'] + offset
 
-        for orbital in orbitals: # orbitals defined above
+        orbitals = list(el_data.keys()) # need to redefine orbitals to prevent overwriting
+        orbitals.remove('energy')
+        for orbital in orbitals: 
             if not total:
                 max_y = max(max_y, max(el_data[orbital]))
 
