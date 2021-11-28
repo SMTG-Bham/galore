@@ -73,9 +73,6 @@ def process_1d_data(input=['vasprun.xml'],
 
     """
 
-    if 'flipx' in kwargs and kwargs['flipx']:
-        raise Exception("x-flip not currently implemented in 1D mode.")
-
     if type(input) == str:
         pass
     elif len(input) > 1:

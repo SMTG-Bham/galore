@@ -170,15 +170,15 @@ def simple_dos_from_files(return_plt=False, **kwargs):
             else:
                 plt.show()
 
-    if kwargs['csv'] is None:
-        galore.formats.write_csv(x_values, broadened_data, filename=None)
-    elif kwargs['csv']:
+    if kwargs['flipx']:
+        x_values = np.flip(-x_values)
+        broadened_data = np.flip(broadened_data)
+
+    if kwargs['csv'] or (kwargs['csv'] is None):
         galore.formats.write_csv(
             x_values, broadened_data, filename=kwargs['csv'])
 
-    if kwargs['txt'] is None:
-        galore.formats.write_txt(x_values, broadened_data, filename=None)
-    elif kwargs['txt']:
+    if kwargs['txt'] or (kwargs['txt'] is None):
         galore.formats.write_txt(
             x_values, broadened_data, filename=kwargs['txt'])
 
