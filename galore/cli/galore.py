@@ -309,20 +309,23 @@ def get_parser():
         "--no-total",
         action="store_false",
         dest="total",
-        help="Don't plot the total photoelectron spectrum (only works with --pdos flag)",
-    )
+        help='If using --pdos, do not plot the total spectrum. '
+             '(Total spectrum will still be calculated to determine legend cutoff.)'
+        )
     parser.add_argument(
-        '--legend-cutoff', type=float, default=2, dest="legend_cutoff",
-        help='Cutoff in %% of max y-value in the plot range that determines if a line is given a '
-             'legend label (default: 2)')
+        '--legend-cutoff', type=float, default=0.02, dest="legend_cutoff",
+        help='Cutoff value as fraction of max y-value in the plot range that determines '
+             'if a line is given a legend label (default: 0.02)'
+        )
     parser.add_argument(
         "--no-fill",
         action="store_false",
         dest="fill",
         help="Don't colour-fill the photoelectron spectrum plot",
-    )
+        )
     parser.add_argument(
-        '--alpha', type=float, default=0.25, help='Transparency value for plot colour filling')
+        '--alpha', type=float, default=0.25, help='Transparency value for plot colour filling'
+        )
 
     return parser
 
