@@ -112,6 +112,7 @@ def pdos_from_files(return_plt=False, **kwargs):
         if return_plt:
             return plt
         elif kwargs['plot']:
+            plt.tight_layout()
             plt.savefig(kwargs['plot'])
         elif kwargs['plot'] is None:
             plt.show()
@@ -164,6 +165,7 @@ def simple_dos_from_files(return_plt=False, **kwargs):
             if return_plt:
                 return plt
             elif kwargs['plot']:
+                plt.tight_layout()
                 plt.savefig(kwargs['plot'])
             else:
                 plt.show()
