@@ -172,7 +172,7 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True, offset=0., fli
         max_y = max(tdos)
         alpha = 0.7 if show_orbitals else 1
         zorder = 0 if show_orbitals else 1
-        ax.plot(x_data, tdos, label="Total", color='k', linestyle='-', alpha, zorder)
+        ax.plot(x_data, tdos, label="Total", color='k', linestyle='-', alpha=alpha, zorder=zorder)
 
     # Range based on last dataset. If that's not satisfactory, it should have
     # been pruned already by kwargs['xmin'] and kwargs['xmax']
