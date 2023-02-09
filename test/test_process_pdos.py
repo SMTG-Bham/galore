@@ -25,7 +25,7 @@ class test_process_pdos(unittest.TestCase):
             ]))
 
     def test_process_pdos(self):
-        vasprun = 'test/SnO2/vasprun.xml.gz'
+        vasprun = 'SnO2/vasprun.xml.gz'
         xmin, xmax = (-10, 4)
         weighting = 'Alka'
 
