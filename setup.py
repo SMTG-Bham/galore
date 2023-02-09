@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     setup(
         name='galore',
-        version='0.7.0',
+        version='0.8.0',
         description='Broadening and weighting for simulated spectra',
         long_description="""
     Apply Gaussian and Lorentzian broadening to data from ab initio
@@ -42,9 +42,9 @@ if __name__ == "__main__":
             'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
             'Natural Language :: English', 
             'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.5',
-            'Programming Language :: Python :: 3.6',
-            'Programming Language :: Python :: 3.6',                     
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9',
             'Topic :: Scientific/Engineering :: Chemistry',
             'Topic :: Scientific/Engineering :: Physics'
             ],
@@ -66,7 +66,7 @@ if __name__ == "__main__":
                                  'numpy < 1.20; python_version ~= "3.6"',
                                  'pymatgen;python_version >= "3.7"',
                                  'numpy >= 1.17;python_version >= "3.6"']},
-        python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4',
+        python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, !=3.6.* <4',
         entry_points={
             'console_scripts': [
                 'galore=galore.cli.galore:main',
