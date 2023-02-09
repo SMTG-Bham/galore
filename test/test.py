@@ -34,10 +34,8 @@ def stdout_redirect():
     else:
         output = io.BytesIO()
     sys.stdout = output
-    try:
-        yield output
-    finally:
-        output.close()
+
+    yield output
 
 
 class test_dos_functions(unittest.TestCase):
