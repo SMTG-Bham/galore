@@ -1,3 +1,4 @@
+from pkg_resources import resource_filename
 import numpy as np
 import galore
 import unittest
@@ -25,7 +26,7 @@ class test_process_pdos(unittest.TestCase):
             ]))
 
     def test_process_pdos(self):
-        vasprun = 'SnO2/vasprun.xml.gz'
+        vasprun = resource_filename(__name__, 'SnO2/vasprun.xml.gz')
         xmin, xmax = (-10, 4)
         weighting = 'Alka'
 
