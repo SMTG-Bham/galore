@@ -66,7 +66,7 @@ if __name__ == "__main__":
                                  'numpy < 1.20; python_version ~= "3.6"',
                                  'pymatgen;python_version >= "3.7"',
                                  'numpy >= 1.17;python_version >= "3.6"']},
-        python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, !=3.6.* <4',
+        python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, !=3.6.*, <4',
         entry_points={
             'console_scripts': [
                 'galore=galore.cli.galore:main',
