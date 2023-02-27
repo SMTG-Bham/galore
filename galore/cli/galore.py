@@ -323,7 +323,7 @@ def get_parser():
         "--no-fill",
         action="store_false",
         dest="fill",
-        help="Don't colour-fill the photoelectron spectrum plot",
+        help="Don't colour-fill orbital projections in spectrum plot",
         )
     parser.add_argument(
         '--alpha', type=float, default=0.25, help='Transparency value for plot colour filling'
