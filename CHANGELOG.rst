@@ -5,8 +5,15 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-ucl/galore/compare/0.7.0...HEAD>`__
+`Unreleased <https://github.com/smtg-ucl/galore/compare/0.8.0...HEAD>`__
 -------------------------------------------------------------------------
+
+`[0.8.0] <https://github.com/smtg-ucl/galore/compare/0.7.0...0.8.0>`__ - 2023-02-28
+-----------------------------------------------------------------------------------
+- Minimum python version has increased to 3.7
+- Orbital-projected plots have gained pretty fill colours; these are
+  controlled by `--no-fill`, `--no-total`, `--alpha` and
+  `--legend-cutoff` command-line options. (@kavanase)
 
 `[0.7.0] <https://github.com/smtg-ucl/galore/compare/0.6.2...0.7.0>`__ - 2021-07-06
 -----------------------------------------------------------------------------------

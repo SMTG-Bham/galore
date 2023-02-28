@@ -121,7 +121,7 @@ a given material.
 Requirements
 ------------
 
-Galore is currently compatible with Python versions 3.5 and newer.
+Galore is currently compatible with Python versions 3.7 and newer.
 Galore uses Numpy to apply convolution operations. Matplotlib is
 required for plotting.
 
