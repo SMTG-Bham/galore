@@ -5,6 +5,8 @@ authors:
     given-names: Adam J.
   - family-names: Ganose
     given-names: Alex M.
+  - family-names: Kavanagh
+    given-names: Seán R.
   - family-names: Regoutz
     given-names: Anna
   - family-names: Egdell
@@ -14,8 +16,8 @@ authors:
 doi: 10.5281/zenodo.1491826
 repository-code: https://github.com/smtg-ucl/galore
 title: Galore
-version: 0.7.0
-date-released: 2021-05-24
+version: 0.8.0
+date-released: 2023-02-28
 programming-languages:
   - python
 license: GPL-3.0-or-later
