@@ -33,9 +33,14 @@ def stdout_redirect():
         output = io.StringIO()
     else:
         output = io.BytesIO()
+    sys_stdout = sys.stdout
     sys.stdout = output
 
-    yield output
+    try:
+        yield output
+    finally:
+        output.close()
+        sys.stdout = sys_stdout
 
 
 class test_dos_functions(unittest.TestCase):
