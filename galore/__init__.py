@@ -21,7 +21,7 @@
 
 from __future__ import print_function
 
-from collections import OrderedDict
+from collections.abc import OrderedDict
 from collections.abc import Sequence
 import logging
 from math import sqrt, log

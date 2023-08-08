@@ -1,7 +1,7 @@
 import unittest
 from os.path import join as path_join
 from os.path import abspath, dirname
-from collections import OrderedDict
+from collections.abc import OrderedDict
 
 import numpy as np
 import matplotlib
