@@ -1,7 +1,7 @@
 import os.path
 from pkg_resources import resource_filename
 from json import load as json_load
-from collections import Iterable
+from collections.abc import Iterable
 
 import sqlite3
 from scipy import polyval
