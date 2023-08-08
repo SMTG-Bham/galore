@@ -1,5 +1,5 @@
 """Plotting routines with Matplotlib"""
-from collections.abc import defaultdict
+from collections import defaultdict
 from os.path import basename as path_basename
 from itertools import cycle
 import logging
