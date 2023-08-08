@@ -21,7 +21,7 @@ import os
 import csv
 import re
 import sys
-from collections.abc import OrderedDict
+from collections import OrderedDict
 import numpy as np
 
 

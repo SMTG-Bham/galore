@@ -21,7 +21,7 @@
 ###############################################################################
 import os
 import argparse
-from collections.abc import OrderedDict
+from collections import OrderedDict
 from json import load as json_load
 import logging
 import warnings
