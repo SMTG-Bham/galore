@@ -7,6 +7,8 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 
 `Unreleased <https://github.com/smtg-ucl/galore/compare/0.8.0...HEAD>`__
 -------------------------------------------------------------------------
+- BUGFIX: Import type annoations from collection.abc. This is required
+  for Python 3.10, which deprecates the original location. (@Hashan-Peiris)
 
 `[0.8.0] <https://github.com/smtg-ucl/galore/compare/0.7.0...0.8.0>`__ - 2023-02-28
 -----------------------------------------------------------------------------------
