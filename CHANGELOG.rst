@@ -5,15 +5,19 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-ucl/galore/compare/0.8.0...HEAD>`__
+`Unreleased <https://github.com/smtg-ucl/galore/compare/0.9.0...HEAD>`__
 -------------------------------------------------------------------------
+
+`[0.9.0] <https://github.com/smtg-ucl/galore/compare/0.8.0...0.9.0>`__ - 2023-08-14
+-----------------------------------------------------------------------------------
+- Minimum Python version has increased to 3.8
 - Allow --xflip to be used with simple 1-d data plots (@ajjackson)
 - BUGFIX: Import type annoations from collection.abc. This is required
   for Python 3.10, which deprecates the original location. (@Hashan-Peiris)
 
 `[0.8.0] <https://github.com/smtg-ucl/galore/compare/0.7.0...0.8.0>`__ - 2023-02-28
 -----------------------------------------------------------------------------------
-- Minimum python version has increased to 3.7
+- Minimum Python version has increased to 3.7
 - Orbital-projected plots have gained pretty fill colours; these are
   controlled by `--no-fill`, `--no-total`, `--alpha` and
   `--legend-cutoff` command-line options. (@kavanase)
