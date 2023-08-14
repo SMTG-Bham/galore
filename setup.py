@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     setup(
         name='galore',
-        version='0.8.0',
+        version='0.9.0',
         description='Broadening and weighting for simulated spectra',
         long_description="""
     Apply Gaussian and Lorentzian broadening to data from ab initio
@@ -40,10 +40,11 @@ if __name__ == "__main__":
             'Development Status :: 5 - Production/Stable',
             'Intended Audience :: Science/Research',
             'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-            'Natural Language :: English', 
+            'Natural Language :: English',
             'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9',
+            'Programming Language :: Python :: 3.10',
             'Topic :: Scientific/Engineering :: Chemistry',
             'Topic :: Scientific/Engineering :: Physics'
             ],
@@ -51,15 +52,14 @@ if __name__ == "__main__":
                   ' photoelectron dos pdos gaussian lorentzian broadening'),
         include_package_data=True,
         packages=find_packages(exclude=['docs', 'test']),
-        install_requires=['numpy', 'scipy',
-                          'matplotlib; python_version >= "3.7"'],
+        install_requires=['numpy>= 1.17', 'scipy',
+                          'matplotlib; python_version >= "3.8"'],
         extras_require={'docs': ["sphinx",
                                  "sphinx_rtd_theme",
                                  "sphinx-argparse",
                                  "sphinxcontrib-bibtex"],
-                        'vasp': ['pymatgen;python_version >= "3.7"',
-                                 'numpy >= 1.17']},
-        python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, !=3.6.*, <4',
+                        'vasp': ['pymatgen']},
+        python_requires='>=3.8, <4',
         entry_points={
             'console_scripts': [
                 'galore=galore.cli.galore:main',
