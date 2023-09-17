@@ -178,7 +178,7 @@ Support
 
 If you're having trouble with Galore or think you've found a bug, please
 report it using the
-`Github issue tracker <https://github.com/SMTG-UCL/galore/issues>`__.
+`Github issue tracker <https://github.com/SMTG-bham/galore/issues>`__.
 Issues can also be used for questions and discussion about the Galore
 methodology/implementation.
 
@@ -197,7 +197,7 @@ If you use Galore in your research, please consider citing the following work:
     Adam J. Jackson, Alex M. Ganose, Anna Regoutz, Russell G. Egdell, David O. Scanlon (2018). *Galore: Broadening and weighting for simulation of photoelectron spectroscopy.* Journal of Open Source Software, 3(26), 773, `doi: 10.21105/joss.007733 <https://doi.org/10.21105/joss.00773>`_
 
 Galore includes a machine-readable
-`citation file <https://github.com/SMTG-UCL/galore/blob/master/CITATION.cff>`__
+`citation file <https://github.com/SMTG-bham/galore/blob/master/CITATION.cff>`__
 in an `emerging standard format <https://citation-file-format.github.io>`__
 with citation details for the actual code,
 but as conventions for software citation are still developing
