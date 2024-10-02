@@ -5,9 +5,8 @@ from json import load as json_load
 
 
 import sqlite3
-from scipy import polyval
 from numpy import fromstring as np_fromstr
-from numpy import exp, log
+from numpy import exp, log, polyval
 
 
 def get_cross_sections(weighting, elements=None):
