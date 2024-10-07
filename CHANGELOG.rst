@@ -7,6 +7,8 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 
 `Unreleased <https://github.com/smtg-ucl/galore/compare/0.9.0...HEAD>`__
 -------------------------------------------------------------------------
+- Deal with matplotlib 3.6 deprecation/rename of seaborn-colorblind (@ajjackson)
+
 
 `[0.9.0] <https://github.com/smtg-ucl/galore/compare/0.8.0...0.9.0>`__ - 2023-08-14
 -----------------------------------------------------------------------------------

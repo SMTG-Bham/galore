@@ -1,11 +1,11 @@
 """Plotting routines with Matplotlib"""
 from collections import defaultdict
-from os.path import basename as path_basename
 from itertools import cycle
+from os.path import basename as path_basename
 import logging
 
-import numpy as np
 from matplotlib import pyplot as plt
+import numpy as np
 
 from galore import auto_limits
 import galore.formats
