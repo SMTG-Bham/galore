@@ -26,7 +26,7 @@ import logging
 import numpy as np
 from matplotlib import pyplot as plt
 
-from galore.cli import get_default_style
+from galore.cli.utils import get_default_style
 from galore.cross_sections import get_cross_sections_scofield
 
 
