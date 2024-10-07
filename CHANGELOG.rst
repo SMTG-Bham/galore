@@ -7,7 +7,11 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 
 `Unreleased <https://github.com/smtg-ucl/galore/compare/0.9.0...HEAD>`__
 -------------------------------------------------------------------------
-- Deal with matplotlib 3.6 deprecation/rename of seaborn-colorblind (@ajjackson)
+- Deal with matplotlib compatibility issues (@ajjackson)
+
+  -  3.6 deprecation/rename of seaborn-colorblind
+  -  Use public API to get line colour more robustly
+
 - Deal with scipy deprecation of polyval (@kavanase)
 
 
