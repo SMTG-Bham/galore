@@ -158,15 +158,14 @@ def plot_pdos(pdos_data, ax=None, total=True, show_orbitals=True, offset=0., fli
                 max_y = max(max_y, max(el_data[orbital]))
 
             if show_orbitals:
-                color = next(ax._get_lines.prop_cycler)['color'] # get color to ensure
-                # matching fill
                 label = (None if max(el_data[orbital]) < legend_cutoff * tmax
                          else "{0}: {1}".format(element, orbital))
-                ax.plot(x_data, el_data[orbital], color=color, label=label,
-                        marker='', linestyle=next(linecycler))
+                (line2d, ) = ax.plot(x_data, el_data[orbital], label=label,
+                                     marker='', linestyle=next(linecycler))
 
                 if fill:
-                    ax.fill_between(x_data, el_data[orbital], color=color, alpha=alpha)
+                    ax.fill_between(x_data, el_data[orbital],
+                                    color=line2d.get_color(), alpha=alpha)
 
     if total:
         max_y = max(tdos)
