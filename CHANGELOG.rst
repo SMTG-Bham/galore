@@ -5,11 +5,18 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-bham/galore/compare/0.9.1...HEAD>`__
+`Unreleased <https://github.com/smtg-bham/galore/compare/0.9.2...HEAD>`__
 -------------------------------------------------------------------------
+
+`[0.9.2] <https://github.com/smtg-bham/galore/compare/0.9.1...0.9.2>`__
+-------------------------------------------------------------------------
+- Fix galore-plot-cs import error (@ajjackson)
+
 
 `[0.9.1] <https://github.com/smtg-bham/galore/compare/0.9.0...0.9.1>`__
 -------------------------------------------------------------------------
+(galore-plot-cs is broken in this release - use 0.9.2)
+
 - Deal with matplotlib compatibility issues (@ajjackson)
 
   -  3.6 deprecation/rename of seaborn-colorblind
