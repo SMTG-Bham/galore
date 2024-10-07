@@ -25,8 +25,8 @@ from itertools import cycle
 import logging
 import numpy as np
 from matplotlib import pyplot as plt
-plt.style.use('seaborn-colorblind')
 
+from galore.cli import get_default_style
 from galore.cross_sections import get_cross_sections_scofield
 
 
@@ -52,9 +52,9 @@ def get_parser():
     parser.add_argument('--fontsize', type=int, default=12,
                         help="Font size in pt")
     parser.add_argument(
-        '--style', type=str, nargs='+', default=['seaborn-colorblind'],
+        '--style', type=str, nargs='+', default=get_default_style(),
         help='Plotting style: a sequence of matplotlib styles and paths to '
-             'style files. The default palette is called "seaborn-colorblind".'
+             'style files.'
         )
     parser.add_argument('elements', type=str, nargs='+', help="""
         Space-separated symbols for elements in material.""")
@@ -67,8 +67,7 @@ def run(elements, emin=1, emax=10, megabarn=False, size=None, output=None,
     energies = np.linspace(emin, emax, 200)
     cross_sections = get_cross_sections_scofield(energies, elements)
 
-    if style is not None:
-        plt.style.use(style)
+    plt.style.use(style)
 
     if size is None:
         fig = plt.figure()

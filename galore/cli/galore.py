@@ -29,6 +29,7 @@ import warnings
 import numpy as np
 
 import galore
+from galore.cli.utils import get_default_style
 import galore.formats
 import galore.plot
 from galore import auto_limits
@@ -287,9 +288,9 @@ def get_parser():
     parser.add_argument(
         '--ymax', type=float, default=None, help='Maximum y axis value')
     parser.add_argument(
-        '--style', type=str, nargs='+', default=['seaborn-colorblind'],
+        '--style', type=str, nargs='+', default=get_default_style(),
         help='Plotting style: a sequence of matplotlib styles and paths to '
-             'style files. The default palette is called "seaborn-colorblind".'
+             'style files.'
         )
     parser.add_argument(
         '--overlay', type=str, default=None, help='Data file for overlay')
