@@ -16,7 +16,7 @@ authors:
 doi: 10.5281/zenodo.1491826
 repository-code: https://github.com/smtg-ucl/galore
 title: Galore
-version: 0.8.0
+version: 0.9.1
 date-released: 2023-02-28
 programming-languages:
   - python
