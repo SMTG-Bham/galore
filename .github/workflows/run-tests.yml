@@ -32,6 +32,8 @@ jobs:
           key: ${{ hashFiles('pyproject.toml')}}
 
       - name: Test with tox / unittest / coverage
+        env:
+          TOX_PARALLEL_NO_SPINNER: yes
         run: |
           tox --parallel
 
