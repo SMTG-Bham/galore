@@ -26,7 +26,7 @@ jobs:
         id: cache-tox
         uses: actions/cache@v3
         with:
-          path: ${{ inputs.working-directory }}/.tox
+          path: ${{ github.workspace }}/.tox
           # Invalidate cache when pyproject.toml changes
           key: ${{ hashFiles('pyproject.toml')}}
 
