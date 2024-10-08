@@ -14,6 +14,7 @@ jobs:
           python-version: |
               3.9
               3.10
+              3.11
               3.12
 
       - name: Install dependencies
@@ -32,7 +33,7 @@ jobs:
 
       - name: Test with tox / unittest / coverage
         run: |
-          tox
+          tox --parallel
 
       - name: Upload coverage data
         env:

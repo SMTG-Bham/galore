@@ -57,6 +57,7 @@ legacy_tox_ini = """
       py39
       py310
       py310-gpaw
+      py311
       py312
 
     [testenv]
