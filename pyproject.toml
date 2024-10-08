@@ -54,10 +54,10 @@ legacy_tox_ini = """
     [tox]
     min_version = 4.19
     env_list =
-      3.9
-      3.10
-      3.10-gpaw
-      3.12
+      py39
+      py310
+      py310-gpaw
+      py312
 
     [testenv]
     deps = coverage
