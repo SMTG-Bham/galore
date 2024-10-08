@@ -1,10 +1,10 @@
-import unittest
-import sys
-import io
-from os.path import join as path_join
-from pkg_resources import resource_filename
-from galore.formats import read_gpaw_totaldos, read_gpaw_pdos
 from contextlib import contextmanager
+import io
+from pathlib import Path
+import sys
+import unittest
+
+from galore.formats import read_gpaw_totaldos, read_gpaw_pdos
 
 try:
     from gpaw import GPAW
@@ -29,7 +29,7 @@ def stdout_redirect():
 
 @unittest.skipIf(not has_gpaw, "GPAW not available")
 class TestGPAW(unittest.TestCase):
-    gpaw_file = resource_filename(__name__, path_join('CdTe', 'CdTe.gpw'))
+    gpaw_file = Path(__file__).parent / 'CdTe/CdTe.gpw'
 
     ref_vbm = 4.948260
     efermi = 5.0761385

@@ -57,6 +57,7 @@ legacy_tox_ini = """
       3.9
       3.10
       3.10-gpaw
+      3.12
 
     [testenv]
     deps = coverage
@@ -64,7 +65,7 @@ legacy_tox_ini = """
     allowlist_externals = coverage
     commands = coverage run --source=galore -m unittest discover test
 
-    [testenv:3.10-gpaw]
+    [testenv:py310-gpaw]
     platform = linux
     allowlist_externals =
         {[testenv]allowlist_externals}

@@ -1,8 +1,10 @@
-from pkg_resources import resource_filename
-import numpy as np
-import galore
+from pathlib import Path
 import unittest
+
+import numpy as np
 from numpy.testing import assert_array_almost_equal
+
+import galore
 
 
 class test_process_pdos(unittest.TestCase):
@@ -26,7 +28,8 @@ class test_process_pdos(unittest.TestCase):
             ]))
 
     def test_process_pdos(self):
-        vasprun = resource_filename(__name__, 'SnO2/vasprun.xml.gz')
+        vasprun = str(
+            (Path(__file__).parent / 'SnO2/vasprun.xml.gz').resolve())
         xmin, xmax = (-10, 4)
         weighting = 'Alka'
 

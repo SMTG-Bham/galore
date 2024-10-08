@@ -1,6 +1,6 @@
 import os.path
 from collections.abc import Iterable
-from pkg_resources import resource_filename
+from importlib.resources import files
 from json import load as json_load
 
 
@@ -174,12 +174,10 @@ def get_cross_sections_yeh(source):
 
     """
 
-    weighting_files = {'alka': resource_filename(
-                       __name__, "data/cross_sections.json"),
-                       'he2': resource_filename(
-                           __name__, "data/cross_sections_ups.json"),
-                       'yeh_haxpes': resource_filename(
-                           __name__, "data/cross_sections_haxpes.json")}
+    weighting_files = {'alka': files("galore") / "data/cross_sections.json",
+                       'he2': files("galore") / "data/cross_sections_ups.json",
+                       'yeh_haxpes':
+                           files("galore") / "data/cross_sections_haxpes.json"}
 
     if source.lower() in weighting_files:
         path = weighting_files[source.lower()]
@@ -243,7 +241,7 @@ def get_cross_sections_scofield(energy, elements=None):
         elif energy > max_energy:
             _high_value(energy)
 
-    db_file = resource_filename(__name__, "data/scofield_data.db")
+    db_file = files("galore") / "data/scofield_data.db"
 
     if elements is None:
         elements = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na',
