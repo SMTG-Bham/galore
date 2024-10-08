@@ -14,7 +14,7 @@ authors:
   - family-names: Scanlon
     given-names: David O.
 doi: 10.5281/zenodo.1491826
-repository-code: https://github.com/smtg-ucl/galore
+repository-code: https://github.com/smtg-bham/galore
 title: Galore
 version: 0.9.2
 date-released: 2023-02-28
