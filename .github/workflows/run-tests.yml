@@ -6,33 +6,36 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: ['3.8', '3.10']
-
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: |
+              3.9
+              3.10
+              3.11
+              3.12
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install numpy
-          python -m pip install .[vasp]
-          python -m pip install -r requirements-tests.txt
-
-      - name: Build GPAW
-        run: |          
           sudo apt-get install libblas-dev liblapack-dev libxc-dev
-          python -m pip install gpaw
-          gpaw install-data --register gpaw_setups
+          python -m pip install --upgrade pip
+          python -m pip install tox coveralls
 
-      - name: Test with unittest / coverage
+      - name: Setup cache for tox
+        id: cache-tox
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/.tox
+          # Invalidate cache when pyproject.toml changes
+          key: ${{ hashFiles('pyproject.toml')}}
+
+      - name: Test with tox / unittest / coverage
+        env:
+          TOX_PARALLEL_NO_SPINNER: yes
         run: |
-          coverage run --source galore setup.py test
+          tox --parallel
 
       - name: Upload coverage data
         env:

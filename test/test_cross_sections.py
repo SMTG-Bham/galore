@@ -1,9 +1,9 @@
+from pathlib import Path
 import unittest
 try:
     from unittest import mock
 except ImportError:
     import mock
-from pkg_resources import resource_filename
 
 from galore.cross_sections import get_cross_sections
 from galore.cross_sections import get_cross_sections_json
@@ -62,7 +62,7 @@ class test_json_data(unittest.TestCase):
 
     def test_json_read(self):
         """Check JSON file is opened without trouble"""
-        json_file = resource_filename(__name__, 'json_test.json')
+        json_file = Path(__file__).parent / 'json_test.json'
         json_data = get_cross_sections_json(json_file)
         self.assertEqual(json_data['He']['s'], 'CORRECT')
 
