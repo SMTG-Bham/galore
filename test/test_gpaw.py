@@ -13,8 +13,6 @@ try:
 except ImportError:
     has_gpaw = False
 
-import ase.build
-
 @contextmanager
 def stdout_redirect():
     """Enable tests to inspect stdout in suitable format for Python version"""
