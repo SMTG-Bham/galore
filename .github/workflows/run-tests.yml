@@ -22,6 +22,14 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install tox coveralls
 
+      - name: Setup cache for tox
+        id: cache-tox
+        uses: actions/cache@v3
+        with:
+          path: ${{ inputs.working-directory }}/.tox
+          # Invalidate cache when pyproject.toml changes
+          key: ${{ hashFiles('pyproject.toml')}}
+
       - name: Test with tox / unittest / coverage
         run: |
           tox
