@@ -8,6 +8,12 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
 `Unreleased <https://github.com/smtg-bham/galore/compare/0.9.2...HEAD>`__
 -------------------------------------------------------------------------
 - Update github URL in docs (@alexsquires)
+- General modernisation and packaging updates (@ajjackson)
+
+  - Drop Python 3.8, add support for 3.11 and 3.12
+  - Update packaging: replace setup.py with pyproject.toml
+  - Use `tox` as testing entrypoint, manage multiple Python versions
+  - Stop using pkg_resources
 
 `[0.9.2] <https://github.com/smtg-bham/galore/compare/0.9.1...0.9.2>`__
 -------------------------------------------------------------------------
