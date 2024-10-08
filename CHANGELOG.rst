@@ -14,6 +14,7 @@ Versioning <http://semver.org/>`__. The changelog format is inspired by
   - Update packaging: replace setup.py with pyproject.toml
   - Use `tox` as testing entrypoint, manage multiple Python versions
   - Stop using pkg_resources
+  - Replace deprecated numpy.fromstring (of binary str) with numpy.frombuffer
 
 `[0.9.2] <https://github.com/smtg-bham/galore/compare/0.9.1...0.9.2>`__
 -------------------------------------------------------------------------

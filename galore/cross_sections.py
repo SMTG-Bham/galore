@@ -5,7 +5,7 @@ from json import load as json_load
 
 
 import sqlite3
-from numpy import fromstring as np_fromstr
+from numpy import frombuffer
 from numpy import exp, log, polyval
 
 
@@ -276,6 +276,6 @@ def get_cross_sections_scofield(energy, elements=None):
             orbitals_fits = cur.fetchall()
 
             el_cross_sections.update({element: {
-                orb: _eval_fit(energy, np_fromstr(coeffs))
+                orb: _eval_fit(energy, frombuffer(coeffs))
                 for orb, coeffs in orbitals_fits}})
     return el_cross_sections
