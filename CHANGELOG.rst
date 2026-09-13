@@ -5,8 +5,13 @@ Notable changes are logged here by release. This project uses `Semantic
 Versioning <http://semver.org/>`__. The changelog format is inspired by
 `keep-a-changelog <https://github.com/olivierlacan/keep-a-changelog>`__.
 
-`Unreleased <https://github.com/smtg-bham/galore/compare/0.9.2...HEAD>`__
--------------------------------------------------------------------------
+`Unreleased <https://github.com/smtg-bham/galore/compare/0.10.0...HEAD>`__
+--------------------------------------------------------------------------
+
+`[0.10.0] <https://github.com/smtg-bham/galore/compare/0.9.2...0.10.0>`__
+---------------------------------------------------------------------------
+Maintenance updates: this will be the last release for Python 3.9 and 3.10
+
 - Update github URL in docs (@alexsquires)
 - General modernisation and packaging updates (@ajjackson)
 
