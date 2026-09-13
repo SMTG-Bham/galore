@@ -189,6 +189,13 @@ This code is developed by the Scanlon Materials Theory Group based at
 University College London. Suggestions and contributions are welcome;
 please read the CONTRIBUTING guidelines and use the Github issue tracker.
 
+Testing
+-------
+
+Galore uses the standard-library ``unittest`` package, and manages
+tests with ``tox``. Install ``tox`` and the appropriate Python
+versions and run ``tox`` from the project directory.
+
 How to cite Galore
 ------------------
 
